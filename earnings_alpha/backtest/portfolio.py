@@ -164,8 +164,7 @@ def leg_weights(
         msg = f"weighting desconocido: {weighting!r}; válidos: {_VALID_WEIGHTING}"
         raise ConfigError(msg)
 
-    n = len(s)
-    if weighting == "equal" or s.nunique() == 1:
+    if weighting == "equal" or (s.to_numpy() == s.iloc[0]).all():
         raw = pd.Series(1.0, index=s.index)
     else:
         ascending = total >= 0  # pata larga: score alto ⇒ rango alto ⇒ más peso

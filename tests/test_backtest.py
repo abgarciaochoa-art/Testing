@@ -23,6 +23,8 @@ Los cinco contratos que estos tests defienden:
 
 from __future__ import annotations
 
+from itertools import pairwise
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -399,7 +401,7 @@ class TestEngineSignalSanity:
             totals.append(float((1.0 + res.returns).prod()))
             gross_totals.append(float((1.0 + res.gross_returns).prod()))
             assert (res.costs["total"] >= 0.0).all()
-        assert all(a > b for a, b in zip(totals[:-1], totals[1:], strict=True)), totals
+        assert all(a > b for a, b in pairwise(totals)), totals
         # el bruto no depende del modelo de costes: los costes no tocan la cartera
         assert gross_totals[0] == pytest.approx(gross_totals[1], rel=1e-12)
         assert gross_totals[0] == pytest.approx(gross_totals[3], rel=1e-12)
@@ -519,7 +521,7 @@ class TestEngineNoLookahead:
         panel = _flat_panel(tickers, SESSIONS)
         k = 10
         sig_day, jump_day = SESSIONS[k], SESSIONS[k + 1]
-        after = SESSIONS[SESSIONS >= jump_day]
+        after = SESSIONS[k + 1 :]
         panel.loc[(after, "A"), ["open", "close", "adj_close"]] = 130.0
 
         scores = pd.Series(

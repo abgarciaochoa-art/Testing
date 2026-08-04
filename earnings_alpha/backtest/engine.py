@@ -179,7 +179,7 @@ class BacktestResult:
     @property
     def total_costs(self) -> pd.Series:
         """Coste total acumulado por componente (fracción del NAV, suma diaria)."""
-        return self.costs[list(_COST_COLS) + ["total"]].sum()
+        return self.costs[[*_COST_COLS, "total"]].sum()
 
     def sharpe(self, **kwargs: object):  # -> SharpeResult (import diferido)
         """Sharpe **neto** con banda de error (delegado a `stats.performance`).
@@ -210,9 +210,9 @@ class BacktestResult:
             "total_net_return": float(np.prod(1.0 + r) - 1.0),
             "annual_one_way_turnover": float(self.turnover.sum() / years) if years > 0 else 0.0,
             "total_costs": self.total_costs.to_dict(),
-            "n_rebalances": int(len(self.rebalance_dates)),
-            "n_skipped": int(len(self.skipped_rebalances)),
-            "n_silent_delistings": int(len(self.silent_delistings)),
+            "n_rebalances": len(self.rebalance_dates),
+            "n_skipped": len(self.skipped_rebalances),
+            "n_silent_delistings": len(self.silent_delistings),
         }
 
 
@@ -251,13 +251,16 @@ class CrossSectionalBacktest:
         if not math.isfinite(capital) or capital <= 0.0:
             msg = f"capital debe ser positivo; recibido {capital!r}"
             raise ConfigError(msg)
-        if universe is not None and not isinstance(universe, pd.DataFrame):
-            if not hasattr(universe, "membership_panel"):
-                msg = (
-                    "universe debe ser un DataFrame booleano (date x ticker) o un "
-                    "UniverseProvider con membership_panel()"
-                )
-                raise ConfigError(msg)
+        if (
+            universe is not None
+            and not isinstance(universe, pd.DataFrame)
+            and not hasattr(universe, "membership_panel")
+        ):
+            msg = (
+                "universe debe ser un DataFrame booleano (date x ticker) o un "
+                "UniverseProvider con membership_panel()"
+            )
+            raise ConfigError(msg)
         self.universe = universe
         self.sectors = (
             pd.Series(dict(sectors)) if isinstance(sectors, Mapping) else sectors
@@ -535,7 +538,7 @@ class CrossSectionalBacktest:
         dl_map = dict(delist_returns) if delist_returns else {}
         last_valid = np.where(valid_price, np.arange(n_dates)[:, None], -1).max(axis=0)
         gap_days = np.diff(dates.to_numpy()).astype("timedelta64[D]").astype(int)
-        borrow_rates = costs.borrow_daily_rates(list(tickers_arr))
+        ticker_list = [str(t) for t in tickers_arr]
 
         ret_net = np.zeros(n_dates)
         ret_gross = np.zeros(n_dates)
@@ -647,7 +650,7 @@ class CrossSectionalBacktest:
 
             # ---- préstamo de los cortos que pasan la noche (ACT/360)
             if t < n_dates - 1:
-                hold = costs.holding_costs(w_after, list(tickers_arr), int(gap_days[t]))
+                hold = costs.holding_costs(w_after, ticker_list, int(gap_days[t]))
                 cb = cb + hold
 
             net_t = gross_t - cb.total

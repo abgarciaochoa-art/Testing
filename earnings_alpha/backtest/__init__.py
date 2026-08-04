@@ -8,9 +8,9 @@ Dos ángulos, dos motores:
   point-in-time por rebalanceo, liquidación de delistings y costes desglosados
   (`CostModel`: spread por tramo de liquidez + impacto √participación +
   comisión + préstamo de cortos; cada parámetro con fuente).
-- **Evento (ángulo B)** — `EventBacktest` (ventanas alrededor del anuncio, gap
-  overnight explícito) vive en `earnings_alpha.backtest.event` cuando esté
-  implementado.
+- **Evento (ángulo B)** — `EventBacktest` (`earnings_alpha.backtest.event_engine`):
+  entra/sale en offsets de sesión alrededor del anuncio con el gap overnight
+  modelado de forma explícita, y `run_grid` para comparar puntos de entrada.
 
 Ejemplo mínimo::
 
@@ -37,6 +37,12 @@ from earnings_alpha.backtest.engine import (
     CrossSectionalBacktest,
     ExecutionTiming,
     rebalance_schedule,
+)
+from earnings_alpha.backtest.event_engine import (
+    EventBacktest,
+    EventBacktestResult,
+    run_grid,
+    summarize_event_returns,
 )
 from earnings_alpha.backtest.portfolio import (
     apply_participation_limit,
@@ -65,9 +71,14 @@ __all__ = [  # noqa: RUF022 - orden temático, no alfabético
     "one_way_turnover",
     "apply_turnover_limit",
     "apply_participation_limit",
-    # motor
+    # motor cross-section
     "ExecutionTiming",
     "rebalance_schedule",
     "BacktestResult",
     "CrossSectionalBacktest",
+    # motor de eventos
+    "EventBacktest",
+    "EventBacktestResult",
+    "summarize_event_returns",
+    "run_grid",
 ]
