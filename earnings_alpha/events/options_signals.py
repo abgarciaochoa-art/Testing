@@ -115,6 +115,7 @@ Referencias principales
 
 from __future__ import annotations
 
+import itertools
 import math
 import re
 from collections.abc import Mapping, Sequence
@@ -131,11 +132,11 @@ from earnings_alpha.events import flow
 
 __all__ = [
     "ABS_MOVE_FACTOR",
+    "OPTION_EVENT_FEATURES",
     "STRADDLE_TO_ONE_SIGMA",
     "EventVolDecomposition",
     "FilterReport",
     "ImpliedForward",
-    "OPTION_EVENT_FEATURES",
     "OptionsPreEventFeatures",
     "QualityFilterConfig",
     "SmileSlice",
@@ -946,9 +947,13 @@ def expected_iv_crush(
     crush = 1.0 - sigma_diffusive / iv_front
     if not np.isfinite(sigma_event):
         return float(crush)
-    alt = 1.0 - math.sqrt(max(1.0 - sigma_event**2 / (iv_front**2 * tau_front), 0.0))
-    # Ambas expresiones son la misma identidad; se usa la directa y se contrasta.
-    return float(crush) if abs(crush - alt) < 1e-6 else float(crush)
+    # Las dos expresiones del docstring son la misma identidad algebraica: si
+    # los argumentos no la satisfacen es que (σ_d, σ_E, IV₁) no salen de la
+    # misma descomposición aditiva, y el resultado honesto es NaN.
+    arg = 1.0 - sigma_event**2 / (iv_front**2 * tau_front)
+    if arg < 0.0 or abs(crush - (1.0 - math.sqrt(arg))) > 1e-6:
+        return float("nan")
+    return float(crush)
 
 
 # ---------------------------------------------------------------------------
@@ -1250,7 +1255,13 @@ def _aggregate_one(
     )
     if skew_exp is not None:
         out["iv_skew_25delta"] = skew_25delta(smiles[skew_exp])
-        out["iv_skew_xzz"] = skew_xzz(smiles[skew_exp], spot)
+        # XZZ selecciona strikes por K/S; sin spot en la cadena se usa F·DF como
+        # proxy (S = F·DF + VP(dividendos); el error es el VP del dividendo, muy
+        # por debajo de la anchura de las bandas de moneyness del paper).
+        spot_for_xzz = spot if np.isfinite(spot) else (
+            forwards[skew_exp].forward * forwards[skew_exp].discount
+        )
+        out["iv_skew_xzz"] = skew_xzz(smiles[skew_exp], spot_for_xzz)
         if np.isfinite(out["iv_skew_25delta"]) and np.isfinite(out["iv_skew_xzz"]):
             out["iv_curvature"] = out["iv_skew_25delta"] - out["iv_skew_xzz"]
 
@@ -1283,7 +1294,7 @@ def _aggregate_one(
         pair = next(
             (
                 (a, b)
-                for a, b in zip(usable[:-1], usable[1:], strict=False)
+                for a, b in itertools.pairwise(usable)
                 if (counts[a], counts[b]) in {(1, 1), (0, 1)}
             ),
             None,
@@ -1682,7 +1693,7 @@ class OptionsPreEventFeatures:
             if col not in panel.columns:
                 return None
             return (
-                panel[col]
+                panel[col]  # noqa: PD010 - pivot_table agregaría duplicados en silencio
                 .unstack("ticker")
                 .reindex(index=dates, columns=tickers)
                 .to_numpy(dtype=float)
@@ -1842,7 +1853,7 @@ def _derive_event_vol_matrices(
 
     def wide(col: str) -> np.ndarray:
         return (
-            panel[col]
+            panel[col]  # noqa: PD010 - pivot_table agregaría duplicados en silencio
             .unstack("ticker")
             .reindex(index=dates, columns=tickers)
             .to_numpy(dtype=float)
