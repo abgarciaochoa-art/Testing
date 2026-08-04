@@ -82,10 +82,11 @@ Decisiones de diseño y sus porqués
    (`validation_methodology.md`: el retorno en ventana de evento tiene curtosis
    altísima). Toda métrica con banda; un Sharpe sin banda no se acepta.
 
-Fuera de alcance (anotado en `docs/OPEN_QUESTIONS.md` por el orquestador):
-estrategias con **opciones** a través del evento (straddles pre-anuncio, IV
-crush): requieren el `CostModel` de opciones y el `iv_crush_expected` de
-`docs/research/options_signals.md` §7.3, y no se modelan aquí.
+Fuera de alcance de este motor: estrategias con **opciones** a través del evento
+(straddles pre-anuncio, IV crush). Requieren un modelo de costes propio (spreads
+de opciones, mucho más anchos) y el `iv_crush_expected` de
+`docs/research/options_signals.md` §7.3; este motor solo opera el subyacente en
+contado. Queda registrado como cuestión abierta de la plataforma.
 
 Referencias
 -----------
@@ -794,7 +795,7 @@ class EventBacktest:
         trades = self._compute_trades(accepted, data, weight)
         trades["quantile"] = assign_quantiles(trades["score"], n_quantiles)
 
-        daily = self._daily_accounting(trades, data, weight)
+        daily = self._daily_accounting(trades, data)
         summary = self._summarize(
             trades,
             daily,
@@ -901,69 +902,71 @@ class EventBacktest:
         """
         n_dates = len(data.grid)
         grid_values = data.grid.values
-        sessions_raw = (
-            base["session"].astype(str).str.lower()
-            if "session" in base.columns
-            else pd.Series("", index=base.index)
-        )
-        est_raw = (
-            base["is_estimated_date"].fillna(False).astype(bool)
-            if "is_estimated_date" in base.columns
-            else pd.Series(False, index=base.index)
-        )
+
+        ids = base["event_id"].astype(str).to_numpy()
+        tickers = base["ticker"].astype(str).to_numpy()
+        event_dates = base["event_date"].to_numpy(dtype="datetime64[ns]")
+        if "session" in base.columns:
+            sessions_arr = base["session"].astype(str).str.lower().to_numpy()
+        else:
+            sessions_arr = np.full(len(base), "", dtype=object)
+        if "is_estimated_date" in base.columns:
+            est_arr = base["is_estimated_date"].fillna(False).astype(bool).to_numpy()
+        else:
+            est_arr = np.zeros(len(base), dtype=bool)
+        scores_arr = score_by_event.to_numpy(dtype=float)
+        pos0_arr = np.searchsorted(grid_values, event_dates)
 
         candidates: list[dict[str, object]] = []
         skipped: list[dict[str, object]] = []
 
-        def skip(row: pd.Series, reason: str) -> None:
+        def skip(i: int, reason: str) -> None:
             skipped.append(
                 {
-                    "event_id": row["event_id"],
-                    "ticker": row["ticker"],
-                    "event_date": row["event_date"],
+                    "event_id": ids[i],
+                    "ticker": tickers[i],
+                    "event_date": pd.Timestamp(event_dates[i]),
                     "reason": reason,
                 }
             )
 
         for i in range(len(base)):
-            row = base.iloc[i]
-            ticker = str(row["ticker"])
+            ticker = tickers[i]
             if ticker not in data.col:
-                skip(row, "ticker_not_in_prices")
+                skip(i, "ticker_not_in_prices")
                 continue
             j = data.col[ticker]
-            target = np.datetime64(row["event_date"], "ns")
-            pos0 = int(np.searchsorted(grid_values, target))
-            if pos0 >= n_dates or grid_values[pos0] != target:
-                skip(row, "event_date_not_in_prices")
+            pos0 = int(pos0_arr[i])
+            if pos0 >= n_dates or grid_values[pos0] != event_dates[i]:
+                skip(i, "event_date_not_in_prices")
                 continue
 
             e_at, x_at = entry_at, exit_at
-            session = str(sessions_raw.iloc[i])
+            session = str(sessions_arr[i])
             if session == "dmh" and entry_offset == 0 and e_at == "open":
                 # La apertura de tau=0 de un DMH es ANTERIOR al anuncio: entrar ahí
                 # sería look-ahead (pit_and_biases.md §9.4, caso 3).
                 if self.dmh_policy == "exclude":
-                    skip(row, "dmh_excluded")
+                    skip(i, "dmh_excluded")
                     continue
                 e_at = "close"
                 if _point_key(entry_offset, e_at) >= _point_key(exit_offset, x_at):
-                    skip(row, "dmh_excluded")
+                    skip(i, "dmh_excluded")
                     continue
 
             e_pos = pos0 + entry_offset
             x_pos = pos0 + exit_offset
             if e_pos < 0 or x_pos > n_dates - 1:
-                skip(row, "window_out_of_price_panel")
+                skip(i, "window_out_of_price_panel")
                 continue
 
-            sc = float(score_by_event.iloc[i])
+            sc = float(scores_arr[i])
             if side == "signed":
                 if not np.isfinite(sc):
-                    skip(row, "score_missing")
+                    skip(i, "score_missing")
                     continue
                 if sc == 0.0:
-                    skip(row, "score_zero")
+                    skip(i, "score_zero")
                     continue
                 sd = 1.0 if sc > 0 else -1.0
             else:
@@ -983,17 +986,17 @@ class EventBacktest:
                 or n_gap_nan > 0
                 or n_intra_nan > 0
             ):
-                skip(row, "missing_prices")
+                skip(i, "missing_prices")
                 continue
 
             candidates.append(
                 {
-                    "event_id": str(row["event_id"]),
+                    "event_id": ids[i],
                     "ticker": ticker,
                     "col": j,
-                    "event_date": row["event_date"],
+                    "event_date": pd.Timestamp(event_dates[i]),
                     "session": session,
-                    "is_estimated_date": bool(est_raw.iloc[i]),
+                    "is_estimated_date": bool(est_arr[i]),
                     "pos0": pos0,
                     "e_pos": e_pos,
                     "x_pos": x_pos,
@@ -1212,9 +1215,7 @@ class EventBacktest:
 
     # ------------------------------------------------------------------ diario
 
-    def _daily_accounting(
-        self, trades: pd.DataFrame, data: _PriceData, weight: float
-    ) -> pd.DataFrame:
+    def _daily_accounting(self, trades: pd.DataFrame, data: _PriceData) -> pd.DataFrame:
         """Serie diaria de la cartera con número fijo de acciones por posición.
 
         Cada posición mantiene `peso·NAV/precio_entrada` acciones, así que el P&L

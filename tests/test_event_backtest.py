@@ -229,9 +229,8 @@ def test_entry_at_event_is_at_open_of_tradable_session(
     # Ningún trade de entrada en tau=0 mantiene el gap del anuncio.
     assert not res.trades["holds_event_gap"].any()
 
-    merged = res.trades.merge(
-        events[["event_id", "announced_at", "session"]], left_index=True, right_on="event_id"
-    )
+    announced = events.set_index("event_id")["announced_at"]
+    merged = res.trades.assign(announced_at=announced.reindex(res.trades.index))
     amc = merged[merged["session"] == "amc"]
     assert len(amc) > 0
     # La sesión negociable de un AMC es estrictamente posterior al día del anuncio.
@@ -338,7 +337,7 @@ def test_event_day_gap_share_recovered(
     share = t["event_gap_return"].abs() / (
         t["event_gap_return"].abs() + t["event_intraday_return"].abs()
     )
-    assert 0.65 < share.median() < 0.92
+    assert abs(share.median() - EVENT_GAP_SHARE) < 0.15
     # Y el gap del anuncio NO está en el retorno de la operación (entrada en tau=0):
     # el componente nocturno de la tenencia es de noches ordinarias, mucho menor.
     assert t["gap_return"].abs().median() < t["event_gap_return"].abs().median()
@@ -524,7 +523,7 @@ def test_grid_rows_are_internally_coherent(grid: pd.DataFrame) -> None:
             row["p99"],
             row["best_net"],
         ]
-        assert all(a <= b + 1e-12 for a, b in zip(chain, chain[1:], strict=True))
+        assert all(a <= b + 1e-12 for a, b in zip(chain, chain[1:], strict=False))
         assert row["worst_net"] <= row["mean_net"] <= row["best_net"]
         assert row["n_events"] >= 10
         assert row["mean_net_ci_low"] <= row["mean_net"] <= row["mean_net_ci_high"]
@@ -589,7 +588,9 @@ def test_invalid_inputs_raise_config_errors(
     with pytest.raises(ConfigError, match="entero"):
         engine.run(events, prices, entry_offset=1.5, exit_offset=5)  # type: ignore[arg-type]
     with pytest.raises(ConfigError, match="side"):
-        engine.run(events, prices, entry_offset=1, exit_offset=5, side="hedged")  # type: ignore[arg-type]
+        engine.run(
+            events, prices, entry_offset=1, exit_offset=5, side="hedged"  # type: ignore[arg-type]
+        )
     with pytest.raises(ConfigError, match="columna"):
         engine.run(events, prices, entry_offset=1, exit_offset=5, score="no_such_column")
     with pytest.raises(ConfigError, match="per_event_capital"):
