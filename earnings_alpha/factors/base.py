@@ -38,7 +38,7 @@ from __future__ import annotations
 
 import datetime as dt
 from collections.abc import Callable, Iterator, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
 import numpy as np
@@ -166,7 +166,7 @@ class FactorContext:
         return sorted(set(self.prices.index.get_level_values("ticker")))
 
     def panel_index(self) -> pd.MultiIndex:
-        """MultiIndex canónico ``(date, ticker)`` = `dates` × tickers del panel."""
+        """MultiIndex canónico ``(date, ticker)`` = `dates` x tickers del panel."""
         return build_panel_index(self.dates, self.tickers())
 
 
@@ -317,14 +317,14 @@ class StaticUniverse:
         self._sectors = dict(sectors or {})
         self._ciks = dict(ciks or {})
 
-    def members_on(self, d: dt.date) -> list[Ticker]:  # noqa: ARG002 - firma del protocolo
+    def members_on(self, d: dt.date) -> list[Ticker]:  # firma del protocolo
         return list(self._tickers)
 
     def membership_panel(self, start: dt.date, end: dt.date) -> pd.DataFrame:
         dates = pd.date_range(pd.Timestamp(start), pd.Timestamp(end), freq="D", name="date")
         return pd.DataFrame(True, index=dates, columns=pd.Index(self._tickers, name="ticker"))
 
-    def cik_for(self, t: Ticker, on: dt.date | None = None) -> CIK | None:  # noqa: ARG002
+    def cik_for(self, t: Ticker, on: dt.date | None = None) -> CIK | None:
         return self._ciks.get(normalize_ticker(t))
 
     def sector_for(self, t: Ticker) -> str | None:

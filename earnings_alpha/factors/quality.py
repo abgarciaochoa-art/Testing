@@ -877,3 +877,46 @@ FACTORS: tuple[type[FundamentalFactor], ...] = (
     Leverage,
 )
 """Factores exportados por este módulo."""
+
+
+def _register() -> None:
+    """Registra los factores en el `default_registry` de `factors.base`.
+
+    Import en tiempo de ejecución con try/except: `base.py` lo escribe otro
+    agente en paralelo y este módulo debe funcionar también sin él. Las clases
+    parametrizadas (variante, métrica, margen) se registran mediante fábricas
+    con el nombre que declara cada configuración.
+    """
+    try:
+        from earnings_alpha.factors.base import register_factor
+    except ImportError:  # pragma: no cover - base.py aún no integrado
+        return
+    for cls in (CFOToNetIncome, GrossProfitability, EarningsStability, Leverage):
+        register_factor()(cls)
+
+    @register_factor("piotroski_f")
+    def _piotroski_binary(**kwargs: object) -> PiotroskiFScore:
+        return PiotroskiFScore(variant="binary", **kwargs)  # type: ignore[arg-type]
+
+    @register_factor("piotroski_f_cont")
+    def _piotroski_continuous(**kwargs: object) -> PiotroskiFScore:
+        return PiotroskiFScore(variant="continuous", **kwargs)  # type: ignore[arg-type]
+
+    @register_factor("margin_trend_gross")
+    def _margin_trend_gross(**kwargs: object) -> MarginTrend:
+        return MarginTrend(margin="gross", **kwargs)  # type: ignore[arg-type]
+
+    @register_factor("margin_trend_operating")
+    def _margin_trend_operating(**kwargs: object) -> MarginTrend:
+        return MarginTrend(margin="operating", **kwargs)  # type: ignore[arg-type]
+
+    @register_factor("roa")
+    def _roa(**kwargs: object) -> Profitability:
+        return Profitability("roa", **kwargs)  # type: ignore[arg-type]
+
+    @register_factor("roe")
+    def _roe(**kwargs: object) -> Profitability:
+        return Profitability("roe", **kwargs)  # type: ignore[arg-type]
+
+
+_register()

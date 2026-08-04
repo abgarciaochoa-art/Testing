@@ -112,6 +112,13 @@ class FactorContextLike(Protocol):
     calendar: "TradingCalendar"
 
 
+try:  # Coordinación con factors/base.py, escrito por otro agente en paralelo:
+    # si el módulo ya existe se re-exporta su FactorContext real; si aún no,
+    # se programa contra el protocolo estructural `FactorContextLike` de arriba.
+    from earnings_alpha.factors.base import FactorContext  # noqa: F401
+except ImportError:  # pragma: no cover - depende del orden de integración
+    FactorContext = None  # type: ignore[assignment]
+
 Availability = Literal["announcement", "filing"]
 """Política de fechado point-in-time del dato fundamental.
 
@@ -798,3 +805,20 @@ FACTORS: tuple[type[FundamentalFactor], ...] = (
     SalesYield,
 )
 """Factores exportados por este módulo, en orden de la tarea (§3.4)."""
+
+
+def _register() -> None:
+    """Registra los factores en el `default_registry` de `factors.base`.
+
+    Import en tiempo de ejecución con try/except: `base.py` lo escribe otro
+    agente en paralelo y este módulo debe funcionar también sin él.
+    """
+    try:
+        from earnings_alpha.factors.base import register_factor
+    except ImportError:  # pragma: no cover - base.py aún no integrado
+        return
+    for cls in FACTORS:
+        register_factor()(cls)
+
+
+_register()

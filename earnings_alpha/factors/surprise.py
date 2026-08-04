@@ -18,7 +18,7 @@ fórmulas exactas y sus salvaguardas:
 - **SURGE, sorpresa de ingresos** (Jegadeesh y Livnat 2006): mismo modelo de
   expectativas sobre ingresos **por acción** — con ingresos totales el factor
   mide la política de recompras y puede invertir el signo (§3, verificado en el
-  informe con una recompra del 10%: +0.126 por acción vs −0.814 en total—).
+  informe con una recompra del 10%: +0.126 por acción vs -0.814 en total—).
 - **DOUBLE** (Jegadeesh y Livnat 2006, FAJ): mínimo de |z(SUE)| y |z(SURGE)|
   cuando comparten signo, cero cuando discrepan (§3).
 - **PEAD** (Ball y Brown 1968; Bernard y Thomas 1989; erosión: Martineau 2021,
@@ -50,7 +50,7 @@ import datetime as dt
 import warnings
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Final
+from typing import ClassVar, Final
 
 import numpy as np
 import pandas as pd
@@ -218,8 +218,14 @@ def sue_time_series(
                 msg = f"precio no positivo para el suelo de sigma: {price}"
                 raise DataQualityError(msg)
             floor = sigma_floor_frac * price
+        # Degeneración relativa: una serie perfectamente estacional produce
+        # sigma ~ 1e-16 por redondeo, no 0.0 exacto; dividir por ese residuo
+        # fabricaría SUEs de 1e13. El umbral es relativo a la escala de la
+        # serie para preservar la invariancia de escala.
+        scale = float(np.max(np.abs(np.asarray(eps, dtype=float)[-MIN_QUARTERS_SUE:])))
+        degenerate = sigma < 1e-9 * max(scale, np.finfo(float).tiny)
         denom = max(sigma, floor)
-        if not np.isfinite(denom) or denom <= 0.0:
+        if not np.isfinite(denom) or denom <= 0.0 or (degenerate and floor <= 0.0):
             return float("nan")
         return ue / denom
     if b is SurpriseBasis.PRICE:
@@ -287,7 +293,7 @@ def price_before_event(
         msg = f"`prices` no tiene columna {price_col!r}"
         raise DataQualityError(msg)
 
-    wide = prices[price_col].unstack("ticker")
+    wide = prices[price_col].unstack("ticker")  # noqa: PD010
     grid = wide.index.to_numpy(dtype="datetime64[ns]")
     values = wide.to_numpy(dtype=float)
 
@@ -296,7 +302,7 @@ def price_before_event(
         .normalize()
         .to_numpy(dtype="datetime64[ns]")
     )
-    # side="left" y −1: la última sesión ESTRICTAMENTE anterior al tradable_date.
+    # side="left" y -1: la última sesión ESTRICTAMENTE anterior al tradable_date.
     row = np.searchsorted(grid, ts, side="left") - 1
     col = wide.columns.get_indexer(events["ticker"].astype(str))
     ok = (row >= 0) & (col >= 0)
@@ -605,7 +611,7 @@ def revenue_surprise_events(
 
     El "por acción" no es cosmético: el informe (§3) verifica numéricamente que
     con una recompra del 10% el factor sobre ingresos totales invierte el signo
-    (−0.814 vs +0.126) y pasa a medir la política de recompras (*net share
+    (-0.814 vs +0.126) y pasa a medir la política de recompras (*net share
     issuance*), que es otro factor. Mismo requisito de 13 trimestres que SUE.
 
     La fecha de la señal es el `tradable_date` del **evento** (los ingresos se
@@ -644,7 +650,10 @@ def revenue_surprise_events(
     foster = foster_surprise_events(
         merged, value_col="rps", min_quarters=min_quarters, max_gap_days=max_gap_days
     )
-    sigma = foster["sigma"].replace(0.0, np.nan)
+    # Degeneración relativa (misma salvaguarda que `sue_time_series`): una
+    # sigma que solo es residuo de redondeo no es un denominador.
+    degeneracy = 1e-9 * merged["rps"].abs().clip(lower=np.finfo(float).tiny)
+    sigma = foster["sigma"].where(foster["sigma"] > degeneracy)
     surge = foster["ue"] / sigma
 
     out = pd.DataFrame(
@@ -703,11 +712,14 @@ CONSENSUS_PIT_WARNING: Final[str] = (
     "rentabilidad (Payne y Thomas 2003)."
 )
 
-_SESSION_ANNOUNCE_MINUTES: Final[dict[Session, int]] = {
-    Session.BMO: 7 * 60,        # 07:00 ET, antes de la apertura
-    Session.DMH: 12 * 60 + 30,  # 12:30 ET, sesión abierta
-    Session.AMC: 17 * 60,       # 17:00 ET, tras el cierre
-    Session.UNKNOWN: 17 * 60,   # conservador: se trata como AMC
+# Claves como `str` y no como `Session`: las columnas Arrow del parquet
+# degradan un StrEnum a texto plano al almacenarlo, así que todo el flujo del
+# loader trabaja con los valores string canónicos de `types.Session`.
+_SESSION_ANNOUNCE_MINUTES: Final[dict[str, int]] = {
+    Session.BMO.value: 7 * 60,        # 07:00 ET, antes de la apertura
+    Session.DMH.value: 12 * 60 + 30,  # 12:30 ET, sesión abierta
+    Session.AMC.value: 17 * 60,       # 17:00 ET, tras el cierre
+    Session.UNKNOWN.value: 17 * 60,   # conservador: se trata como AMC
 }
 
 
@@ -793,7 +805,11 @@ def load_consensus_events(
     frame["ticker"] = [normalize_ticker(str(t)) for t in frame["ticker"]]
     frame["report_date"] = pd.DatetimeIndex(pd.to_datetime(frame["report_date"])).normalize()
     frame["period_end"] = pd.to_datetime(frame["fiscal_period_end"], errors="coerce")
-    frame["session"] = frame["report_time"].map(parse_session)
+    frame["session"] = pd.Series(
+        [parse_session(v if not pd.isna(v) else None).value for v in frame["report_time"]],
+        index=frame.index,
+        dtype=object,
+    )
 
     if tickers is not None:
         wanted = {normalize_ticker(t) for t in tickers}
@@ -810,16 +826,16 @@ def load_consensus_events(
         raise InsufficientHistory(msg)
 
     # --- propagación de sesión entre fuentes por (ticker, report_date) -----
-    labeled = frame[frame["session"] != Session.UNKNOWN]
+    unknown = Session.UNKNOWN.value
+    labeled = frame[frame["session"] != unknown]
     per_key = labeled.groupby(["ticker", "report_date"])["session"].agg(
-        lambda s: s.iloc[0] if s.nunique() == 1 else Session.UNKNOWN
+        lambda s: s.iloc[0] if len(set(s)) == 1 else unknown
     )
     key = pd.MultiIndex.from_frame(frame[["ticker", "report_date"]])
     inferred = pd.Series(per_key.reindex(key).to_numpy(), index=frame.index)
-    needs = frame["session"] == Session.UNKNOWN
-    frame.loc[needs, "session"] = inferred[needs].where(inferred[needs].notna(),
-                                                        Session.UNKNOWN)
-    n_session_filled = int((needs & (frame["session"] != Session.UNKNOWN)).sum())
+    needs = frame["session"] == unknown
+    frame.loc[needs, "session"] = inferred[needs].where(inferred[needs].notna(), unknown)
+    n_session_filled = int((needs & (frame["session"] != unknown)).sum())
 
     # --- descartes sin clave de evento -------------------------------------
     n_no_period = int(frame["period_end"].isna().sum())
@@ -829,7 +845,7 @@ def load_consensus_events(
         raise DataQualityError(msg)
 
     # --- deduplicación por (ticker, period_end) ----------------------------
-    frame["__has_session__"] = frame["session"] != Session.UNKNOWN
+    frame["__has_session__"] = frame["session"] != unknown
     frame["__has_eps__"] = frame["eps_reported"].notna() & frame["eps_estimated"].notna()
     frame["__snap__"] = pd.to_datetime(frame["snapshot_date"], errors="coerce")
     n_before = len(frame)
@@ -846,7 +862,6 @@ def load_consensus_events(
     unique_local = pd.DatetimeIndex(local.unique())
     to_utc = {ts: eastern_to_utc(ts.to_pydatetime()) for ts in unique_local}
     frame["announced_at"] = pd.DatetimeIndex([to_utc[ts] for ts in local])
-    frame["session"] = frame["session"].map(lambda s: s.value)
     frame["event_date"] = tradable_dates(frame, cal)
 
     pe = pd.DatetimeIndex(frame["period_end"])
@@ -905,7 +920,7 @@ class AnalystSUE:
     tengan panel completo, y el horizonte corto lo aplica `PEAD`.
     """
 
-    requires = ["earnings_calendar", "prices", "estimates"]
+    requires: ClassVar[list[str]] = ["earnings_calendar", "prices", "estimates"]
 
     def __init__(
         self,
@@ -974,7 +989,7 @@ class TimeSeriesSUE:
     previo (§2.3: ortogonalizar contra `E/P` antes de combinar).
     """
 
-    requires = ["earnings_calendar", "prices"]
+    requires: ClassVar[list[str]] = ["earnings_calendar", "prices"]
 
     def __init__(
         self,
@@ -1051,7 +1066,7 @@ class RevenueSurprise:
     """
 
     name = "revenue_surprise"
-    requires = ["earnings_calendar", "fundamentals"]
+    requires: ClassVar[list[str]] = ["earnings_calendar", "fundamentals"]
 
     def __init__(
         self,
@@ -1102,7 +1117,7 @@ class DoubleSurprise:
     """
 
     name = "double_surprise"
-    requires = ["earnings_calendar", "fundamentals", "prices"]
+    requires: ClassVar[list[str]] = ["earnings_calendar", "fundamentals", "prices"]
 
     def __init__(
         self,
@@ -1153,7 +1168,7 @@ class PEAD:
     """
 
     name = "pead"
-    requires = ["earnings_calendar", "prices"]
+    requires: ClassVar[list[str]] = ["earnings_calendar", "prices"]
 
     def __init__(
         self,

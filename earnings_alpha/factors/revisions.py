@@ -40,7 +40,7 @@ la revisión.
 from __future__ import annotations
 
 import warnings
-from typing import Final
+from typing import ClassVar, Final
 
 import numpy as np
 import pandas as pd
@@ -52,6 +52,7 @@ from earnings_alpha.factors.base import (
     register_factor,
     require_columns,
 )
+
 __all__ = [  # noqa: RUF022 - orden temático, no alfabético
     "NoVintagesWarning",
     "has_revision_vintages",
@@ -152,7 +153,7 @@ def _coverage_mask(
     *,
     staleness_sessions: int,
 ) -> np.ndarray:
-    """Matriz booleana (n_fechas × n_tickers): hay consenso vivo en esa fecha.
+    """Matriz booleana (n_fechas x n_tickers): hay consenso vivo en esa fecha.
 
     Falsa antes de la primera foto observable del ticker y cuando la última
     foto observada tiene más de `staleness_sessions` sesiones de antigüedad.
@@ -268,7 +269,7 @@ def revision_momentum_panel(
         )
 
     # Precio en el momento de la revisión: última sesión <= as_of.
-    wide_close = prices["close"].unstack("ticker").reindex(grid)
+    wide_close = prices["close"].unstack("ticker").reindex(grid)  # noqa: PD010
     price_grid = wide_close.to_numpy(dtype=float)
     pos_price = np.searchsorted(
         grid.to_numpy(dtype="datetime64[ns]"),
@@ -448,7 +449,7 @@ def analyst_dispersion_panel(
     floor = np.full((n, m), abs_floor, dtype=float)
     if prices is not None:
         require_columns(prices, ["close"], name="prices")
-        wide_close = prices["close"].unstack("ticker").reindex(grid)
+        wide_close = prices["close"].unstack("ticker").reindex(grid)  # noqa: PD010
         aligned = wide_close.reindex(columns=ticker_list).to_numpy(dtype=float)
         with np.errstate(invalid="ignore"):
             floor = np.fmax(floor, floor_frac * aligned)
@@ -483,7 +484,7 @@ class RevisionMomentum:
     """
 
     name = "revision_momentum"
-    requires = ["estimates", "prices"]
+    requires: ClassVar[list[str]] = ["estimates", "prices"]
 
     def __init__(self, months: int = 3, *, value_col: str = "eps_mean") -> None:
         self.months = months
@@ -514,7 +515,7 @@ class RevisionDiffusion:
     """
 
     name = "revision_diffusion"
-    requires = ["estimates"]
+    requires: ClassVar[list[str]] = ["estimates"]
 
     def __init__(
         self, months: int = 3, *, min_revisions: int = 3, value_col: str = "eps_mean"
@@ -539,7 +540,7 @@ class RevisionDiffusion:
 
 @register_factor()
 class AnalystDispersion:
-    """Factor `analyst_dispersion`: −dispersión de previsiones (signo DMS).
+    """Factor `analyst_dispersion`: -dispersión de previsiones (signo DMS).
 
     Referencia: Diether, Malloy y Scherbina (2002). El signo negativo cumple
     el contrato "mayor = más alcista": las empresas con analistas de acuerdo
@@ -549,7 +550,7 @@ class AnalystDispersion:
     """
 
     name = "analyst_dispersion"
-    requires = ["estimates", "prices"]
+    requires: ClassVar[list[str]] = ["estimates", "prices"]
 
     def __init__(self, *, floor_frac: float = 0.005, abs_floor: float = 0.01) -> None:
         self.floor_frac = floor_frac
