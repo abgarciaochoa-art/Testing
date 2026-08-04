@@ -6,7 +6,7 @@ razones concretas:
 
 1. **Los factores no son independientes.** `docs/research/fundamental_factors.md`
    §14 documenta los solapamientos medidos: `SUE_price`↔`E/P`, `CFO/NI` ≡
-   `1 − PACC`, `F_ACCRUAL` ⊂ F-Score, revisiones de analistas ↔ momentum de
+   `1 - PACC`, `F_ACCRUAL` ⊂ F-Score, revisiones de analistas ↔ momentum de
    precio. Sumar z-scores a pesos iguales sobre esa batería concentra el riesgo
    en la dirección repetida y llama "diversificación" a lo contrario. De ahí
    `orthogonalize` (Gram-Schmidt secuencial por fecha).
@@ -55,6 +55,7 @@ Referencias
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from itertools import pairwise
 from typing import Literal, cast
 
 import numpy as np
@@ -363,7 +364,7 @@ def _signal_corr_prefix(
     codes, uniques = pd.factorize(day, sort=True)
     order = np.argsort(codes, kind="stable")
     offsets = np.searchsorted(codes[order], np.arange(len(uniques) + 1))
-    for i, (start, stop) in enumerate(zip(offsets[:-1], offsets[1:], strict=True)):
+    for i, (start, stop) in enumerate(pairwise(offsets)):
         rows = order[start:stop]
         block = values[rows]
         block = block[np.isfinite(block).all(axis=1)]
@@ -869,7 +870,7 @@ def symmetric_orthogonalize(
     `S` es la matriz de correlación cross-section entre señales de esa fecha.
     `S^{-1/2}` se calcula por descomposición espectral. La transformación es la
     ortogonalización que **menos** deforma el conjunto original (minimiza
-    ``‖Y − X‖_F`` entre todas las bases ortonormales del mismo espacio), lo que
+    ``‖Y - X‖_F`` entre todas las bases ortonormales del mismo espacio), lo que
     evita tener que justificar un orden de prelación arbitrario
     (Löwdin 1950; Klein y Chow 2013).
 
@@ -888,7 +889,7 @@ def symmetric_orthogonalize(
     order = np.argsort(codes, kind="stable")
     offsets = np.searchsorted(codes[order], np.arange(len(uniques) + 1))
     n_ok = 0
-    for start, stop in zip(offsets[:-1], offsets[1:], strict=True):
+    for start, stop in pairwise(offsets):
         rows = order[start:stop]
         sel = rows[complete[rows]]
         if len(sel) < max(min_obs, k + 2):

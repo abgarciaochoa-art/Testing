@@ -44,7 +44,7 @@ Referencias
 - Tukey, J. W. (1962), *The Future of Data Analysis*: winsorización como
   estimación robusta frente a colas pesadas.
 - Rousseeuw, P. y Croux, C. (1993), *Alternatives to the Median Absolute
-  Deviation*, JASA 88: constante 1.4826 que hace la MAD consistente con σ bajo
+  Deviation*, JASA 88: constante 1.4826 que hace la MAD consistente con sigma bajo
   normalidad.
 - Blom, G. (1958) y van der Waerden (1952): puntuaciones normales por rango
   (`rank_pct(mode="normal")`).
@@ -65,6 +65,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from enum import StrEnum
+from itertools import pairwise
 from typing import Literal, cast
 
 import numpy as np
@@ -91,7 +92,7 @@ __all__ = [  # noqa: RUF022 - orden temático, no alfabético
 ]
 
 MAD_TO_SIGMA = 1.482602218505602
-"""Constante que hace la MAD consistente con σ bajo normalidad (1/Φ⁻¹(0.75)).
+"""Constante que hace la MAD consistente con sigma bajo normalidad (1/Φ⁻¹(0.75)).
 
 Rousseeuw y Croux (1993). Sin ella, un "z robusto" no es comparable con un z
 clásico y los umbrales de winsorización cambian de significado.
@@ -360,15 +361,26 @@ def _post_fill(
 ) -> pd.Series:
     """Aplica la parte de la política que actúa sobre la **salida**.
 
-    Solo toca las filas cuya *entrada* era nula: una fecha anulada por `min_obs`
-    sigue siendo NaN, porque su problema no es un dato ausente sino una sección
-    cruzada insuficiente, y taparlo sería mentir sobre la cobertura.
+    Dos salvaguardas:
+
+    1. Solo se rellenan filas cuya *entrada* era nula. Un NaN nacido de la
+       transformación (varianza cero, grados de libertad insuficientes) no es un
+       dato ausente y no se tapa.
+    2. Solo se rellenan fechas que **produjeron alguna señal**. Si una fecha se
+       anuló entera por `min_obs`, rellenar sus huecos con el valor neutro
+       fabricaría una sección cruzada donde no la hay: quedaría un día en el que
+       todos los nombres valen 0 y ninguno vale otra cosa, indistinguible de un
+       día real de dispersión nula.
     """
     if policy is NaNPolicy.DROP:
         return out[~input_na.to_numpy()]
     if policy in (NaNPolicy.NEUTRAL, NaNPolicy.ZERO):
         fill_value = 0.0 if policy is NaNPolicy.ZERO else neutral
-        target = input_na.to_numpy() & out.isna().to_numpy()
+        produced = (
+            out.notna().astype("float64").groupby(out.index.get_level_values(0)).transform("max")
+            > 0
+        )
+        target = input_na.to_numpy() & out.isna().to_numpy() & produced.to_numpy()
         if isinstance(fill_value, pd.Series):
             out = out.where(~target, fill_value)
         else:
@@ -398,7 +410,7 @@ def _enforce_min_obs(
         )
         raise InsufficientHistory(msg)
     if on_insufficient == "raise":
-        bad = pd.Index(out.index[short]).get_level_values(0).unique()
+        bad = out.index[short].get_level_values(0).unique()
         msg = (
             f"{what}: {len(bad)} fechas por debajo de min_obs={min_obs} "
             f"(muestra: {[str(d.date()) for d in bad[:5]]})"
@@ -434,26 +446,26 @@ def zscore(
     constant: Literal["nan", "zero"] = "nan",
     missing_group: Literal["nan", "pool", "raise"] = "nan",
 ) -> pd.Series | pd.DataFrame:
-    """Estandariza la sección cruzada de cada fecha: ``(x - μ_t) / σ_t``.
+    """Estandariza la sección cruzada de cada fecha: ``(x - μ_t) / sigma_t``.
 
     Con `by` se estandariza dentro de cada grupo de la fecha (sector, por
     ejemplo), lo que equivale a una neutralización sectorial de media *y*
     varianza; es más agresivo que `demean` y conviene solo cuando los grupos
     tienen tamaño suficiente (`fundamental_factors.md` §1.5: con 21 nombres en
-    Energy el σ intra-sector es ya ruidoso).
+    Energy el sigma intra-sector es ya ruidoso).
 
     Parámetros
     ----------
     robust:
         Usa mediana y MAD escalada (`MAD_TO_SIGMA`) en vez de media y desviación
         típica. Recomendado cuando la señal no se ha winsorizado antes: un único
-        outlier de |z|>20 —habitual en `E/P` o en accruals— infla σ y comprime
+        outlier de |z|>20 —habitual en `E/P` o en accruals— infla sigma y comprime
         toda la sección cruzada hacia cero (`fundamental_factors.md` §1.4).
     clip:
         Recorte simétrico posterior en unidades de z (p. ej. 3.0). Es una
         winsorización expresada en la escala estandarizada.
     constant:
-        Qué devolver si la sección cruzada es constante (σ = 0): `"nan"` por
+        Qué devolver si la sección cruzada es constante (sigma = 0): `"nan"` por
         defecto —no hay información transversal que estandarizar— o `"zero"`.
 
     Devuelve
@@ -528,7 +540,7 @@ def winsorize(
     """Acota las colas de cada sección cruzada.
 
     Winsorizar **antes** de estandarizar, nunca al revés: al revés, un solo
-    outlier infla σ y comprime el resto de la sección cruzada
+    outlier infla sigma y comprime el resto de la sección cruzada
     (`fundamental_factors.md` §1.4). El valor por defecto `q=0.01` es el 1 %/99 %
     de la receta canónica del repo.
 
@@ -543,7 +555,7 @@ def winsorize(
           cuantiles extremos son ruidosos.
         - ``"mad"``: recorta a ``mediana ± k·MAD_escalada``. Robusto y estable
           con pocos nombres (Rousseeuw y Croux 1993).
-        - ``"sigma"``: recorta a ``media ± k·σ``. El menos robusto: los propios
+        - ``"sigma"``: recorta a ``media ± k·sigma``. El menos robusto: los propios
           outliers desplazan los límites.
     mode:
         ``"clip"`` (winsorización propiamente dicha) sustituye el valor extremo
@@ -952,13 +964,12 @@ def residualize(
 
     reg_values = x_panel.to_numpy(dtype="float64")
     reg_ok = np.isfinite(reg_values).all(axis=1)
-    if not reg_ok.all():
-        if regressor_nan == "raise":
-            msg = (
-                f"{int((~reg_ok).sum())} observaciones con exposiciones ausentes; "
-                "con regressor_nan='raise' no se estima"
-            )
-            raise DataQualityError(msg)
+    if not reg_ok.all() and regressor_nan == "raise":
+        msg = (
+            f"{int((~reg_ok).sum())} observaciones con exposiciones ausentes; "
+            "con regressor_nan='raise' no se estima"
+        )
+        raise DataQualityError(msg)
 
     y_values = s.to_numpy(dtype="float64")
     if policy in (NaNPolicy.MEAN, NaNPolicy.MEDIAN):
@@ -981,7 +992,7 @@ def residualize(
     n_used = np.zeros(len(s))
     order, offsets, _dates = _blocks(s.index)
 
-    for start, stop in zip(offsets[:-1], offsets[1:], strict=True):
+    for start, stop in pairwise(offsets):
         rows = order[start:stop]
         sel = rows[usable[rows]]
         n_used[rows] = len(sel)
@@ -1163,7 +1174,7 @@ def neutralize(
     n_used = np.zeros(len(s))
     order, offsets, _dates = _blocks(s.index)
 
-    for start, stop in zip(offsets[:-1], offsets[1:], strict=True):
+    for start, stop in pairwise(offsets):
         rows = order[start:stop]
         sel = rows[usable[rows]]
         n_used[rows] = len(sel)
