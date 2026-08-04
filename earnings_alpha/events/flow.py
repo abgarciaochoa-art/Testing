@@ -66,26 +66,36 @@ from __future__ import annotations
 import datetime as dt
 import math
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Final, Literal
 
 import numpy as np
 import pandas as pd
-from scipy.special import ndtr
+from scipy.optimize import minimize
+from scipy.special import gammaln, logsumexp, ndtr
 
-from earnings_alpha.errors import DataQualityError, InsufficientHistory
+from earnings_alpha.errors import (
+    DataQualityError,
+    InsufficientHistory,
+    ProviderUnavailable,
+)
 from earnings_alpha.pit import TradingCalendar, get_calendar
 
 __all__ = [
     "DEFAULT_BASE_WINDOW",
     "DEFAULT_DETECTION_WINDOWS",
     "LOG_TURNOVER_CONSTANT",
+    "PINEstimate",
     "amihud_illiquidity",
     "abnormal_volume",
     "ar1_effective_sample_size",
     "bvc_order_imbalance",
     "clv_order_imbalance",
+    "estimate_pin",
     "insider_net_buy_form4",
     "off_exchange_share_delta",
+    "pin_log_likelihood",
+    "pin_quarterly",
     "settlement_cycle_lag",
     "settlement_to_trade_date",
     "short_interest_delta",
@@ -1303,3 +1313,271 @@ def insider_net_buy_form4(
                 cols["insider_net_buy_form4_routine"][i] = _npr(rut)
 
     return pd.DataFrame(cols, index=pd.Index(ev["event_id"], name="event_id"))
+
+
+# ---------------------------------------------------------------------------
+# PIN — Probability of Informed Trading (opcional, requiere trades firmados)
+# ---------------------------------------------------------------------------
+
+
+def pin_log_likelihood(
+    buys: Sequence[float] | np.ndarray,
+    sells: Sequence[float] | np.ndarray,
+    alpha: float,
+    delta: float,
+    mu: float,
+    eps_b: float,
+    eps_s: float,
+) -> float:
+    """Log-verosimilitud del modelo PIN por **log-sum-exp** (informe §5.3).
+
+    Modelo de Easley, Kiefer, O'Hara y Paperman (1996): cada día ocurre un evento
+    informativo con probabilidad ``alpha`` (malo con probabilidad ``delta``); los
+    no informados llegan con intensidades Poisson ``eps_b``/``eps_s`` y los
+    informados con ``mu`` en el lado de la noticia. La verosimilitud de un día
+    con ``B`` compras y ``S`` ventas es una mezcla de tres regímenes.
+
+    **Por qué esta forma y no otra — corrección central del informe, verificada
+    numéricamente allí (§5.2–§5.3):**
+
+    - La verosimilitud **directa** desborda `float64` para ``B, S`` mayores de
+      ~150: inservible en el S&P 500, con decenas de miles de operaciones al día.
+    - La factorización clásica con ``M = min(B,S) + max(B,S)/2`` (Easley,
+      Hvidkjaer y O'Hara 2010; Lin y Ke 2011) —la que implementa buena parte de
+      la literatura— también desborda: su término ``x^(-M)`` lanza
+      ``OverflowError`` ya con ``B = S = 3.000``.
+    - La forma estable es **log-sum-exp sobre los tres regímenes**, que nunca
+      exponencia un número grande y coincide con la directa con error máximo
+      2,4·10⁻¹³ donde ambas existen::
+
+        lxb = ln(eps_b/(mu+eps_b));  lxs = ln(eps_s/(mu+eps_s))
+        t1 = log1p(-alpha)             + B·lxb + S·lxs      # sin evento
+        t2 = ln(alpha) + ln(delta)     - mu + B·lxb         # noticia mala
+        t3 = ln(alpha) + log1p(-delta) - mu + S·lxs         # noticia buena
+        ln L = -eps_b - eps_s + B·ln(mu+eps_b) + S·ln(mu+eps_s)
+             - ln(B!) - ln(S!) + logsumexp([t1, t2, t3])
+
+    ``log1p(-alpha)`` y ``log1p(-delta)`` preservan la precisión cuando el
+    optimizador explora ``alpha, delta -> 1`` (informe §5.3). Devuelve la suma
+    sobre todos los días.
+    """
+    b = np.asarray(buys, dtype=float)
+    s = np.asarray(sells, dtype=float)
+    if b.shape != s.shape or b.ndim != 1 or len(b) == 0:
+        msg = "`buys` y `sells` deben ser vectores 1-D no vacíos de igual longitud"
+        raise DataQualityError(msg)
+    if (b < 0).any() or (s < 0).any() or not (np.isfinite(b).all() and np.isfinite(s).all()):
+        msg = "los recuentos de operaciones deben ser finitos y no negativos"
+        raise DataQualityError(msg)
+    if not (0.0 <= alpha <= 1.0 and 0.0 <= delta <= 1.0):
+        msg = f"alpha y delta deben estar en [0, 1]; recibidos ({alpha}, {delta})"
+        raise DataQualityError(msg)
+    if mu < 0.0 or eps_b <= 0.0 or eps_s <= 0.0:
+        msg = f"se exige mu >= 0 y eps_b, eps_s > 0; recibidos ({mu}, {eps_b}, {eps_s})"
+        raise DataQualityError(msg)
+
+    # Bordes de probabilidad: se retraen un epsilon para que ln() exista; el
+    # límite es continuo y el error introducido es < 1e-12 en log-verosimilitud.
+    tiny = 1e-12
+    a = min(max(alpha, tiny), 1.0 - tiny)
+    d = min(max(delta, tiny), 1.0 - tiny)
+
+    lxb = math.log(eps_b) - math.log(mu + eps_b)
+    lxs = math.log(eps_s) - math.log(mu + eps_s)
+    t1 = math.log1p(-a) + b * lxb + s * lxs
+    t2 = math.log(a) + math.log(d) - mu + b * lxb
+    t3 = math.log(a) + math.log1p(-d) - mu + s * lxs
+    mix = logsumexp(np.stack([t1, t2, t3]), axis=0)
+    ll = (
+        -eps_b
+        - eps_s
+        + b * math.log(mu + eps_b)
+        + s * math.log(mu + eps_s)
+        - gammaln(b + 1.0)
+        - gammaln(s + 1.0)
+        + mix
+    )
+    return float(np.sum(ll))
+
+
+@dataclass(frozen=True, slots=True)
+class PINEstimate:
+    """Resultado de la estimación de PIN por máxima verosimilitud.
+
+    ``pin = alpha·mu / (alpha·mu + eps_b + eps_s)`` (EKOP 1996). `n_days` es el
+    tamaño muestral y `log_likelihood` el óptimo alcanzado entre todos los
+    arranques; `n_starts` cuántos arranques convergieron.
+    """
+
+    alpha: float
+    delta: float
+    mu: float
+    eps_b: float
+    eps_s: float
+    pin: float
+    log_likelihood: float
+    n_days: int
+    n_starts: int
+
+
+def estimate_pin(
+    buys: Sequence[float] | np.ndarray,
+    sells: Sequence[float] | np.ndarray,
+    *,
+    seed: int = 20260803,
+    n_starts: int = 16,
+    min_days: int = 40,
+) -> PINEstimate:
+    """Estima PIN por máxima verosimilitud con arranques múltiples (informe §5.3).
+
+    La superficie de verosimilitud tiene óptimos locales, así que un solo
+    arranque no es aceptable: se usa una rejilla aleatoria de valores iniciales
+    al estilo Yan–Zhang / Ersan–Alıcı —``eps`` como fracción del flujo medio de
+    cada lado y ``mu`` derivado del desequilibrio medio— **derivada de `seed`**
+    (determinismo, contrato §0.4), optimizando con L-BFGS-B acotado y quedándose
+    con el máximo global observado.
+
+    Con menos de `min_days` días (por defecto 40, el umbral del informe §5.3
+    para una ventana trimestral de ~60 sesiones) se lanza `InsufficientHistory`.
+
+    **Advertencias de uso (informe §5.4):** PIN no es direccional (mide
+    intensidad de asimetría, no signo) y Duarte y Young (2009) muestran que su
+    prima es de iliquidez, no de información; entra como variable de
+    condicionamiento trimestral desfasada, nunca como señal de evento.
+    """
+    b = np.asarray(buys, dtype=float)
+    s = np.asarray(sells, dtype=float)
+    if b.ndim != 1 or b.shape != s.shape:
+        msg = "`buys` y `sells` deben ser vectores 1-D de igual longitud"
+        raise DataQualityError(msg)
+    if len(b) < min_days:
+        msg = (
+            f"solo {len(b)} días de recuentos firmados; PIN exige >= {min_days} "
+            "(ventana trimestral, informe §5.3)"
+        )
+        raise InsufficientHistory(msg)
+    if n_starts < 1:
+        msg = f"n_starts debe ser >= 1; recibido {n_starts}"
+        raise DataQualityError(msg)
+
+    mean_b, mean_s = float(np.mean(b)), float(np.mean(s))
+    scale = max(mean_b + mean_s, 1.0)
+    bounds = [
+        (1e-6, 1.0 - 1e-6),  # alpha
+        (1e-6, 1.0 - 1e-6),  # delta
+        (1e-6, 5.0 * scale),  # mu
+        (1e-6, 5.0 * scale),  # eps_b
+        (1e-6, 5.0 * scale),  # eps_s
+    ]
+
+    def negloglik(theta: np.ndarray) -> float:
+        try:
+            return -pin_log_likelihood(b, s, *theta)
+        except DataQualityError:  # el optimizador puede pisar el borde numérico
+            return float("inf")
+
+    rng = np.random.default_rng(np.random.SeedSequence([int(seed), len(b)]))
+    best: tuple[float, np.ndarray] | None = None
+    converged = 0
+    imbalance = float(np.mean(np.abs(b - s)))
+    for _ in range(n_starts):
+        alpha0 = float(rng.uniform(0.1, 0.9))
+        delta0 = float(rng.uniform(0.1, 0.9))
+        gamma_b = float(rng.uniform(0.3, 0.95))
+        gamma_s = float(rng.uniform(0.3, 0.95))
+        eps_b0 = max(gamma_b * mean_b, 1e-3)
+        eps_s0 = max(gamma_s * mean_s, 1e-3)
+        mu0 = max(imbalance / max(alpha0, 0.2), 1.0)
+        x0 = np.array([alpha0, delta0, mu0, eps_b0, eps_s0])
+        result = minimize(negloglik, x0, method="L-BFGS-B", bounds=bounds)
+        if not np.isfinite(result.fun):
+            continue
+        converged += int(bool(result.success))
+        if best is None or result.fun < best[0]:
+            best = (float(result.fun), np.asarray(result.x, dtype=float))
+    if best is None:  # pragma: no cover - inalcanzable con datos finitos
+        msg = "ningún arranque de la estimación de PIN produjo verosimilitud finita"
+        raise DataQualityError(msg)
+
+    alpha, delta, mu, eps_b, eps_s = (float(v) for v in best[1])
+    pin = alpha * mu / (alpha * mu + eps_b + eps_s)
+    return PINEstimate(
+        alpha=alpha,
+        delta=delta,
+        mu=mu,
+        eps_b=eps_b,
+        eps_s=eps_s,
+        pin=pin,
+        log_likelihood=-best[0],
+        n_days=len(b),
+        n_starts=converged,
+    )
+
+
+def pin_quarterly(
+    signed_trades: pd.DataFrame | None,
+    events: pd.DataFrame,
+    *,
+    window: tuple[int, int] = (-126, -64),
+    min_days: int = 40,
+    seed: int = 20260803,
+    n_starts: int = 16,
+) -> pd.Series:
+    """PIN por evento, desfasado un trimestre: feature **opcional** (informe §5.4).
+
+    PIN exige recuentos diarios de operaciones **firmadas** (tick data +
+    Lee–Ready); con OHLCV diario no se puede estimar, y su frecuencia natural
+    (trimestral) es incompatible con la ventana de detección de 5 días. Por eso:
+
+    - Sin `signed_trades` se lanza `ProviderUnavailable`: no existe versión
+      degradada honesta y no se inventa (misma política que exige el informe
+      para VPIN, §6.2: "no inventar una versión diaria y llamarla VPIN").
+    - Con datos, el PIN de cada evento se estima sobre la ventana ``window`` en
+      sesiones relativas a T — por defecto ``[-126, -64]``, el trimestre
+      **anterior** completo, de modo que ``available_at`` efectivo es el fin del
+      trimestre previo y la feature actúa como variable de condicionamiento
+      lenta, jamás como señal rápida.
+
+    `signed_trades`: DataFrame largo con columnas ``ticker, date, buys, sells``
+    (recuentos diarios clasificados). Eventos sin `min_days` días válidos en la
+    ventana salen NaN. Las sesiones relativas a T se anclan sobre la propia
+    rejilla de fechas del ticker: la serie debe cubrir de forma continua hasta
+    las inmediaciones de T (los días de T en adelante nunca se leen, pero un
+    hueco grande justo antes de T desplazaría la ventana hacia datos más
+    antiguos — desplazamiento conservador, nunca look-ahead).
+    """
+    ev = _normalize_events(events)
+    if signed_trades is None:
+        raise ProviderUnavailable(
+            "intraday_trades",
+            "PIN requiere recuentos diarios de operaciones firmadas (tick data "
+            "clasificado con Lee-Ready); no hay proveedor intradía configurado y "
+            "con OHLCV diario no existe una versión honesta (informe §5.4)",
+        )
+    _require_columns(signed_trades, ["ticker", "date", "buys", "sells"], "signed_trades")
+    st = signed_trades.copy()
+    st["date"] = pd.DatetimeIndex(pd.to_datetime(st["date"])).normalize()
+    lo, hi = window
+    if not lo < hi < 0:
+        msg = f"ventana PIN inválida {window}: se exige lo < hi < 0"
+        raise DataQualityError(msg)
+
+    values = np.full(len(ev), np.nan)
+    grouped = {str(t): sub.sort_values("date") for t, sub in st.groupby("ticker", sort=False)}
+    for i, row in enumerate(ev.itertuples(index=False)):
+        sub = grouped.get(row.ticker)
+        if sub is None:
+            continue
+        dates = pd.DatetimeIndex(sub["date"])
+        pos = int(dates.searchsorted(pd.Timestamp(row.event_date)))
+        sl = slice(max(pos + lo, 0), max(pos + hi + 1, 0))
+        b = sub["buys"].to_numpy(dtype=float)[sl]
+        s = sub["sells"].to_numpy(dtype=float)[sl]
+        if len(b) < min_days or pos + lo < 0:
+            continue
+        est = estimate_pin(b, s, seed=seed, n_starts=n_starts, min_days=min_days)
+        values[i] = est.pin
+
+    out = pd.Series(values, index=pd.Index(ev["event_id"], name="event_id"), name="pin_quarterly")
+    _raise_if_all_nan(out, "pin_quarterly")
+    return out

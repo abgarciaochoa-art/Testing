@@ -212,10 +212,10 @@ class TestTurnoverZscore:
 
     def test_detecta_la_filtracion(self, leaky: SyntheticMarket, ctx_leaky: EventContext) -> None:
         """El run-up de volumen inyectado sube el z de los eventos filtrados."""
-        z = flow.turnover_zscore(ctx_leaky.prices, ctx_leaky.events, k=10)
+        z = flow.turnover_zscore(ctx_leaky.prices, ctx_leaky.events, k=5)
         frame = z.to_frame("z")
         mask = frame.index.to_series().isin(set(leaky.leaked_event_ids()))
-        assert _welch_t(frame["z"], mask) > 3.0
+        assert _welch_t(frame["z"], mask) > 4.0
 
     def test_metodos_empirico_y_ar1_coherentes(self, ctx_leaky: EventContext) -> None:
         """Las dos correcciones de autocorrelación del informe §3.3 casi coinciden."""
@@ -376,7 +376,7 @@ class TestBVC:
 class TestCLV:
     def test_valor_exacto_y_rango_degenerado(self) -> None:
         """CLV en [-1, 1]; un día con H == L contribuye 0 (informe §4.3)."""
-        dates = pd.bdate_range("2021-06-01", periods=3)
+        dates = pd.bdate_range("2021-06-01", periods=4)
         rows = [
             # cierre en el máximo -> CLV = +1, volumen 300
             {"date": dates[0], "ticker": "YY", "close": 11.0, "high": 11.0, "low": 10.0,
@@ -387,10 +387,12 @@ class TestCLV:
             # sin rango -> CLV = 0, volumen 600
             {"date": dates[2], "ticker": "YY", "close": 10.5, "high": 10.5, "low": 10.5,
              "volume": 600.0},
+            # la sesión del propio evento: NO debe entrar en la ventana [T-3, T-1]
+            {"date": dates[3], "ticker": "YY", "close": 99.0, "high": 99.0, "low": 1.0,
+             "volume": 1e9},
         ]
         events = pd.DataFrame(
-            {"event_id": ["YY:ev"], "ticker": ["YY"],
-             "event_date": [dates[-1] + pd.offsets.BDay(1)]}
+            {"event_id": ["YY:ev"], "ticker": ["YY"], "event_date": [dates[3]]}
         )
         oib = flow.clv_order_imbalance(_panel(rows), events, k=3)
         # (1*300 - 1*100 + 0*600) / 1000 = 0.2
@@ -477,11 +479,11 @@ def _si_fixture(jump_published_before_t: bool) -> pd.DataFrame:
     """
     settlements = pd.date_range("2020-06-15", periods=24, freq="SME")
     sir = 0.05 + 0.001 * np.resize([1.0, -1.0], len(settlements))
-    sir[-2] = 0.09  # snapshot liquidado 2021-05-31: el salto sospechoso
+    sir[-1] = 0.09  # snapshot liquidado 2021-05-31: el salto sospechoso
     rows = []
     for i, (d, v) in enumerate(zip(settlements, sir, strict=True)):
         avail = d + pd.Timedelta(days=12)
-        if i == len(settlements) - 2 and not jump_published_before_t:
+        if i == len(settlements) - 1 and not jump_published_before_t:
             avail = pd.Timestamp("2021-06-15")  # publicado exactamente en T
         rows.append(
             {
@@ -538,16 +540,18 @@ class TestShortInterest:
 
 
 def _offex_fixture(shift_unpublished_week: float = 0.0) -> pd.DataFrame:
-    """Cuota off-exchange semanal: 20 semanas, la última publicable con salto a 0,50.
+    """Cuota off-exchange semanal: 24 semanas, la última publicable con salto a 0,50.
 
+    Con retardo de publicación de 14 días y evento T = 2021-06-15, la última
+    semana publicada es la que termina el 2021-05-28 (índice -4): la ventana
+    efectiva es ≈ [T-35, T-15], como documenta el informe §8.2.
     `shift_unpublished_week` altera una semana aún NO publicada en T: el
-    resultado no debe moverse ni un bit (test de la ventana efectiva ≈
-    [T-35, T-15] del informe §8.2).
+    resultado no debe moverse ni un bit.
     """
-    weeks = pd.date_range("2021-01-08", periods=20, freq="W-FRI")
+    weeks = pd.date_range("2021-01-08", periods=24, freq="W-FRI")
     share = 0.40 + 0.01 * np.resize([1.0, -1.0], len(weeks))
-    share[-3] = 0.50  # week_end 2021-05-28, publicada el 2021-06-11 (< T)
-    share[-1] += shift_unpublished_week  # week_end 2021-06-11, publicada tras T
+    share[-4] = 0.50  # week_end 2021-05-28, publicada el 2021-06-11 (< T)
+    share[-2] += shift_unpublished_week  # week_end 2021-06-11, publicada tras T
     return pd.DataFrame(
         {
             "ticker": "AAA",
@@ -562,9 +566,12 @@ class TestOffExchange:
     def test_valor_manual(self) -> None:
         """z contra la media/std de las 12 semanas previas a la última publicada."""
         out = flow.off_exchange_share_delta(_offex_fixture(), _SI_EVENTS)
-        base = 0.40 + 0.01 * np.resize([1.0, -1.0], 20)[5:17]
+        # Publicadas antes de T: índices 0..20; la última es la del salto (idx 20)
+        # y la base son las 12 anteriores (índices 8..19), que alternan +-0.01.
+        base = 0.40 + 0.01 * np.resize([1.0, -1.0], 24)[8:20]
         expected = (0.50 - base.mean()) / base.std(ddof=1)
         assert float(out.iloc[0]) == pytest.approx(expected, rel=1e-9)
+        assert float(out.iloc[0]) > 5.0
 
     def test_semana_no_publicada_es_invisible(self) -> None:
         """El retardo de 2 semanas de FINRA hace inobservable la semana previa a T."""
@@ -983,3 +990,132 @@ class TestNoLookAhead:
             assert np.array_equal(
                 np.nan_to_num(av), np.nan_to_num(bv)
             ), f"features de {eid} usan datos >= T"
+
+
+# ===========================================================================
+# 10. PIN por log-sum-exp (informe §5.2-§5.4)
+# ===========================================================================
+
+
+def _pin_direct_loglik(
+    b: int, s: int, alpha: float, delta: float, mu: float, eps_b: float, eps_s: float
+) -> float:
+    """Verosimilitud directa de EKOP (1996): el patrón-oro que desborda."""
+    from scipy.stats import poisson
+
+    l1 = (1 - alpha) * poisson.pmf(b, eps_b) * poisson.pmf(s, eps_s)
+    l2 = alpha * delta * poisson.pmf(b, eps_b) * poisson.pmf(s, eps_s + mu)
+    l3 = alpha * (1 - delta) * poisson.pmf(b, eps_b + mu) * poisson.pmf(s, eps_s)
+    with np.errstate(divide="ignore"):
+        return float(np.log(l1 + l2 + l3))
+
+
+class TestPIN:
+    THETA = (0.3, 0.4, 200.0, 800.0, 850.0)
+
+    def test_coincide_con_la_directa_donde_ambas_existen(self) -> None:
+        """Error < 1e-10 frente a la verosimilitud directa en 200 casos aleatorios."""
+        rng = np.random.default_rng(0)
+        for _ in range(200):
+            alpha, delta = rng.uniform(0.05, 0.95, 2)
+            mu = float(rng.uniform(1, 50))
+            eps_b, eps_s = rng.uniform(5, 80, 2)
+            b, s = int(rng.integers(0, 120)), int(rng.integers(0, 120))
+            lse = flow.pin_log_likelihood([b], [s], alpha, delta, mu, eps_b, eps_s)
+            direct = _pin_direct_loglik(b, s, alpha, delta, mu, eps_b, eps_s)
+            assert lse == pytest.approx(direct, abs=1e-10)
+
+    def test_tabla_del_informe_53(self) -> None:
+        """La tabla verificada del informe §5.3: la directa muere, log-sum-exp no.
+
+        Con theta = (0.3, 0.4, 200, 800, 850): B=900/S=850 -> -14,5100 (ambas);
+        B=S=3.000 y B=20.000/S=19.000 -> la directa subdesborda a -inf (y la
+        factorización clásica con M lanza OverflowError) mientras log-sum-exp
+        devuelve -2.940,79 y -81.810,28.
+        """
+        assert flow.pin_log_likelihood([900], [850], *self.THETA) == pytest.approx(
+            -14.5100, abs=5e-4
+        )
+        assert _pin_direct_loglik(900, 850, *self.THETA) == pytest.approx(-14.5100, abs=5e-4)
+
+        assert _pin_direct_loglik(3000, 3000, *self.THETA) == float("-inf")
+        assert flow.pin_log_likelihood([3000], [3000], *self.THETA) == pytest.approx(
+            -2940.79, abs=0.01
+        )
+        assert _pin_direct_loglik(20000, 19000, *self.THETA) == float("-inf")
+        assert flow.pin_log_likelihood([20000], [19000], *self.THETA) == pytest.approx(
+            -81810.28, abs=0.01
+        )
+
+    def test_entradas_invalidas(self) -> None:
+        with pytest.raises(DataQualityError):
+            flow.pin_log_likelihood([10], [10, 20], *self.THETA)
+        with pytest.raises(DataQualityError):
+            flow.pin_log_likelihood([10], [10], 1.5, 0.4, 200.0, 800.0, 850.0)
+        with pytest.raises(DataQualityError):
+            flow.pin_log_likelihood([10], [10], 0.3, 0.4, 200.0, 0.0, 850.0)
+
+    def test_recupera_los_parametros_verdaderos(self) -> None:
+        """Sobre 60 días simulados del modelo EKOP, el PIN estimado clava el real."""
+        rng = np.random.default_rng(3)
+        alpha, delta, mu, eps = 0.4, 0.3, 300.0, 1000.0
+        n = 60
+        has_event = rng.random(n) < alpha
+        is_bad = rng.random(n) < delta
+        buys = rng.poisson(eps + np.where(has_event & ~is_bad, mu, 0.0))
+        sells = rng.poisson(eps + np.where(has_event & is_bad, mu, 0.0))
+        est = flow.estimate_pin(buys, sells, seed=1)
+        true_pin = alpha * mu / (alpha * mu + 2 * eps)
+        assert est.pin == pytest.approx(true_pin, abs=0.02)
+        assert 0.0 < est.pin < 1.0
+        assert est.n_days == n
+        # Determinismo (contrato §0.4): misma semilla, mismo resultado exacto.
+        assert flow.estimate_pin(buys, sells, seed=1) == est
+
+    def test_pocos_dias_lanza(self) -> None:
+        with pytest.raises(InsufficientHistory):
+            flow.estimate_pin([100] * 10, [90] * 10)
+
+    def test_sin_proveedor_intradia_lanza_provider_unavailable(self) -> None:
+        """Sin trades firmados no hay PIN honesto: fallo explícito (informe §5.4)."""
+        from earnings_alpha.errors import ProviderUnavailable
+
+        with pytest.raises(ProviderUnavailable):
+            flow.pin_quarterly(None, _SI_EVENTS)
+
+    def test_pin_por_evento_desfasado_un_trimestre(self) -> None:
+        """Con recuentos firmados, PIN se estima sobre el trimestre anterior."""
+        rng = np.random.default_rng(11)
+        dates = pd.bdate_range("2020-08-03", periods=220)
+        n = len(dates)
+        has_event = rng.random(n) < 0.4
+        is_bad = rng.random(n) < 0.5
+        signed = pd.DataFrame(
+            {
+                "ticker": "AAA",
+                "date": dates,
+                "buys": rng.poisson(200 + np.where(has_event & ~is_bad, 80.0, 0.0)),
+                "sells": rng.poisson(200 + np.where(has_event & is_bad, 80.0, 0.0)),
+            }
+        )
+        events = pd.DataFrame(
+            {"event_id": ["AAA:ev"], "ticker": ["AAA"], "event_date": [dates[200]]}
+        )
+        out = flow.pin_quarterly(signed, events, seed=5, n_starts=8)
+        value = float(out.iloc[0])
+        assert 0.0 < value < 1.0
+        # La ventana [-126, -64] termina un trimestre antes de T: corromper los
+        # recuentos del trimestre inmediato [T-63, T-1] (los que usaría un
+        # detector rápido) no mueve el PIN ni un bit, porque es condicionamiento
+        # lento, no señal de evento.
+        corrupto = signed.copy()
+        fast_window = (corrupto["date"] >= dates[200 - 63]) & (corrupto["date"] < dates[200])
+        assert fast_window.sum() == 63
+        corrupto.loc[fast_window, ["buys", "sells"]] = 99_999
+        out2 = flow.pin_quarterly(corrupto, events, seed=5, n_starts=8)
+        assert float(out2.iloc[0]) == pytest.approx(value, abs=1e-12)
+        # Y los datos de T en adelante tampoco existen para la feature.
+        corrupto_t = signed.copy()
+        corrupto_t.loc[corrupto_t["date"] >= dates[200], ["buys", "sells"]] = 99_999
+        out3 = flow.pin_quarterly(corrupto_t, events, seed=5, n_starts=8)
+        assert float(out3.iloc[0]) == pytest.approx(value, abs=1e-12)
