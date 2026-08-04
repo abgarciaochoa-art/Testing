@@ -206,7 +206,7 @@ class CostModel:
             msg = "spread_tiers no puede estar vacío"
             raise ConfigError(msg)
         advs = [t.min_adv_usd for t in self.spread_tiers]
-        if any(b >= a for a, b in zip(advs, advs[1:], strict=True)):
+        if any(b >= a for a, b in zip(advs[:-1], advs[1:], strict=True)):
             msg = (
                 "spread_tiers debe ir ordenado por min_adv_usd estrictamente "
                 f"descendente; recibido {advs}"

@@ -181,7 +181,7 @@ class BacktestResult:
         """Coste total acumulado por componente (fracción del NAV, suma diaria)."""
         return self.costs[list(_COST_COLS) + ["total"]].sum()
 
-    def sharpe(self, **kwargs: object):  # noqa: ANN201 - SharpeResult, import diferido
+    def sharpe(self, **kwargs: object):  # -> SharpeResult (import diferido)
         """Sharpe **neto** con banda de error (delegado a `stats.performance`).
 
         Regla §3.8 del contrato: ninguna métrica sin intervalo de confianza.
@@ -625,8 +625,10 @@ class CrossSectionalBacktest:
                 contrib = w * r_f
                 q_source = rcc[t]
 
-            # ---- delisting: series que terminan con posición viva (§6.3-6.4)
-            dying = (w_after != 0.0) & (last_valid <= t)
+            # ---- delisting: series que terminan con posición viva (§6.3-6.4).
+            # El final de la MUESTRA no es un delisting: solo cuentan las series
+            # que terminan antes que el propio panel.
+            dying = (w_after != 0.0) & (last_valid <= t) & (last_valid < n_dates - 1)
             if dying.any():
                 dl_total = 0.0
                 for i in np.flatnonzero(dying):
