@@ -1,0 +1,137 @@
+{
+  "cik": 1111111,
+  "entityName": "Testa Corp",
+  "facts": {
+    "dei": {
+      "EntityCommonStockSharesOutstanding": {
+        "label": "Entity Common Stock, Shares Outstanding",
+        "description": "",
+        "units": {
+          "shares": [
+            {"end": "2024-06-30", "val": 1000000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      }
+    },
+    "us-gaap": {
+      "Revenues": {
+        "label": "Revenues",
+        "description": "Total revenue (pre-ASC 606 tag)",
+        "units": {
+          "USD": [
+            {"start": "2017-01-01", "end": "2017-04-01", "val": 100000000, "accn": "0001111111-17-000010", "fy": 2017, "fp": "Q1", "form": "10-Q", "filed": "2017-05-03", "frame": "CY2017Q1"},
+            {"start": "2017-01-01", "end": "2017-04-01", "val": 95000000, "accn": "0001111111-18-000007", "fy": 2017, "fp": "FY", "form": "10-K/A", "filed": "2018-02-15"},
+            {"start": "2017-04-02", "end": "2017-07-01", "val": 104000000, "accn": "0001111111-17-000020", "fy": 2017, "fp": "Q2", "form": "10-Q", "filed": "2017-08-02", "frame": "CY2017Q2"},
+            {"start": "2017-07-02", "end": "2017-09-30", "val": 108000000, "accn": "0001111111-17-000030", "fy": 2017, "fp": "Q3", "form": "10-Q", "filed": "2017-11-01", "frame": "CY2017Q3"},
+            {"start": "2017-10-01", "end": "2017-12-30", "val": 112000000, "accn": "0001111111-18-000005", "fy": 2017, "fp": "FY", "form": "10-K", "filed": "2018-02-10", "frame": "CY2017Q4"},
+            {"start": "2018-01-01", "end": "2018-03-31", "val": 116000000, "accn": "0001111111-18-000020", "fy": 2018, "fp": "Q1", "form": "10-Q", "filed": "2018-05-02", "frame": "CY2018Q1"},
+            {"start": "2018-04-01", "end": "2018-06-30", "val": 120000000, "accn": "0001111111-18-000030", "fy": 2018, "fp": "Q2", "form": "10-Q", "filed": "2018-08-01", "frame": "CY2018Q2"}
+          ]
+        }
+      },
+      "RevenueFromContractWithCustomerExcludingAssessedTax": {
+        "label": "Revenue from Contract with Customer, Excluding Assessed Tax",
+        "description": "ASC 606 revenue tag",
+        "units": {
+          "USD": [
+            {"start": "2018-01-01", "end": "2018-03-31", "val": 116000000, "accn": "0001111111-18-000020", "fy": 2018, "fp": "Q1", "form": "10-Q", "filed": "2018-05-02"},
+            {"start": "2018-04-01", "end": "2018-06-30", "val": 120000000, "accn": "0001111111-18-000030", "fy": 2018, "fp": "Q2", "form": "10-Q", "filed": "2018-08-01"},
+            {"start": "2018-07-01", "end": "2018-09-29", "val": 124000000, "accn": "0001111111-18-000040", "fy": 2018, "fp": "Q3", "form": "10-Q", "filed": "2018-11-01", "frame": "CY2018Q3"},
+            {"start": "2018-09-30", "end": "2018-12-29", "val": 128000000, "accn": "0001111111-19-000005", "fy": 2018, "fp": "FY", "form": "10-K", "filed": "2019-02-12", "frame": "CY2018Q4"},
+            {"start": "2018-12-30", "end": "2019-03-30", "val": 132000000, "accn": "0001111111-19-000020", "fy": 2019, "fp": "Q1", "form": "10-Q", "filed": "2019-05-01", "frame": "CY2019Q1"},
+            {"start": "2019-03-31", "end": "2019-06-29", "val": 136000000, "accn": "0001111111-19-000030", "fy": 2019, "fp": "Q2", "form": "10-Q", "filed": "2019-07-31", "frame": "CY2019Q2"},
+            {"start": "2019-06-30", "end": "2019-09-28", "val": 140000000, "accn": "0001111111-19-000040", "fy": 2019, "fp": "Q3", "form": "10-Q", "filed": "2019-10-30", "frame": "CY2019Q3"},
+            {"start": "2019-09-29", "end": "2019-12-28", "val": 144000000, "accn": "0001111111-20-000005", "fy": 2019, "fp": "FY", "form": "10-K", "filed": "2020-02-11", "frame": "CY2019Q4"}
+          ]
+        }
+      },
+      "NetIncomeLoss": {
+        "label": "Net Income (Loss) Attributable to Parent",
+        "description": "Trampa 7: el 10-Q de 2024Q2 publica 3M, YTD y comparativos, todos con fy=2024 fp=Q2",
+        "units": {
+          "USD": [
+            {"start": "2024-04-01", "end": "2024-06-30", "val": 20000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01", "frame": "CY2024Q2"},
+            {"start": "2024-01-01", "end": "2024-06-30", "val": 38000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"},
+            {"start": "2023-04-01", "end": "2023-06-30", "val": 18000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"},
+            {"start": "2023-01-01", "end": "2023-06-30", "val": 35000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      },
+      "NetCashProvidedByUsedInOperatingActivities": {
+        "label": "Net Cash Provided by (Used in) Operating Activities",
+        "description": "",
+        "units": {
+          "USD": [
+            {"start": "2023-01-01", "end": "2023-04-01", "val": 10000000, "accn": "0001111111-23-000020", "fy": 2023, "fp": "Q1", "form": "10-Q", "filed": "2023-05-01", "frame": "CY2023Q1"},
+            {"start": "2023-04-02", "end": "2023-07-01", "val": 12000000, "accn": "0001111111-23-000030", "fy": 2023, "fp": "Q2", "form": "10-Q", "filed": "2023-08-01", "frame": "CY2023Q2"},
+            {"start": "2023-07-02", "end": "2023-09-30", "val": 11000000, "accn": "0001111111-23-000040", "fy": 2023, "fp": "Q3", "form": "10-Q", "filed": "2023-11-01", "frame": "CY2023Q3"},
+            {"start": "2023-01-01", "end": "2023-12-31", "val": 50000000, "accn": "0001111111-24-000010", "fy": 2023, "fp": "FY", "form": "10-K", "filed": "2024-02-20", "frame": "CY2023"}
+          ]
+        }
+      },
+      "LongTermDebtNoncurrent": {
+        "label": "Long-Term Debt, Excluding Current Maturities",
+        "description": "",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 800000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01", "frame": "CY2024Q2I"}
+          ]
+        }
+      },
+      "LongTermDebtCurrent": {
+        "label": "Long-Term Debt, Current Maturities",
+        "description": "",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 200000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      },
+      "ShortTermBorrowings": {
+        "label": "Short-Term Borrowings",
+        "description": "",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 50000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      },
+      "LongTermDebt": {
+        "label": "Long-Term Debt",
+        "description": "Agregado que NO debe ganar a los componentes",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 800000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      },
+      "LongTermDebtAndFinanceLeaseObligations": {
+        "label": "Long-Term Debt and Finance Lease Obligations",
+        "description": "Único tag de deuda disponible en 2023FY: fallback legítimo",
+        "units": {
+          "USD": [
+            {"end": "2023-12-31", "val": 900000000, "accn": "0001111111-24-000010", "fy": 2023, "fp": "FY", "form": "10-K", "filed": "2024-02-20", "frame": "CY2023Q4I"}
+          ]
+        }
+      },
+      "Assets": {
+        "label": "Assets",
+        "description": "",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 5000000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01", "frame": "CY2024Q2I"}
+          ]
+        }
+      },
+      "AccountsPayable": {
+        "label": "Accounts Payable (Deprecated 2009-01-31)",
+        "description": "Tag obsoleto conservado por la SEC: debe marcarse deprecated",
+        "units": {
+          "USD": [
+            {"end": "2024-06-30", "val": 30000000, "accn": "0001111111-24-000042", "fy": 2024, "fp": "Q2", "form": "10-Q", "filed": "2024-08-01"}
+          ]
+        }
+      }
+    }
+  }
+}

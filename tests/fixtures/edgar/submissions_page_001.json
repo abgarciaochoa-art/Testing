@@ -1,0 +1,16 @@
+{
+  "accessionNumber": ["0001111111-10-000019", "0001111111-10-000005"],
+  "filingDate": ["2010-07-20", "2010-02-26"],
+  "reportDate": ["2010-06-30", "2009-12-31"],
+  "acceptanceDateTime": ["2010-07-20T16:32:00.000Z", "2010-02-26T14:10:00.000Z"],
+  "act": ["34", "34"],
+  "form": ["8-K", "10-K"],
+  "fileNumber": ["001-11111", "001-11111"],
+  "filmNumber": ["10000001", "10000002"],
+  "items": ["2.02,9.01", ""],
+  "size": [95000, 2400000],
+  "isXBRL": [0, 1],
+  "isInlineXBRL": [0, 0],
+  "primaryDocument": ["tsta-8k-q2-2010.htm", "tsta-10k-2009.htm"],
+  "primaryDocDescription": ["8-K", "10-K"]
+}

@@ -1,0 +1,18 @@
+{
+  "results": [
+    {
+      "cash_amount": 0.205,
+      "currency": "USD",
+      "declaration_date": "2020-07-30",
+      "dividend_type": "CD",
+      "ex_dividend_date": "2020-09-02",
+      "frequency": 4,
+      "id": "fixture-div-1",
+      "pay_date": "2020-09-10",
+      "record_date": "2020-09-07",
+      "ticker": "AAPL"
+    }
+  ],
+  "status": "OK",
+  "request_id": "fixture-dividends"
+}

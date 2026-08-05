@@ -1,0 +1,15 @@
+[
+  {
+    "date": "2024-06-29",
+    "symbol": "TSTA",
+    "reportedCurrency": "USD",
+    "cik": "0001111111",
+    "fillingDate": "2024-08-01",
+    "acceptedDate": "2024-08-01 16:45:12",
+    "period": "Q2",
+    "totalAssets": 5000000000,
+    "totalStockholdersEquity": 2500000000,
+    "totalDebt": 1050000000,
+    "cashAndCashEquivalents": 400000000
+  }
+]

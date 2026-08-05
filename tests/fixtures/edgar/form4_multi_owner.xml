@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<ownershipDocument>
+  <schemaVersion>X0306</schemaVersion>
+  <documentType>4</documentType>
+  <periodOfReport>2024-05-02</periodOfReport>
+  <issuer>
+    <issuerCik>0001111111</issuerCik>
+    <issuerName>TESTA CORP</issuerName>
+    <issuerTradingSymbol>TSTA-A</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0002222222</rptOwnerCik>
+      <rptOwnerName>SMITH FAMILY TRUST &amp; CO</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>1</isDirector>
+      <isOfficer>0</isOfficer>
+      <isTenPercentOwner>1</isTenPercentOwner>
+      <isOther>0</isOther>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0003333333</rptOwnerCik>
+      <rptOwnerName>SMITH JOHN</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>1</isDirector>
+      <isOfficer>0</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+      <isOther>0</isOther>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle><value>Class A Common Stock</value></securityTitle>
+      <transactionDate><value>2024-05-01</value></transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+        <equitySwapInvolved>0</equitySwapInvolved>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares><value>34.1689</value><footnoteId id="F1"/></transactionShares>
+        <transactionPricePerShare><value>60.8979</value></transactionPricePerShare>
+        <transactionAcquiredDisposedCode><value>A</value></transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction><value>22291.39</value></sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership><value>I</value></directOrIndirectOwnership>
+        <natureOfOwnership><value>By trust: Smith & Sons, u/a dated 1/1/2000</value></natureOfOwnership>
+      </ownershipNature>
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">Acquired under the dividend reinvestment plan.</footnote>
+  </footnotes>
+</ownershipDocument>

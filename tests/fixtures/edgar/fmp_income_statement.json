@@ -1,0 +1,38 @@
+[
+  {
+    "date": "2024-06-29",
+    "symbol": "TSTA",
+    "reportedCurrency": "USD",
+    "cik": "0001111111",
+    "fillingDate": "2024-08-01",
+    "acceptedDate": "2024-08-01 16:45:12",
+    "calendarYear": "2024",
+    "period": "Q2",
+    "revenue": 150000000,
+    "costOfRevenue": 60000000,
+    "grossProfit": 90000000,
+    "operatingIncome": 40000000,
+    "netIncome": 20000000,
+    "eps": 0.021,
+    "epsdiluted": 0.02,
+    "weightedAverageShsOutDil": 1000000000
+  },
+  {
+    "date": "2024-03-30",
+    "symbol": "TSTA",
+    "reportedCurrency": "USD",
+    "cik": "0001111111",
+    "fillingDate": "2024-05-01",
+    "acceptedDate": "2024-05-01 17:05:00",
+    "calendarYear": "2024",
+    "period": "Q1",
+    "revenue": 145000000,
+    "costOfRevenue": 58000000,
+    "grossProfit": 87000000,
+    "operatingIncome": 38000000,
+    "netIncome": 18000000,
+    "eps": 0.019,
+    "epsdiluted": 0.018,
+    "weightedAverageShsOutDil": 1000000000
+  }
+]
