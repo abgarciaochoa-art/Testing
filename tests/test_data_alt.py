@@ -593,13 +593,13 @@ class TestEstimatesRegistry:
 
 class TestBlackScholes:
     def test_put_call_parity(self) -> None:
-        S, r, q = 100.0, 0.03, 0.012
-        K = np.array([70.0, 90, 100, 110, 140])
+        spot, r, q = 100.0, 0.03, 0.012
+        strikes = np.array([70.0, 90, 100, 110, 140])
         tau = np.array([0.05, 0.25, 0.5, 1.0, 2.0])
         sigma = np.array([0.2, 0.35, 0.5, 0.25, 0.6])
-        call = bs_price(S, K, tau, sigma, r, q, True)
-        put = bs_price(S, K, tau, sigma, r, q, False)
-        parity = S * np.exp(-q * tau) - K * np.exp(-r * tau)
+        call = bs_price(spot, strikes, tau, sigma, r, q, True)
+        put = bs_price(spot, strikes, tau, sigma, r, q, False)
+        parity = spot * np.exp(-q * tau) - strikes * np.exp(-r * tau)
         np.testing.assert_allclose(call - put, parity, atol=1e-12)
 
     def test_matches_synthetic_reference(self) -> None:
@@ -625,36 +625,36 @@ class TestBlackScholes:
         np.testing.assert_allclose(ours.vega, ref_vega, atol=1e-10)
 
     def test_greeks_against_finite_differences(self) -> None:
-        S, K, tau, sigma, r, q = 100.0, 105.0, 0.5, 0.3, 0.03, 0.01
+        s0, k0, tau, sigma, r, q = 100.0, 105.0, 0.5, 0.3, 0.03, 0.01
         h = 1e-5
         for is_call in (True, False):
-            g = bs_greeks(S, K, tau, sigma, r, q, is_call)
+            g = bs_greeks(s0, k0, tau, sigma, r, q, is_call)
             d_s = (
-                bs_price(S + h, K, tau, sigma, r, q, is_call)
-                - bs_price(S - h, K, tau, sigma, r, q, is_call)
+                bs_price(s0 + h, k0, tau, sigma, r, q, is_call)
+                - bs_price(s0 - h, k0, tau, sigma, r, q, is_call)
             ) / (2 * h)
             assert float(g.delta) == pytest.approx(float(d_s), abs=1e-6)
             # Para la segunda derivada un h tan fino cancela dígitos: h más ancho.
             hg = 1e-3
             d2_s = (
-                bs_price(S + hg, K, tau, sigma, r, q, is_call)
-                - 2 * bs_price(S, K, tau, sigma, r, q, is_call)
-                + bs_price(S - hg, K, tau, sigma, r, q, is_call)
+                bs_price(s0 + hg, k0, tau, sigma, r, q, is_call)
+                - 2 * bs_price(s0, k0, tau, sigma, r, q, is_call)
+                + bs_price(s0 - hg, k0, tau, sigma, r, q, is_call)
             ) / hg**2
             assert float(g.gamma) == pytest.approx(float(d2_s), abs=1e-6)
             d_sigma = (
-                bs_price(S, K, tau, sigma + h, r, q, is_call)
-                - bs_price(S, K, tau, sigma - h, r, q, is_call)
+                bs_price(s0, k0, tau, sigma + h, r, q, is_call)
+                - bs_price(s0, k0, tau, sigma - h, r, q, is_call)
             ) / (2 * h)
             assert float(g.vega) == pytest.approx(float(d_sigma) / 100.0, abs=1e-8)
             d_tau = (
-                bs_price(S, K, tau + h, sigma, r, q, is_call)
-                - bs_price(S, K, tau - h, sigma, r, q, is_call)
+                bs_price(s0, k0, tau + h, sigma, r, q, is_call)
+                - bs_price(s0, k0, tau - h, sigma, r, q, is_call)
             ) / (2 * h)
             assert float(g.theta) == pytest.approx(-float(d_tau) / 365.0, abs=1e-8)
             d_r = (
-                bs_price(S, K, tau, sigma, r + h, q, is_call)
-                - bs_price(S, K, tau, sigma, r - h, q, is_call)
+                bs_price(s0, k0, tau, sigma, r + h, q, is_call)
+                - bs_price(s0, k0, tau, sigma, r - h, q, is_call)
             ) / (2 * h)
             assert float(g.rho) == pytest.approx(float(d_r) / 100.0, abs=1e-8)
 
@@ -665,12 +665,12 @@ class TestBlackScholes:
 
 class TestImpliedVol:
     def test_roundtrip(self) -> None:
-        K = np.array([80.0, 95, 100, 105, 120, 150])
+        strikes = np.array([80.0, 95, 100, 105, 120, 150])
         tau = np.array([0.1, 0.25, 0.5, 1.0, 0.6, 2.0])
         sigma = np.array([0.6, 0.3, 0.2, 0.45, 0.35, 0.8])
         for is_call in (True, False):
-            price = bs_price(100.0, K, tau, sigma, 0.03, 0.01, is_call)
-            iv = implied_vol(price, 100.0, K, tau, 0.03, 0.01, is_call)
+            price = bs_price(100.0, strikes, tau, sigma, 0.03, 0.01, is_call)
+            iv = implied_vol(price, 100.0, strikes, tau, 0.03, 0.01, is_call)
             np.testing.assert_allclose(iv, sigma, atol=1e-7)
 
     def test_bisection_fallback_engages(self) -> None:
@@ -706,15 +706,15 @@ class TestImpliedVol:
 class TestImpliedForward:
     def test_recovers_forward_and_df(self) -> None:
         strikes = np.array([90.0, 95, 100, 105, 110])
-        F, DF, tau = 101.3, 0.985, 0.5
-        diffs = DF * (F - strikes)
+        fwd, disc, tau = 101.3, 0.985, 0.5
+        diffs = disc * (fwd - strikes)
         est = implied_forward(strikes, diffs, np.zeros_like(strikes), tau,
                               rate=0.03, spot=100.0)
-        assert est["forward"] == pytest.approx(F, abs=1e-9)
-        assert est["discount_factor"] == pytest.approx(DF, abs=1e-9)
+        assert est["forward"] == pytest.approx(fwd, abs=1e-9)
+        assert est["discount_factor"] == pytest.approx(disc, abs=1e-9)
         # implied_borrow = r - ln(F/S)/tau
         assert est["implied_borrow"] == pytest.approx(
-            0.03 - np.log(F / 100.0) / tau, abs=1e-9
+            0.03 - np.log(fwd / 100.0) / tau, abs=1e-9
         )
 
     def test_insufficient_pairs(self) -> None:
@@ -936,7 +936,7 @@ class TestPolygonOptions:
                 )
             raise AssertionError(f"URL inesperada: {url}")
 
-        client, transport = scripted_http("polygon", dispatcher, repeat_last=True)
+        client, _transport = scripted_http("polygon", dispatcher, repeat_last=True)
         provider = PolygonOptionsProvider(http=client, risk_free_rate=rate)
         chain = provider.chain("AAPL", asof)
         # 6 contratos en el fixture; el strike 300 (banda) y el vencimiento 2022

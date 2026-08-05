@@ -64,7 +64,7 @@ import base64
 import datetime as dt
 import logging
 from collections.abc import Mapping, Sequence
-from typing import Any, Final
+from typing import Any, ClassVar, Final, TypeAlias
 
 import numpy as np
 import pandas as pd
@@ -173,7 +173,7 @@ SHORT_VOLUME_COLUMNS: tuple[str, ...] = (
     "source",
 )
 
-DateLike = str | dt.date | dt.datetime | pd.Timestamp
+DateLike: TypeAlias = str | dt.date | dt.datetime | pd.Timestamp
 
 # Primeras liquidaciones de cada ciclo (informe §8.1; SEC T+2 desde operaciones
 # del 2017-09-05, T+1 desde operaciones del 2024-05-28). Idénticas a las de
@@ -828,8 +828,8 @@ class FinraOffExchangeProvider(_FinraQueryMixin, FlowProviderBase):
     name = "finra_ats"
     kinds: tuple[str, ...] = (OFF_EXCHANGE_KIND,)
 
-    _ATS_CODES = {"ATS_W_SMBL"}
-    _NON_ATS_CODES = {"OTC_W_SMBL"}
+    _ATS_CODES: ClassVar[frozenset[str]] = frozenset({"ATS_W_SMBL"})
+    _NON_ATS_CODES: ClassVar[frozenset[str]] = frozenset({"OTC_W_SMBL"})
 
     def _fetch_off_exchange(
         self, start: dt.date, end: dt.date, tickers: list[Ticker] | None

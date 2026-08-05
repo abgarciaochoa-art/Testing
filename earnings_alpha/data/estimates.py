@@ -59,7 +59,7 @@ import datetime as dt
 import logging
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar, TypeAlias
 
 import numpy as np
 import pandas as pd
@@ -166,7 +166,7 @@ UNKNOWN recibe la hora AMC porque la política del repo (`types.Session.UNKNOWN`
 primera sesión, nunca se inventa una."""
 
 
-DateLike = str | dt.date | dt.datetime | pd.Timestamp
+DateLike: TypeAlias = str | dt.date | dt.datetime | pd.Timestamp
 
 
 # ===========================================================================
@@ -360,8 +360,15 @@ def calendar_to_events(frame: pd.DataFrame) -> list[EarningsEvent]:
 
 def events_to_frame(events: Sequence[EarningsEvent]) -> pd.DataFrame:
     """Convierte `EarningsEvent` al calendario canónico (inversa de arriba)."""
-    rows = [
-        {
+    rows = []
+    for ev in events:
+        surprise, estimate = ev.eps_surprise, ev.eps_estimate
+        pct = (
+            100.0 * surprise / abs(estimate)
+            if surprise is not None and estimate is not None and estimate != 0.0
+            else np.nan
+        )
+        rows.append({
             "ticker": ev.ticker,
             "period_end": pd.Timestamp(ev.period_end),
             "announced_at": pd.Timestamp(ev.announced_at),
@@ -371,18 +378,12 @@ def events_to_frame(events: Sequence[EarningsEvent]) -> pd.DataFrame:
             "eps_estimate": ev.eps_estimate,
             "revenue_actual": ev.revenue_actual,
             "revenue_estimate": ev.revenue_estimate,
-            "surprise": ev.eps_surprise,
-            "surprise_pct": (
-                100.0 * ev.eps_surprise / abs(ev.eps_estimate)
-                if ev.eps_surprise is not None and ev.eps_estimate not in (None, 0)
-                else np.nan
-            ),
+            "surprise": surprise,
+            "surprise_pct": pct,
             "is_estimated_date": ev.is_estimated_date,
             "announced_time_is_nominal": False,
             "source": ev.source,
-        }
-        for ev in events
-    ]
+        })
     if not rows:
         return _empty_calendar()
     return _finalize_calendar(pd.DataFrame(rows), "events_to_frame")
@@ -581,7 +582,9 @@ class FMPEstimatesProvider(EstimatesProviderBase):
                     "surprise": surprise,
                     "surprise_pct": (
                         100.0 * surprise / abs(float(eps_est))
-                        if not pd.isna(surprise) and eps_est not in (None, 0)
+                        if not pd.isna(surprise)
+                        and eps_est is not None
+                        and float(eps_est) != 0.0
                         else np.nan
                     ),
                     "is_estimated_date": day > today,
@@ -748,7 +751,9 @@ class FinnhubEstimatesProvider(EstimatesProviderBase):
                     "surprise": surprise,
                     "surprise_pct": (
                         100.0 * surprise / abs(float(eps_est))
-                        if not pd.isna(surprise) and eps_est not in (None, 0)
+                        if not pd.isna(surprise)
+                        and eps_est is not None
+                        and float(eps_est) != 0.0
                         else np.nan
                     ),
                     "is_estimated_date": day > today,
@@ -904,7 +909,7 @@ class NasdaqEstimatesProvider(EstimatesProviderBase):
     BASE = "https://api.nasdaq.com/api/calendar/earnings"
     MAX_WINDOW_DAYS = 45
     RATE = RateLimitPolicy(1.0, burst=2, note="endpoint web no documentado; cortesía")
-    HEADERS = {
+    HEADERS: ClassVar[dict[str, str]] = {
         "Accept": "application/json, text/plain, */*",
         "User-Agent": (
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -944,7 +949,7 @@ class NasdaqEstimatesProvider(EstimatesProviderBase):
         except ValueError:
             return pd.NaT
 
-    _SESSION_BY_TIME = {
+    _SESSION_BY_TIME: ClassVar[dict[str, Session]] = {
         "time-pre-market": Session.BMO,
         "time-after-hours": Session.AMC,
         "time-not-supplied": Session.UNKNOWN,
@@ -1155,7 +1160,7 @@ class ExternalConsensusProvider(EstimatesProviderBase):
             self._table = table.sort_values(["ticker", "report_date"]).reset_index(drop=True)
         return self._table
 
-    _SESSION_BY_REPORT_TIME = {
+    _SESSION_BY_REPORT_TIME: ClassVar[dict[str, Session]] = {
         "pre-market": Session.BMO,
         "post-market": Session.AMC,
         "intraday": Session.DMH,

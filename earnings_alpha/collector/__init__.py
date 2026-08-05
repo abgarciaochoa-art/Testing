@@ -217,7 +217,7 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _resolve_options_source(choice: str, settings, wall):  # noqa: ANN001 - CLI interno
+def _resolve_options_source(choice: str, settings, wall):  # CLI interno, sin anotar
     from earnings_alpha.data.synthetic import SyntheticMarket
 
     if choice in ("auto", "tradier") and settings.env("TRADIER_ACCESS_TOKEN"):
@@ -247,7 +247,7 @@ def _resolve_options_source(choice: str, settings, wall):  # noqa: ANN001 - CLI 
     return SyntheticOptionsSource(market, wall=wall, settings=settings)
 
 
-def _resolve_estimates_provider(choice: str, settings, options_source):  # noqa: ANN001
+def _resolve_estimates_provider(choice: str, settings, options_source):  # CLI interno
     from earnings_alpha.data.estimates import (
         FinnhubEstimatesProvider,
         FMPEstimatesProvider,

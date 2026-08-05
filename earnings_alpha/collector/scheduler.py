@@ -327,7 +327,7 @@ def plan_collection(
         selected=selected,
         deferred=deferred,
         cost_per_ticker=int(cost_per_ticker),
-        fixed_cost=int(fixed_cost) if fixed_ok else int(fixed_cost),
+        fixed_cost=int(fixed_cost),
         budget=budget,
     )
 
@@ -394,9 +394,11 @@ class CollectionLog:
 
     def __init__(self, path: Path | str) -> None:
         self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
 
     def record(self, entry: LogEntry) -> None:
+        # El directorio se crea al primer registro, no al construir: un dry-run
+        # no debe dejar ni un directorio vacío como rastro.
+        self.path.parent.mkdir(parents=True, exist_ok=True)
         line = json.dumps(entry.to_json(), ensure_ascii=False)
         with self.path.open("a", encoding="utf-8") as fh:
             fh.write(line + os.linesep)
@@ -500,7 +502,7 @@ def call_with_retries(
                 exc,
             )
             timer.sleep(delay)
-    assert last is not None  # noqa: S101 - invariante del bucle
+    assert last is not None  # invariante del bucle: solo se llega aquí tras fallar
     raise last
 
 
@@ -793,11 +795,14 @@ class DailyCollector:
 
         if calendar_frame is not None and len(calendar_frame):
             try:
+                # Se sella el frame ya pedido en la planificación: una sola
+                # petición de calendario por pasada.
                 snap = snapshot_earnings_calendar(
                     self.estimates_provider,
                     day,
                     day + dt.timedelta(days=self.horizon_days),
                     wall=self.wall,
+                    frame=calendar_frame,
                 )
                 self._append(report, "earnings_calendar", snap)
             except EarningsAlphaError as exc:

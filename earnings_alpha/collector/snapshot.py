@@ -514,11 +514,11 @@ class YFinanceOptionsSource:
         """Último precio del subyacente; NaN si el cliente no lo expone."""
         try:
             info = getattr(tk, "fast_info", None)
-            if info is not None:
-                value = info["last_price"] if "last_price" in info else None
+            if info is not None and "last_price" in info:
+                value = info["last_price"]
                 if value is not None:
                     return float(value)
-        except Exception:  # noqa: BLE001 - el spot es opcional, la cadena no
+        except Exception:  # el spot es opcional, la cadena no
             logger.debug("no se pudo leer el spot de yfinance; se deja NaN")
         return float("nan")
 
@@ -1094,6 +1094,7 @@ def snapshot_earnings_calendar(
     *,
     wall: WallClock | None = None,
     tickers: Sequence[Ticker] | None = None,
+    frame: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Foto diaria del calendario de próximos resultados en ``[start, end]``.
 
@@ -1101,9 +1102,13 @@ def snapshot_earnings_calendar(
     prevista (confirmación, adelanto, retraso) no puede reconstruirse después, y
     los retrasos de anuncio son en sí informativos. `capture_date` es la columna
     de partición: cada día produce su propio vintage del calendario.
+
+    `frame` permite sellar un calendario **ya pedido** (el orquestador lo usa
+    para planificar y capturarlo con una sola petición); sin él, se pide aquí.
     """
     clock = wall or SystemWallClock()
-    frame = provider.earnings_calendar(start, end, tickers)
+    if frame is None:
+        frame = provider.earnings_calendar(start, end, tickers)
     captured = clock.now()
     out = frame.copy()
     out["capture_date"] = pd.Timestamp(_session_date_et(captured))

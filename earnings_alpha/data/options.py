@@ -64,7 +64,7 @@ import math
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypeAlias
 
 import numpy as np
 import pandas as pd
@@ -137,7 +137,7 @@ CHAIN_COLUMNS: tuple[str, ...] = (
 )
 """Columnas obligatorias del esquema canónico de cadenas."""
 
-DateLike = str | dt.date | dt.datetime | pd.Timestamp
+DateLike: TypeAlias = str | dt.date | dt.datetime | pd.Timestamp
 
 _SQRT_2PI = math.sqrt(2.0 * math.pi)
 
@@ -479,7 +479,7 @@ def implied_forward_table(
                 "discount_factor": est["discount_factor"],
                 "implied_rate": est["implied_rate"],
                 "implied_borrow": est["implied_borrow"],
-                "n_pairs": int(len(strikes)),
+                "n_pairs": len(strikes),
             }
         )
     if not rows:
@@ -520,7 +520,7 @@ def normalize_chain(frame: pd.DataFrame) -> pd.DataFrame:
     out["expiry"] = pd.to_datetime(out["expiry"]).dt.normalize()
     out["ticker"] = [normalize_ticker(str(t)) for t in out["ticker"]]
     rights = [
-        _RIGHT_MAP.get(str(r).strip().lower(), _RIGHT_MAP.get(str(r).strip(), None))
+        _RIGHT_MAP.get(str(r).strip().lower(), _RIGHT_MAP.get(str(r).strip()))
         for r in out["right"]
     ]
     if any(r is None for r in rights):
