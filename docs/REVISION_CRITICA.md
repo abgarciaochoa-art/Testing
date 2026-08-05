@@ -6,8 +6,9 @@ verificación de sus 12 hallazgos: cada uno fue re-verificado leyendo el código
 y, cuando traía snippet, reproducido antes de tocar nada. Resultado global:
 **11 CONFIRMADOS** (9 arreglados, 2 pendientes de diseño) y **1 DESCARTADO**.
 
-Suite final tras los arreglos: **1.281 tests en verde** (`python3 -m pytest -m
-"not network" -p no:cacheprovider -q`).
+Suite final tras los arreglos (`python3 -m pytest -m "not network" -p
+no:cacheprovider -q`): **1.280 passed, 1 skipped, 13 deselected (red)** — todo
+en verde, ningún test roto por los arreglos.
 
 ---
 
