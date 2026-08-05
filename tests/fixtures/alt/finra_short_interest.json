@@ -1,0 +1,41 @@
+[
+  {
+    "issueName": "APPLE INC",
+    "issueSymbolIdentifier": "AAPL",
+    "marketClassCode": "NNM",
+    "settlementDate": "2020-08-14",
+    "currentShortPositionQuantity": 39420000,
+    "previousShortPositionQuantity": 36110000,
+    "changePreviousNumber": 3310000,
+    "changePercent": 9.17,
+    "averageDailyVolumeQuantity": 168000000,
+    "daysToCoverQuantity": 1.0,
+    "revisionFlag": ""
+  },
+  {
+    "issueName": "APPLE INC",
+    "issueSymbolIdentifier": "AAPL",
+    "marketClassCode": "NNM",
+    "settlementDate": "2020-08-31",
+    "currentShortPositionQuantity": 41830000,
+    "previousShortPositionQuantity": 39420000,
+    "changePreviousNumber": 2410000,
+    "changePercent": 6.11,
+    "averageDailyVolumeQuantity": 175000000,
+    "daysToCoverQuantity": 1.0,
+    "revisionFlag": ""
+  },
+  {
+    "issueName": "MICROSOFT CORP",
+    "issueSymbolIdentifier": "MSFT",
+    "marketClassCode": "NNM",
+    "settlementDate": "2020-08-31",
+    "currentShortPositionQuantity": 45120000,
+    "previousShortPositionQuantity": 47880000,
+    "changePreviousNumber": -2760000,
+    "changePercent": -5.76,
+    "averageDailyVolumeQuantity": 31000000,
+    "daysToCoverQuantity": 1.46,
+    "revisionFlag": ""
+  }
+]

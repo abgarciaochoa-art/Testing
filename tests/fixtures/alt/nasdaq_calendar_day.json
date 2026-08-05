@@ -1,0 +1,55 @@
+{
+  "data": {
+    "asOf": null,
+    "headers": {
+      "symbol": "Symbol",
+      "name": "Company Name",
+      "time": "Time"
+    },
+    "rows": [
+      {
+        "lastYearRptDt": "7/30/2019",
+        "lastYearEPS": "$0.55",
+        "time": "time-after-hours",
+        "symbol": "AAPL",
+        "name": "Apple Inc.",
+        "marketCap": "$1,978,350,000,000",
+        "fiscalQuarterEnding": "Jun/2020",
+        "epsForecast": "$0.51",
+        "noOfEsts": "28",
+        "eps": "$0.65",
+        "surprise": "26.8"
+      },
+      {
+        "lastYearRptDt": "7/26/2019",
+        "lastYearEPS": "($1.37)",
+        "time": "time-pre-market",
+        "symbol": "TWTR",
+        "name": "Twitter, Inc.",
+        "marketCap": "$29,180,000,000",
+        "fiscalQuarterEnding": "Jun/2020",
+        "epsForecast": "($0.02)",
+        "noOfEsts": "9",
+        "eps": "($0.16)",
+        "surprise": "-700.0"
+      },
+      {
+        "lastYearRptDt": "",
+        "lastYearEPS": "N/A",
+        "time": "time-not-supplied",
+        "symbol": "ZZZQ",
+        "name": "Placeholder Corp.",
+        "marketCap": "N/A",
+        "fiscalQuarterEnding": "",
+        "epsForecast": "N/A",
+        "noOfEsts": "N/A"
+      }
+    ]
+  },
+  "message": null,
+  "status": {
+    "rCode": 200,
+    "bCodeMessage": null,
+    "developerMessage": null
+  }
+}

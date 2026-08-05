@@ -1,0 +1,66 @@
+{
+  "options": {
+    "option": [
+      {
+        "symbol": "AAPL260821C00115000",
+        "description": "AAPL Aug 21 2026 $115.00 Call",
+        "exch": "Z",
+        "type": "option",
+        "last": 4.9,
+        "change": 0.2,
+        "volume": 1520,
+        "open": 4.6,
+        "high": 5.05,
+        "low": 4.55,
+        "close": null,
+        "bid": 4.8,
+        "ask": 5.0,
+        "strike": 115.0,
+        "expiration_date": "2026-08-21",
+        "option_type": "call",
+        "open_interest": 9120,
+        "greeks": {
+          "delta": 0.5512,
+          "gamma": 0.041,
+          "theta": -0.095,
+          "vega": 0.11,
+          "rho": 0.05,
+          "phi": -0.05,
+          "bid_iv": 0.401,
+          "mid_iv": 0.408,
+          "ask_iv": 0.415,
+          "smv_vol": 0.409,
+          "updated_at": "2026-08-04 20:00:05"
+        }
+      },
+      {
+        "symbol": "AAPL260821P00115000",
+        "description": "AAPL Aug 21 2026 $115.00 Put",
+        "exch": "Z",
+        "type": "option",
+        "last": 4.1,
+        "change": -0.1,
+        "volume": 980,
+        "bid": 4.0,
+        "ask": 4.2,
+        "strike": 115.0,
+        "expiration_date": "2026-08-21",
+        "option_type": "put",
+        "open_interest": 6410,
+        "greeks": {
+          "delta": -0.4482,
+          "gamma": 0.041,
+          "theta": -0.09,
+          "vega": 0.11,
+          "rho": -0.045,
+          "phi": 0.042,
+          "bid_iv": 0.412,
+          "mid_iv": 0.419,
+          "ask_iv": 0.426,
+          "smv_vol": 0.418,
+          "updated_at": "2026-08-04 20:00:05"
+        }
+      }
+    ]
+  }
+}

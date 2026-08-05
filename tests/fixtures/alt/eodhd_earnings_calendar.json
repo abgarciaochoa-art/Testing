@@ -1,0 +1,41 @@
+{
+  "type": "Earnings",
+  "description": "Earnings release dates",
+  "from": "2020-08-24",
+  "to": "2020-09-02",
+  "earnings": [
+    {
+      "code": "AAPL.US",
+      "report_date": "2020-08-27",
+      "date": "2020-06-27",
+      "before_after_market": "AfterMarket",
+      "currency": "USD",
+      "actual": 0.645,
+      "estimate": 0.5132,
+      "difference": 0.1318,
+      "percent": 25.68
+    },
+    {
+      "code": "MSFT.US",
+      "report_date": "2020-08-28",
+      "date": "2020-06-30",
+      "before_after_market": "BeforeMarket",
+      "currency": "USD",
+      "actual": 1.46,
+      "estimate": 1.37,
+      "difference": 0.09,
+      "percent": 6.57
+    },
+    {
+      "code": "ZM.US",
+      "report_date": "2020-08-31",
+      "date": "2020-07-31",
+      "before_after_market": null,
+      "currency": "USD",
+      "actual": null,
+      "estimate": 0.92,
+      "difference": null,
+      "percent": null
+    }
+  ]
+}

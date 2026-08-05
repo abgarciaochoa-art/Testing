@@ -1,0 +1,72 @@
+{
+  "request_id": "abc124",
+  "status": "OK",
+  "results": [
+    {
+      "day": {
+        "close": 3.15,
+        "volume": 2210
+      },
+      "details": {
+        "contract_type": "call",
+        "exercise_style": "american",
+        "expiration_date": "2026-10-16",
+        "shares_per_contract": 100,
+        "strike_price": 125,
+        "ticker": "O:AAPL261016C00125000"
+      },
+      "greeks": {
+        "delta": 0.3418,
+        "gamma": 0.0244,
+        "theta": -0.061,
+        "vega": 0.156
+      },
+      "implied_volatility": 0.3891,
+      "last_quote": {
+        "ask": 3.3,
+        "bid": 3.05
+      },
+      "last_trade": {
+        "price": 3.12
+      },
+      "open_interest": 8875,
+      "underlying_asset": {
+        "price": 116.6,
+        "ticker": "AAPL"
+      }
+    },
+    {
+      "day": {
+        "close": 11.2,
+        "volume": 940
+      },
+      "details": {
+        "contract_type": "put",
+        "exercise_style": "american",
+        "expiration_date": "2026-10-16",
+        "shares_per_contract": 100,
+        "strike_price": 125,
+        "ticker": "O:AAPL261016P00125000"
+      },
+      "greeks": {
+        "delta": -0.6402,
+        "gamma": 0.0239,
+        "theta": -0.055,
+        "vega": 0.151
+      },
+      "implied_volatility": 0.4014,
+      "last_quote": {
+        "ask": 11.5,
+        "bid": 11.0
+      },
+      "last_trade": {
+        "price": 11.15
+      },
+      "open_interest": 5124,
+      "underlying_asset": {
+        "price": 116.6,
+        "ticker": "AAPL"
+      }
+    }
+  ]
+}

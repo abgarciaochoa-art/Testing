@@ -1,0 +1,25 @@
+{
+  "options": {
+    "option": {
+      "symbol": "AAPL260918C00120000",
+      "description": "AAPL Sep 18 2026 $120.00 Call",
+      "exch": "Z",
+      "type": "option",
+      "last": 3.6,
+      "volume": 610,
+      "bid": 3.5,
+      "ask": 3.7,
+      "strike": 120.0,
+      "expiration_date": "2026-09-18",
+      "option_type": "call",
+      "open_interest": 3110,
+      "greeks": {
+        "delta": 0.3915,
+        "gamma": 0.031,
+        "theta": -0.062,
+        "vega": 0.14,
+        "mid_iv": 0.392
+      }
+    }
+  }
+}

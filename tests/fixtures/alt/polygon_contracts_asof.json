@@ -1,0 +1,72 @@
+{
+  "request_id": "ctr1",
+  "status": "OK",
+  "results": [
+    {
+      "cfi": "OCASPS",
+      "contract_type": "call",
+      "exercise_style": "american",
+      "expiration_date": "2020-09-18",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 110,
+      "ticker": "O:AAPL200918C00110000",
+      "underlying_ticker": "AAPL"
+    },
+    {
+      "cfi": "OPASPS",
+      "contract_type": "put",
+      "exercise_style": "american",
+      "expiration_date": "2020-09-18",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 110,
+      "ticker": "O:AAPL200918P00110000",
+      "underlying_ticker": "AAPL"
+    },
+    {
+      "cfi": "OCASPS",
+      "contract_type": "call",
+      "exercise_style": "american",
+      "expiration_date": "2020-09-18",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 120,
+      "ticker": "O:AAPL200918C00120000",
+      "underlying_ticker": "AAPL"
+    },
+    {
+      "cfi": "OPASPS",
+      "contract_type": "put",
+      "exercise_style": "american",
+      "expiration_date": "2020-09-18",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 120,
+      "ticker": "O:AAPL200918P00120000",
+      "underlying_ticker": "AAPL"
+    },
+    {
+      "cfi": "OCASPS",
+      "contract_type": "call",
+      "exercise_style": "american",
+      "expiration_date": "2020-09-18",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 300,
+      "ticker": "O:AAPL200918C00300000",
+      "underlying_ticker": "AAPL"
+    },
+    {
+      "cfi": "OCASPS",
+      "contract_type": "call",
+      "exercise_style": "american",
+      "expiration_date": "2022-06-17",
+      "primary_exchange": "BATO",
+      "shares_per_contract": 100,
+      "strike_price": 120,
+      "ticker": "O:AAPL220617C00120000",
+      "underlying_ticker": "AAPL"
+    }
+  ]
+}

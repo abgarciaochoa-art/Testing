@@ -1,0 +1,93 @@
+{
+  "request_id": "abc123",
+  "status": "OK",
+  "results": [
+    {
+      "break_even_price": 121.7,
+      "day": {
+        "change": 0.42,
+        "change_percent": 6.8,
+        "close": 6.6,
+        "high": 6.9,
+        "last_updated": 1599076800000000000,
+        "low": 6.0,
+        "open": 6.1,
+        "previous_close": 6.18,
+        "volume": 4120,
+        "vwap": 6.45
+      },
+      "details": {
+        "contract_type": "call",
+        "exercise_style": "american",
+        "expiration_date": "2026-09-18",
+        "shares_per_contract": 100,
+        "strike_price": 115,
+        "ticker": "O:AAPL260918C00115000"
+      },
+      "greeks": {
+        "delta": 0.5641,
+        "gamma": 0.0322,
+        "theta": -0.083,
+        "vega": 0.132
+      },
+      "implied_volatility": 0.4125,
+      "last_quote": {
+        "ask": 6.75,
+        "ask_size": 12,
+        "bid": 6.45,
+        "bid_size": 20,
+        "midpoint": 6.6
+      },
+      "last_trade": {
+        "price": 6.58,
+        "size": 2
+      },
+      "open_interest": 15230,
+      "underlying_asset": {
+        "change_to_break_even": 5.1,
+        "price": 116.6,
+        "ticker": "AAPL"
+      }
+    },
+    {
+      "break_even_price": 109.6,
+      "day": {
+        "close": 5.4,
+        "volume": 3805,
+        "vwap": 5.35
+      },
+      "details": {
+        "contract_type": "put",
+        "exercise_style": "american",
+        "expiration_date": "2026-09-18",
+        "shares_per_contract": 100,
+        "strike_price": 115,
+        "ticker": "O:AAPL260918P00115000"
+      },
+      "greeks": {
+        "delta": -0.4359,
+        "gamma": 0.0322,
+        "theta": -0.079,
+        "vega": 0.132
+      },
+      "implied_volatility": 0.4266,
+      "last_quote": {
+        "ask": 5.55,
+        "ask_size": 9,
+        "bid": 5.3,
+        "bid_size": 14,
+        "midpoint": 5.42
+      },
+      "last_trade": {
+        "price": 5.44,
+        "size": 1
+      },
+      "open_interest": 11840,
+      "underlying_asset": {
+        "price": 116.6,
+        "ticker": "AAPL"
+      }
+    }
+  ],
+  "next_url": "https://api.polygon.io/v3/snapshot/options/AAPL?cursor=cGFnZTI"
+}

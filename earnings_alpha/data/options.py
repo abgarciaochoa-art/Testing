@@ -238,9 +238,10 @@ def bs_greeks(
 
     nan = np.full_like(s, np.nan)
     keep = live
+    expired_delta = np.where(call, (s > k).astype(float), -((k > s).astype(float)))
     return BsGreeks(
         price=price,
-        delta=np.where(keep, delta, np.where(call, (s > k) * 1.0, -(k > s) * 1.0)),
+        delta=np.where(keep, delta, expired_delta),
         gamma=np.where(keep, gamma, nan),
         vega=np.where(keep, vega, nan),
         theta=np.where(keep, theta, nan),
@@ -734,6 +735,10 @@ class OptionsProviderBase(BaseProvider):
                 missing_env=missing,
             )
 
+    def _today(self) -> dt.date:
+        """Fecha "hoy" de los snapshots (UTC). Inyectable en tests."""
+        return dt.datetime.now(dt.UTC).date()
+
     def chain(self, ticker: Ticker, asof: DateLike | None = None) -> pd.DataFrame:
         """Cadena canónica de `ticker` en la sesión `asof` (o la más reciente)."""
         symbol = normalize_ticker(ticker)
@@ -888,7 +893,7 @@ class PolygonOptionsProvider(OptionsProviderBase):
 
     def _snapshot_chain(self, ticker: Ticker) -> pd.DataFrame:
         results = self._paged(f"{self.BASE}/v3/snapshot/options/{ticker}", {"limit": 250})
-        today = pd.Timestamp(dt.datetime.now(dt.UTC).date())
+        today = pd.Timestamp(self._today())
         rows: list[dict[str, Any]] = []
         for item in results:
             details = item.get("details") or {}
@@ -1142,7 +1147,7 @@ class TradierOptionsProvider(OptionsProviderBase):
         }
 
     def _fetch_chain(self, ticker: Ticker, asof: pd.Timestamp | None) -> pd.DataFrame:
-        today = pd.Timestamp(dt.datetime.now(dt.UTC).date())
+        today = pd.Timestamp(self._today())
         if asof is not None and asof.normalize() != today:
             raise ProviderUnavailable(
                 self.name,

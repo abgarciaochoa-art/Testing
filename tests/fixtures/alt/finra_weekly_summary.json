@@ -1,0 +1,43 @@
+[
+  {
+    "issueSymbolIdentifier": "AAPL",
+    "issueName": "APPLE INC",
+    "summaryTypeCode": "ATS_W_SMBL",
+    "totalWeeklyShareQuantity": 98500000,
+    "totalWeeklyTradeCount": 412000,
+    "weekStartDate": "2020-08-24",
+    "tierIdentifier": "T1",
+    "lastUpdateDate": "2020-09-08"
+  },
+  {
+    "issueSymbolIdentifier": "AAPL",
+    "issueName": "APPLE INC",
+    "summaryTypeCode": "OTC_W_SMBL",
+    "totalWeeklyShareQuantity": 141200000,
+    "totalWeeklyTradeCount": 1310000,
+    "weekStartDate": "2020-08-24",
+    "tierIdentifier": "T1",
+    "lastUpdateDate": "2020-09-08"
+  },
+  {
+    "issueSymbolIdentifier": "MSFT",
+    "issueName": "MICROSOFT CORP",
+    "summaryTypeCode": "ATS_W_SMBL",
+    "totalWeeklyShareQuantity": 31200000,
+    "totalWeeklyTradeCount": 240000,
+    "weekStartDate": "2020-08-24",
+    "tierIdentifier": "T1",
+    "lastUpdateDate": "2020-09-08"
+  },
+  {
+    "issueSymbolIdentifier": "AAPL",
+    "issueName": "APPLE INC",
+    "summaryTypeCode": "ATS_W_FIRM",
+    "totalWeeklyShareQuantity": 12100000,
+    "totalWeeklyTradeCount": 51000,
+    "weekStartDate": "2020-08-24",
+    "tierIdentifier": "T1",
+    "marketParticipantName": "SOME ATS LLC",
+    "lastUpdateDate": "2020-09-08"
+  }
+]

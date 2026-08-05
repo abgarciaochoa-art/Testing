@@ -456,10 +456,17 @@ class EstimatesProviderBase(BaseProvider):
         s, e = _check_window(start, end)
         wanted = _normalize_tickers(tickers)
         self._require_credentials()
-        frame = self._fetch_calendar(s, e, wanted)
-        if frame is not None and len(frame) and wanted is not None:
-            frame = frame[frame["ticker"].isin(wanted)]
-        return _finalize_calendar(frame, self.name)
+        out = _finalize_calendar(self._fetch_calendar(s, e, wanted), self.name)
+        if wanted is not None:
+            # Tras normalizar: el "BRK-B" de un proveedor debe casar con "BRK.B".
+            out = out[out["ticker"].isin(wanted)].reset_index(drop=True)
+            if not len(out):
+                msg = (
+                    f"{self.name}: ninguno de los símbolos pedidos ({wanted}) tiene "
+                    f"anuncios en [{s}, {e}]"
+                )
+                raise InsufficientHistory(msg)
+        return out
 
     def consensus(
         self,
@@ -472,13 +479,16 @@ class EstimatesProviderBase(BaseProvider):
         wanted = _normalize_tickers(tickers)
         assert wanted is not None  # tickers es obligatorio aquí
         self._require_credentials()
-        frame = self._fetch_consensus(wanted)
-        if frame is not None and len(frame):
-            if start is not None:
-                frame = frame[frame["period_end"] >= pd.Timestamp(_as_date(start))]
-            if end is not None:
-                frame = frame[frame["period_end"] <= pd.Timestamp(_as_date(end))]
-        return _finalize_consensus(frame, self.name)
+        out = _finalize_consensus(self._fetch_consensus(wanted), self.name)
+        if start is not None:
+            out = out[out["period_end"] >= pd.Timestamp(_as_date(start))]
+        if end is not None:
+            out = out[out["period_end"] <= pd.Timestamp(_as_date(end))]
+        out = out.reset_index(drop=True)
+        if not len(out):
+            msg = f"{self.name}: el filtro de periodos deja el consenso vacío"
+            raise InsufficientHistory(msg)
+        return out
 
     # -- ganchos --------------------------------------------------------------
 
