@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "epsAvg": 0.5132,
+      "epsHigh": 0.60,
+      "epsLow": 0.42,
+      "numberAnalysts": 28,
+      "period": "2020-06-30",
+      "quarter": 2,
+      "year": 2020
+    },
+    {
+      "epsAvg": 2.35,
+      "epsHigh": 2.61,
+      "epsLow": 2.05,
+      "numberAnalysts": 22,
+      "period": "2099-09-30",
+      "quarter": 3,
+      "year": 2099
+    }
+  ],
+  "freq": "quarterly",
+  "symbol": "AAPL"
+}

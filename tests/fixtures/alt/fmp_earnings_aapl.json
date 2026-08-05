@@ -1,0 +1,29 @@
+[
+  {
+    "symbol": "AAPL",
+    "date": "2020-08-27",
+    "epsActual": 0.645,
+    "epsEstimated": 0.5132,
+    "revenueActual": 59685000000,
+    "revenueEstimated": 52251000000,
+    "fiscalDateEnding": "2020-06-27"
+  },
+  {
+    "symbol": "AAPL",
+    "date": "2020-04-30",
+    "epsActual": 0.6375,
+    "epsEstimated": 0.5675,
+    "revenueActual": 58313000000,
+    "revenueEstimated": 54540000000,
+    "fiscalDateEnding": "2020-03-28"
+  },
+  {
+    "symbol": "AAPL",
+    "date": "2020-01-28",
+    "epsActual": 1.2475,
+    "epsEstimated": 1.1387,
+    "revenueActual": 91819000000,
+    "revenueEstimated": 88380000000,
+    "fiscalDateEnding": "2019-12-28"
+  }
+]

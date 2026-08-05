@@ -1,0 +1,37 @@
+{
+  "earningsCalendar": [
+    {
+      "date": "2020-08-27",
+      "epsActual": 0.645,
+      "epsEstimate": 0.5132,
+      "hour": "amc",
+      "quarter": 2,
+      "revenueActual": 59685000000,
+      "revenueEstimate": 52251000000,
+      "symbol": "AAPL",
+      "year": 2020
+    },
+    {
+      "date": "2020-08-28",
+      "epsActual": 1.46,
+      "epsEstimate": 1.37,
+      "hour": "bmo",
+      "quarter": 2,
+      "revenueActual": 38033000000,
+      "revenueEstimate": 36540000000,
+      "symbol": "MSFT",
+      "year": 2020
+    },
+    {
+      "date": "2020-08-31",
+      "epsActual": null,
+      "epsEstimate": 0.92,
+      "hour": "",
+      "quarter": 2,
+      "revenueActual": null,
+      "revenueEstimate": 11500000000,
+      "symbol": "ZM",
+      "year": 2020
+    }
+  ]
+}

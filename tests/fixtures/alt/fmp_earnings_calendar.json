@@ -1,0 +1,43 @@
+[
+  {
+    "symbol": "AAPL",
+    "date": "2020-08-27",
+    "epsActual": 0.645,
+    "epsEstimated": 0.5132,
+    "revenueActual": 59685000000,
+    "revenueEstimated": 52251000000,
+    "time": "amc",
+    "fiscalDateEnding": "2020-06-27",
+    "updatedFromDate": "2020-08-28"
+  },
+  {
+    "symbol": "MSFT",
+    "date": "2020-08-28",
+    "epsActual": 1.46,
+    "epsEstimated": 1.37,
+    "revenueActual": 38033000000,
+    "revenueEstimated": 36540000000,
+    "time": "bmo",
+    "fiscalDateEnding": "2020-06-30"
+  },
+  {
+    "symbol": "BRK-B",
+    "date": "2020-08-29",
+    "epsActual": null,
+    "epsEstimated": 2.11,
+    "revenueActual": null,
+    "revenueEstimated": 61250000000,
+    "time": "--",
+    "fiscalDateEnding": "2020-06-30"
+  },
+  {
+    "symbol": "ZZZT",
+    "date": "2099-01-05",
+    "epsActual": null,
+    "epsEstimated": 1.0,
+    "revenueActual": null,
+    "revenueEstimated": null,
+    "time": "amc",
+    "fiscalDateEnding": "2098-11-30"
+  }
+]

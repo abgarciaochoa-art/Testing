@@ -1,0 +1,24 @@
+[
+  {
+    "symbol": "AAPL",
+    "date": "2099-12-27",
+    "epsAvg": 2.35,
+    "epsHigh": 2.60,
+    "epsLow": 2.10,
+    "numAnalystsEps": 24,
+    "revenueAvg": 124300000000,
+    "revenueHigh": 130000000000,
+    "revenueLow": 118000000000
+  },
+  {
+    "symbol": "AAPL",
+    "date": "2020-06-27",
+    "epsAvg": 0.5132,
+    "epsHigh": 0.60,
+    "epsLow": 0.42,
+    "numAnalystsEps": 28,
+    "revenueAvg": 52251000000,
+    "revenueHigh": 55000000000,
+    "revenueLow": 49000000000
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "revenueAvg": 52251000000,
+      "revenueHigh": 55000000000,
+      "revenueLow": 49000000000,
+      "numberAnalysts": 24,
+      "period": "2020-06-30",
+      "quarter": 2,
+      "year": 2020
+    },
+    {
+      "revenueAvg": 124300000000,
+      "revenueHigh": 130100000000,
+      "revenueLow": 117900000000,
+      "numberAnalysts": 21,
+      "period": "2099-09-30",
+      "quarter": 3,
+      "year": 2099
+    }
+  ],
+  "freq": "quarterly",
+  "symbol": "AAPL"
+}
