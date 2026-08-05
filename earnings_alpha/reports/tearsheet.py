@@ -52,12 +52,12 @@ import pandas as pd
 
 from earnings_alpha.errors import DataQualityError
 
-__all__ = [  # noqa: RUF022 - orden temático, no alfabético
+__all__ = [
     "SECTION_IDS",
     "MetricWithCI",
-    "sharpe_metrics",
     "ic_metrics",
     "render_tearsheet",
+    "sharpe_metrics",
     "write_tearsheet",
 ]
 
@@ -204,7 +204,7 @@ def ic_metrics(summary: object) -> list[MetricWithCI]:
             label="IC IR anualizado",
             value=float(d.get("ic_ir_annualized", float("nan"))),
             decimals=2,
-            note="ĪC/σ_IC·√(periodos/año); diagnóstico, no contraste",
+            note="media/desv. de la IC, anualizado; diagnóstico, no contraste",
         ),
     ]
 
@@ -643,7 +643,14 @@ def _grid_cell_style(v: float, vmax: float) -> str:
 
 def _grid_section_html(grid: pd.DataFrame) -> str:
     """Matriz de calor entrada x salida + tabla detallada del `run_grid`."""
-    g = grid.reset_index() if isinstance(grid.index, pd.MultiIndex) else grid.copy()
+    if isinstance(grid.index, pd.MultiIndex) and grid.index.nlevels >= 2:
+        # `run_grid` indexa por (entry_offset, exit_offset) y además puede traer
+        # esas columnas rellenas solo en las filas no-ok; manda el índice.
+        g = grid.drop(
+            columns=[c for c in ("entry_offset", "exit_offset") if c in grid.columns]
+        ).reset_index()
+    else:
+        g = grid.copy()
     for col in ("entry_offset", "exit_offset"):
         if col not in g.columns:
             msg = (

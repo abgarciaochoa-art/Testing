@@ -116,12 +116,9 @@ def _full_registry():
     registran al importarse; sin estos imports `factors list` mentiría por
     omisión.
     """
-    import earnings_alpha.factors.accruals  # noqa: F401 - registro por importación
-    import earnings_alpha.factors.growth  # noqa: F401
-    import earnings_alpha.factors.quality  # noqa: F401
-    import earnings_alpha.factors.value  # noqa: F401
-    from earnings_alpha.factors import default_registry
+    from earnings_alpha.factors import accruals, default_registry, growth, quality, value
 
+    _ = (accruals, growth, quality, value)  # importados por su efecto de registro
     return default_registry
 
 
@@ -234,7 +231,7 @@ def _dataset_line(label: str, path: Path) -> str:
             import pyarrow.parquet as pq
 
             rows = f", {pq.ParquetFile(path).metadata.num_rows:,} filas"
-        except Exception:  # noqa: BLE001 - diagnóstico, no ruta crítica
+        except Exception:  # diagnóstico, no ruta crítica: el tamaño basta
             rows = ""
     return f"  {label:<26} {path.name} ({size}{rows})"
 
@@ -361,7 +358,7 @@ def _cmd_factors_compute(args: argparse.Namespace) -> int:
         f"({100.0 * len(valid) / max(len(scores), 1):.1f}%), "
         f"{n_dates} fechas x {n_tick} tickers"
     )
-    ic, summary = _ic_block(
+    _, summary = _ic_block(
         market, scores, horizon=args.horizon, min_names=args.min_names, method=args.method
     )
     print(f"  IC ({args.method}, forward {args.horizon} sesiones, retardo de ejecución 1):")
@@ -419,7 +416,7 @@ def _cmd_events_scan(args: argparse.Namespace) -> int:
     for event_id, row in top.iterrows():
         day = row["event_date"]
         day_txt = day.date().isoformat() if hasattr(day, "date") else str(day)
-        print(f"    {str(event_id):<28} {row['ticker']:<8} {day_txt}  score {row['score']:+.3f}")
+        print(f"    {event_id!s:<28} {row['ticker']:<8} {day_txt}  score {row['score']:+.3f}")
 
     if args.ground_truth:
         from earnings_alpha.events.surprise_model import roc_auc

@@ -41,9 +41,9 @@ from pathlib import Path
 # Ejecutable tal cual, sin instalar el paquete: se añade la raíz del repo.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from earnings_alpha.data.synthetic import SyntheticMarket  # noqa: E402
-from earnings_alpha.events.preevent import positive_predictive_value  # noqa: E402
-from earnings_alpha.pipeline import run_event_pipeline  # noqa: E402
+from earnings_alpha.data.synthetic import SyntheticMarket
+from earnings_alpha.events.preevent import positive_predictive_value
+from earnings_alpha.pipeline import run_event_pipeline
 
 
 def main(argv: list[str] | None = None) -> int:

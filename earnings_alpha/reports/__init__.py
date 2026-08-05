@@ -32,11 +32,11 @@ from earnings_alpha.reports.tearsheet import (
     write_tearsheet,
 )
 
-__all__ = [  # noqa: RUF022 - orden temático, no alfabético
+__all__ = [
     "SECTION_IDS",
     "MetricWithCI",
-    "sharpe_metrics",
     "ic_metrics",
     "render_tearsheet",
+    "sharpe_metrics",
     "write_tearsheet",
 ]

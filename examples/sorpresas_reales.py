@@ -36,12 +36,12 @@ import pandas as pd
 # Ejecutable tal cual, sin instalar el paquete: se añade la raíz del repo.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from earnings_alpha.factors import (  # noqa: E402
+from earnings_alpha.factors import (
     CONSENSUS_PIT_WARNING,
     analyst_sue_events,
     load_consensus_events,
 )
-from earnings_alpha.types import SurpriseBasis  # noqa: E402
+from earnings_alpha.types import SurpriseBasis
 
 
 def _seccion(titulo: str) -> None:

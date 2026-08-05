@@ -33,8 +33,8 @@ from pathlib import Path
 # Ejecutable tal cual, sin instalar el paquete: se añade la raíz del repo.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from earnings_alpha.data.synthetic import SyntheticMarket  # noqa: E402
-from earnings_alpha.pipeline import (  # noqa: E402
+from earnings_alpha.data.synthetic import SyntheticMarket
+from earnings_alpha.pipeline import (
     DEFAULT_CONTINUOUS_FACTORS,
     run_continuous_pipeline,
 )

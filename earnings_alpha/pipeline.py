@@ -22,7 +22,8 @@ Principios que el orquestador hace cumplir (y no puede delegar):
    forward llevan retardo de ejecución (`stats.forward_returns`,
    ``execution_lag=1``); el pre-posicionamiento del motor de eventos exige la
    declaración explícita `calendar_known_in_advance` (`pit_and_biases.md` §8.3)
-   y este módulo **no** la suministra por el usuario.
+   y este módulo **no** la hace en nombre del usuario: quien pre-posiciona,
+   declara.
 2. **Fallo explícito.** Un factor sin datos lanza (`ProviderUnavailable`,
    `InsufficientHistory`); con ``on_factor_error="skip"`` el descarte queda
    registrado en ``result.skipped_factors``, nunca oculto.
@@ -50,9 +51,9 @@ import pandas as pd
 # Los submódulos de factores fundamentales se importan por su efecto de registro
 # en `default_registry`; `earnings_alpha.factors` solo registra surprise,
 # revisions y guidance al importarse.
-import earnings_alpha.factors.accruals  # noqa: F401 - registro de factores
-import earnings_alpha.factors.growth  # noqa: F401 - registro de factores
-import earnings_alpha.factors.quality  # noqa: F401 - registro de factores
+import earnings_alpha.factors.accruals
+import earnings_alpha.factors.growth
+import earnings_alpha.factors.quality
 import earnings_alpha.factors.value  # noqa: F401 - registro de factores
 from earnings_alpha.backtest import (
     CostModel,
@@ -108,7 +109,7 @@ from earnings_alpha.stats import (
     summarize_ic,
 )
 
-__all__ = [  # noqa: RUF022 - orden temático, no alfabético
+__all__ = [
     "DEFAULT_CONTINUOUS_FACTORS",
     "ContinuousPipelineResult",
     "EventPipelineResult",
@@ -634,7 +635,7 @@ def run_continuous_pipeline(
     membership: pd.DataFrame | None = None
     try:
         membership = ctx.universe.membership_panel(dates[0].date(), dates[-1].date())
-    except Exception as exc:  # noqa: BLE001 - diagnóstico, el filtro es opcional
+    except Exception as exc:
         # Sin panel de pertenencia la IC no se filtra; se anota en params para
         # que el consumidor sepa que la IC puede llevar sesgo de supervivencia.
         membership = None
@@ -1000,7 +1001,7 @@ def run_event_pipeline(
         finite = intensity_score[np.isfinite(intensity_score.to_numpy(dtype=float))]
         is_leaked = finite.index.to_series().isin(leaked_set).to_numpy()
         n_pos = int(is_leaked.sum())
-        n_tot = int(len(finite))
+        n_tot = len(finite)
         detection = {
             "n_events": float(n_tot),
             "n_leaked": float(n_pos),
@@ -1039,10 +1040,10 @@ def run_event_pipeline(
         "estimation": tuple(int(x) for x in estimation),
         "caar_by": "<series>" if isinstance(caar_by, pd.Series) else caar_by,
         "caar_quantiles": int(caar_quantiles),
-        "n_events_input": int(len(events)),
-        "n_events_features": int(len(feats)),
+        "n_events_input": len(events),
+        "n_events_features": len(feats),
         "missing_sources": list(feats.attrs.get("missing_sources", [])),
-        "n_grid_trials": int(len(grid)),
+        "n_grid_trials": len(grid),
     }
     return EventPipelineResult(
         features=feats,
