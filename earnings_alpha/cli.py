@@ -607,8 +607,13 @@ def _hit_rate_metric(grid: pd.DataFrame):
     if len(ok) == 0 or "mean_net" not in ok.columns:
         return []
     best = ok.sort_values("mean_net", ascending=False).iloc[0]
-    entry, exit_ = best.name if isinstance(best.name, tuple) else ("?", "?")
-    label = f"mejor celda de la rejilla (entrada T{entry:+d}, salida T{exit_:+d})"
+    if isinstance(best.name, tuple) and len(best.name) == 2:
+        label = (
+            f"mejor celda de la rejilla (entrada T{int(best.name[0]):+d}, "
+            f"salida T{int(best.name[1]):+d})"
+        )
+    else:  # pragma: no cover - run_grid siempre indexa por (entrada, salida)
+        label = "mejor celda de la rejilla"
     out = [
         MetricWithCI(
             label=f"retorno neto medio/evento — {label}",
