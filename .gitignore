@@ -7,3 +7,5 @@ __pycache__/
 data/cache/
 .env
 .venv/
+data/cache/
+.guardian-stop
