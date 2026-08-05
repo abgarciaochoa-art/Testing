@@ -76,6 +76,8 @@ from earnings_alpha.pit import (
     parse_session,
     tradable_dates,
 )
+from earnings_alpha.pit.asof import to_naive_utc
+from earnings_alpha.pit.calendar import eastern_offsets_for
 from earnings_alpha.signals import zscore
 from earnings_alpha.types import Session, SurpriseBasis, normalize_ticker
 
@@ -338,12 +340,19 @@ def _pit_consensus(
     *,
     consensus_window_days: int,
 ) -> pd.DataFrame:
-    """Última foto de consenso estrictamente anterior al `tradable_date`.
+    """Última foto de consenso estrictamente anterior al **anuncio**.
 
-    Materializa la trampa 3 de §2.5: el consenso debe leerse de un snapshot con
-    ``as_of <= tradable_date - 1``; usar el consenso final revisado tras el
-    anuncio es look-ahead puro. Devuelve por evento ``consensus`` (mediana si
-    existe, si no media: la mediana es más robusta al analista rezagado) y
+    Materializa la trampa 3 de §2.5: el consenso debe leerse de un snapshot
+    estrictamente anterior al día del anuncio; usar el consenso revisado tras
+    el anuncio es look-ahead puro. El corte se hace por la **fecha ET del
+    anuncio** (`announced_at`) cuando la tabla la trae: para eventos AMC (y
+    UNKNOWN) el `tradable_date` es la sesión *siguiente*, y una foto con
+    ``as_of == día del anuncio`` — capturada en la pasada de cierre, ya
+    contaminada por las revisiones post-anuncio — pasaría un corte por
+    `tradable_date`. Para BMO/DMH ambos cortes coinciden. Sin `announced_at`
+    se degrada al corte por `tradable_date` (comportamiento anterior, correcto
+    solo para BMO/DMH). Devuelve por evento ``consensus`` (mediana si existe,
+    si no media: la mediana es más robusta al analista rezagado) y
     ``dispersion`` (`eps_std`). Fotos más antiguas que `consensus_window_days`
     respecto al `tradable_date` se consideran caducadas → NaN.
     """
@@ -363,11 +372,20 @@ def _pit_consensus(
     ev = events[["ticker", "period_end", "tradable_date"]].copy()
     ev["period_end"] = pd.DatetimeIndex(pd.to_datetime(ev["period_end"])).normalize()
     ev["__row__"] = np.arange(len(ev))
+    # Corte PIT: fecha ET del anuncio si es conocible; si no, tradable_date.
+    if "announced_at" in events.columns and events["announced_at"].notna().any():
+        ts = to_naive_utc(events["announced_at"])
+        offsets = eastern_offsets_for(ts)
+        announce_day = pd.DatetimeIndex(ts + offsets).normalize()
+        cutoff = pd.Series(announce_day, index=events.index)
+        cutoff = cutoff.fillna(ev["tradable_date"])
+    else:
+        cutoff = ev["tradable_date"]
+    ev["__cutoff__"] = cutoff.to_numpy()
 
     merged = ev.merge(est, on=["ticker", "period_end"], how="left")
-    # Estrictamente anterior a la sesión negociable: en la práctica equivale a
-    # `as_of <= tradable_date - 1 día`.
-    merged = merged[merged["as_of"] < merged["tradable_date"]]
+    # Estrictamente anterior al día del anuncio: `as_of <= día_anuncio - 1`.
+    merged = merged[merged["as_of"] < merged["__cutoff__"]]
     merged = merged[
         merged["as_of"] >= merged["tradable_date"] - pd.Timedelta(days=consensus_window_days)
     ]
@@ -704,9 +722,16 @@ CONSENSUS_PIT_WARNING: Final[str] = (
     "intra-trimestre — sirve para SUE de analistas y estudios de evento, NO "
     "para momentum de revisiones (reconstruirlo desde el consenso final es "
     "look-ahead de manual); (2) la lista de tickers padece supervivencia "
-    "parcial (snapshots de 2022 y 2025): empresas excluidas del índice antes "
-    "de esas fechas están infrarrepresentadas, así que toda estadística "
-    "agregada sobre este dataset hereda ese sesgo; (3) los ficheros de "
+    "parcial (snapshots de 2022 y 2025-2026): empresas excluidas del índice "
+    "antes de esas fechas NO están (medido: cobertura del 59,6% de los "
+    "miembros reales del S&P 500 a 2008-06-30, frente a ~93% del último "
+    "snapshot; faltan, entre otros, LEH, BSC, WAMUQ, FNM, FRE, MER, WB y "
+    "NCC — precisamente los eventos con peores retornos post-anuncio de "
+    "2008-2009). Todo backtest o estudio de eventos 1995-2021 construido "
+    "SOLO con este fichero infla el retorno medio por evento y el hit rate "
+    "de los quintiles bajos; el universo PIT debe venir de "
+    "`universe.SP500Universe` (p. ej. `run_event_pipeline(..., universe=...)`); "
+    "(3) los ficheros de "
     "proveedores estilo I/B/E/S llegan reexpresados por splits, y el redondeo "
     "a dos decimales puede fabricar sorpresas espurias correlacionadas con la "
     "rentabilidad (Payne y Thomas 2003)."

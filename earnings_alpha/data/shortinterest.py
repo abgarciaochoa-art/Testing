@@ -858,7 +858,12 @@ class FinraOffExchangeProvider(_FinraQueryMixin, FlowProviderBase):
                     "shares": pd.to_numeric(
                         pd.Series([item.get("totalWeeklyShareQuantity")]), errors="coerce"
                     ).iloc[0],
-                    "tier": str(item.get("tierIdentifier", "T1") or "T1"),
+                    # Sin tier declarado se asume el retardo LARGO (OTC, 4
+                    # semanas), no el corto: equivocarse hacia pronto fabrica
+                    # look-ahead (política del módulo). Si FINRA renombrara el
+                    # campo, todas las filas caerían en el lado conservador en
+                    # vez de adelantar dos semanas la publicación en silencio.
+                    "tier": str(item.get("tierIdentifier") or "OTC"),
                 }
             )
         if not rows:

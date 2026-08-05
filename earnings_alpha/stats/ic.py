@@ -499,6 +499,19 @@ def restrict_to_universe(panel: pd.Series, membership: pd.DataFrame) -> pd.Serie
     panel = _as_panel_series(panel, "panel")
     flags = membership.copy()
     flags.index = pd.to_datetime(flags.index).normalize()
+    # `membership_panel` devuelve por defecto un panel DISPERSO (una fila por
+    # snapshot de composición). Casar por igualdad exacta de fechas descartaría
+    # en silencio toda sesión del panel sin snapshot ese día: se forward-fillea
+    # la pertenencia sobre las fechas del panel (misma semántica PIT que
+    # `backtest.engine._membership_matrix`: vale la última composición conocida).
+    panel_dates = pd.DatetimeIndex(panel.index.get_level_values("date").unique()).sort_values()
+    flags = (
+        flags.reindex(flags.index.union(panel_dates))
+        .ffill()
+        .reindex(panel_dates)
+        .fillna(False)
+        .astype(bool)
+    )
     stacked = flags.stack()
     stacked.index = stacked.index.set_names(["date", "ticker"])
     keep = stacked.reindex(panel.index).fillna(False).astype(bool)

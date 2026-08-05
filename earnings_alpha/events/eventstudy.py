@@ -106,10 +106,16 @@ _PER_EVENT_COLUMNS = (
 def _returns_matrix(prices: pd.DataFrame, kind: ReturnsKind) -> pd.DataFrame:
     """Matriz ancha fecha x ticker de retornos diarios en la unidad pedida.
 
-    Prioridad de fuentes: columna ``log_return`` (canónica del repo) >
-    ``adj_close`` (retorno total) > ``close`` (retorno de precio). Se documenta la
-    elección porque no es inocua: con ``close`` los días ex-dividendo aparecen como
-    retornos negativos espurios.
+    Prioridad de fuentes: ``adj_close`` (retorno **total** por construcción,
+    estilo CRSP) > ``log_return`` > ``close`` (retorno de precio). Se documenta
+    la elección porque no es inocua: con retornos de precio los días
+    ex-dividendo aparecen como retornos negativos espurios, y la columna
+    ``log_return`` del panel sintético (`data/synthetic.py`) es exactamente eso
+    — ``log(close·split_factor/prev_close)``, que incluye la caída mecánica del
+    ex-dividendo. Como los ex-dividendo sintéticos caen sistemáticamente dentro
+    de la ventana post-evento, priorizar ``log_return`` doblaba a la baja la
+    curva CAAR/PEAD (~21 pb en CAAR(+30) medidos). Por eso ``adj_close`` manda
+    cuando existe.
     """
     if not isinstance(prices.index, pd.MultiIndex) or prices.index.nlevels != 2:
         msg = "`prices` debe ser el panel canónico con MultiIndex (date, ticker)"
@@ -119,11 +125,14 @@ def _returns_matrix(prices: pd.DataFrame, kind: ReturnsKind) -> pd.DataFrame:
         msg = f"el panel de precios debe tener índice ['date','ticker']; tiene {names}"
         raise DataQualityError(msg)
 
-    if "log_return" in prices.columns:
+    if "adj_close" in prices.columns and prices["adj_close"].notna().any():
+        level = prices["adj_close"].unstack("ticker").sort_index()
+        with np.errstate(divide="ignore", invalid="ignore"):
+            log_wide = np.log(level).diff()
+    elif "log_return" in prices.columns:
         log_wide = prices["log_return"].unstack("ticker").sort_index()
-    elif "adj_close" in prices.columns or "close" in prices.columns:
-        col = "adj_close" if "adj_close" in prices.columns else "close"
-        level = prices[col].unstack("ticker").sort_index()
+    elif "close" in prices.columns:
+        level = prices["close"].unstack("ticker").sort_index()
         with np.errstate(divide="ignore", invalid="ignore"):
             log_wide = np.log(level).diff()
     else:

@@ -1048,12 +1048,19 @@ class ExternalConsensusProvider(EstimatesProviderBase):
        de analistas y estudios de evento; **NO sirve para momentum de
        revisiones** ni para `analyst_revision_drift` — `require_point_in_time`
        lo rechaza, y debe rechazarlo.
-    2. **Supervivencia parcial.** La lista de tickers procede de snapshots
-       tomados en 2022-2026 (columna `snapshot_date`): las empresas que
-       salieron del índice o desaparecieron antes de esos snapshots están
-       infrarrepresentadas. Cualquier corte transversal histórico construido
-       SOLO con este fichero hereda sesgo de supervivencia; el universo PIT
-       debe venir siempre de `universe.SP500Universe`, y este dataset solo
+    2. **Supervivencia parcial — medida, no solo declarada.** La lista de
+       tickers procede de snapshots tomados en 2022-2026 (columna
+       `snapshot_date`; el 81,5% de las filas viene del snapshot 2022-11-30):
+       las empresas que salieron del índice o desaparecieron antes de esos
+       snapshots NO están. Medido contra los miembros reales del índice:
+       cobertura del **59,6%** a 2008-06-30 (vs ~93% para el último
+       snapshot), y faltan exactamente los quebrados/absorbidos de la crisis
+       (LEH, BSC, WAMUQ, FNM, FRE, MER, WB, NCC, EK...). Cualquier corte
+       transversal histórico construido SOLO con este fichero hereda sesgo de
+       supervivencia que INFLA el retorno medio por evento y el hit rate de
+       los quintiles bajos; el universo PIT debe venir siempre de
+       `universe.SP500Universe` (y los eventos filtrarse a pertenencia PIT,
+       p. ej. `run_event_pipeline(..., universe=...)`); este dataset solo
        aporta los atributos del evento.
     3. **Hora nominal.** `report_time` ∈ {pre-market, post-market, intraday}
        existe solo en ~18 % de las filas; el resto queda `UNKNOWN` y

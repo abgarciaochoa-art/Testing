@@ -424,6 +424,16 @@ def residualize_features(
     menos de ``n_parámetros + min_rows_over_params`` observaciones válidas,
     devuelven NaN (nunca un residuo sobreajustado ni el valor original
     disfrazado de residuo).
+
+    .. warning:: **Look-ahead intra-cohorte conocido y NO resuelto.** La OLS
+       de cada cohorte se estima con TODAS sus observaciones, y las cohortes
+       multi-fecha se fusionan hacia adelante (`cohort_labels`): el residuo de
+       un evento en la fecha T depende de coeficientes estimados con eventos
+       anunciados después de T. Dentro de `SurpriseModel.evaluate` la purga de
+       spans mitiga el daño (los compañeros de cohorte del test se purgan del
+       train), pero usar las features residualizadas como señal negociable en
+       la fecha del evento hereda el look-ahead: el residuo solo es conocible
+       al cierre de la cohorte.
     """
     if cohort_col not in features.columns:
         msg = f"`features` necesita la columna {cohort_col!r}; usa `cohort_labels`"
@@ -876,6 +886,18 @@ class InformedTradingScore:
     Recordatorio de tasa base (informe §12.4, ver `positive_predictive_value`):
     con prevalencia del 2 %, incluso Se=0,80/Sp=0,90 da PPV ≈ 0,14. El score se
     usa para **ponderar exposición**, no como alarma binaria.
+
+    .. warning:: **Look-ahead intra-cohorte conocido y NO resuelto.** Las
+       cohortes de `cohort_labels` fusionan fechas HACIA ADELANTE hasta
+       `min_cohort` eventos: el z-score (y el demeaning por sector) de un
+       evento al principio de la cohorte usa la media y la sigma de eventos
+       anunciados DÍAS DESPUÉS. El score de la fecha T no es computable en
+       tiempo real en T: solo es conocible al cierre de la cohorte. Un
+       backtest que pondere la exposición en T con este score usa información
+       futura y su resultado no es alcanzable por un inversor real. Hasta que
+       la estandarización sea retrospectiva (ventana [T-k, T] o momentos de
+       la cohorte anterior), trátese el score como disponible el ÚLTIMO día
+       de su cohorte, no en la medianoche de T.
     """
 
     weights: Mapping[str, float] | None = None

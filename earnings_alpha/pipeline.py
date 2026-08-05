@@ -108,6 +108,7 @@ from earnings_alpha.stats import (
     forward_returns,
     summarize_ic,
 )
+from earnings_alpha.universe import UniverseProvider
 
 __all__ = [
     "DEFAULT_CONTINUOUS_FACTORS",
@@ -735,6 +736,7 @@ def run_event_pipeline(
     caar_quantiles: int = 5,
     min_group_size: int = 5,
     leaked_event_ids: Sequence[str] | None = None,
+    universe: UniverseProvider | None = None,
 ) -> EventPipelineResult:
     """Pipeline end-to-end del ángulo B: de los anuncios a la rejilla y el CAAR.
 
@@ -771,6 +773,15 @@ def run_event_pipeline(
     ----------
     source:
         `SyntheticMarket` (o compatible) o un `events.preevent.EventContext`.
+    universe:
+        `UniverseProvider` opcional. Si se pasa, los eventos se filtran a los
+        emisores que pertenecían al índice en su `event_date` (pertenencia
+        PIT); los descartados quedan contados en
+        ``params['n_events_outside_universe']``. Con eventos reales derivados
+        de la lista ACTUAL de constituyentes (p. ej. `load_consensus_events`)
+        omitir este filtro incluye toda la historia pre-inclusión — sesgo de
+        selección hacia futuros miembros — y queda anotado en
+        ``params['universe_filter']``.
     model_mode:
         ``"evaluate"`` (CV purgada completa → `SurpriseModelReport`),
         ``"fit"`` (ajuste sobre todo el panel, sin OOS — solo coeficientes) o
@@ -840,6 +851,37 @@ def run_event_pipeline(
     cal = ctx.calendar or get_calendar()
     events = normalize_events(ctx.events, cal)
     prices = ctx.prices
+
+    # ----------------------------------------------- filtro PIT de universo
+    # Sin este filtro, una tabla de eventos construida desde la lista ACTUAL
+    # de miembros (p. ej. `load_consensus_events` sobre consenso_master)
+    # incluye toda la historia PRE-inclusión de los constituyentes de hoy:
+    # el universo efectivo pasa a ser "empresas que ACABARÁN entrando al
+    # índice", una selección condicionada al futuro que infla el retorno
+    # medio por evento y el hit rate. El filtro exige pertenencia en la
+    # propia `event_date` (la sesión negociable del anuncio).
+    n_events_outside_universe = 0
+    if universe is not None:
+        members_cache: dict[object, frozenset[str]] = {}
+        keep_mask = np.zeros(len(events), dtype=bool)
+        for i, (tkr, d) in enumerate(
+            zip(events["ticker"].astype(str), events["event_date"], strict=True)
+        ):
+            day = pd.Timestamp(d).date()
+            members = members_cache.get(day)
+            if members is None:
+                members = frozenset(str(t) for t in universe.members_on(day))
+                members_cache[day] = members
+            keep_mask[i] = tkr in members
+        n_events_outside_universe = int((~keep_mask).sum())
+        events = events.loc[keep_mask].copy()
+        if len(events) == 0:
+            msg = (
+                "el filtro de universo PIT ha descartado todos los eventos: "
+                "revisa que los tickers y fechas del calendario casen con el "
+                "UniverseProvider"
+            )
+            raise InsufficientHistory(msg)
 
     # ------------------------------------------------------------- features
     feats = (
@@ -1044,6 +1086,16 @@ def run_event_pipeline(
         "n_events_features": len(feats),
         "missing_sources": list(feats.attrs.get("missing_sources", [])),
         "n_grid_trials": len(grid),
+        # Auditoría del filtro PIT de universo: sin `universe` los eventos
+        # entran TAL CUAL y, si proceden de la lista actual de miembros del
+        # índice, el resultado hereda sesgo de selección hacia futuros
+        # incluidos (aviso, no error, para no romper el banco sintético).
+        "universe_filter": (
+            type(universe).__name__
+            if universe is not None
+            else "SIN FILTRO: eventos no restringidos a pertenencia PIT"
+        ),
+        "n_events_outside_universe": int(n_events_outside_universe),
     }
     return EventPipelineResult(
         features=feats,

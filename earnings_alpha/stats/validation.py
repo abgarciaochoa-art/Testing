@@ -279,8 +279,18 @@ def purge_and_embargo(
 
     keep = ~overlaps & ~mask_test
     if embargo_steps > 0:
-        test_end = int(test_g1.max())
-        embargoed = (g0 > test_end) & (g0 <= test_end + embargo_steps)
+        # El embargo se aplica tras el fin de CADA segmento de test, no solo
+        # tras el último: `CombinatorialPurgedCV` pasa k grupos NO contiguos
+        # como un único test, y embargar solo tras `max(test_g1)` dejaría en
+        # el entrenamiento las observaciones inmediatamente posteriores a los
+        # demás bloques — exactamente la fuga que el embargo debe eliminar.
+        # Embargar tras cada `t1` de test es un superconjunto seguro del
+        # embargo por bloque: las posiciones interiores a un bloque ya están
+        # excluidas por ser test o por la purga.
+        ends = np.unique(test_g1)
+        pos = np.searchsorted(ends, g0, side="left") - 1
+        prev_end = np.where(pos >= 0, ends[np.clip(pos, 0, None)], -(2**62))
+        embargoed = (g0 > prev_end) & (g0 <= prev_end + embargo_steps)
         keep &= ~embargoed
     return np.flatnonzero(keep)
 

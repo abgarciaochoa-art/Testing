@@ -49,6 +49,7 @@ Referencias
 from __future__ import annotations
 
 import math
+import warnings
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Literal
@@ -551,6 +552,23 @@ def sharpe_ratio(
     skew = float(stats.skew(excess, bias=True))
     kurt = raw_kurtosis(excess)
 
+    method_label = f"sharpe_{ci_method}"
+    if horizon > 1 and ci_method != "bootstrap":
+        # `horizon` solo corrige la dependencia serial en el bootstrap
+        # (longitud de bloque); Mertens y Lo asumen iid. Aceptar el parámetro
+        # y callar daría un IC ~√h veces demasiado estrecho y un PSR inflado
+        # con retornos solapados — exactamente el "t sin corrección declarada"
+        # que prohíbe §1.3. Se avisa y se etiqueta el método como no corregido.
+        warnings.warn(
+            f"sharpe_ratio: horizon={horizon} > 1 se IGNORA con "
+            f"ci_method={ci_method!r} (supuesto iid, sin corrección por "
+            "solapamiento/autocorrelación); usa ci_method='bootstrap' para un "
+            "IC que respete la dependencia serial",
+            UserWarning,
+            stacklevel=2,
+        )
+        method_label = f"sharpe_{ci_method}_iid_sin_correccion_h{horizon}"
+
     boot: BootstrapResult | None = None
     if ci_method == "bootstrap":
         boot = stationary_bootstrap(
@@ -586,7 +604,7 @@ def sharpe_ratio(
         kurtosis=kurt,
         psr_zero=psr(sr, benchmark=0.0, n_obs=n, skew=skew, kurtosis=kurt),
         min_track_record=min_trl(sr, skew=skew, kurtosis=kurt, alpha=alpha),
-        method=f"sharpe_{ci_method}",
+        method=method_label,
         alpha=alpha,
         bootstrap=boot,
     )

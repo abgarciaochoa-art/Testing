@@ -404,11 +404,23 @@ class CrossSectionalBacktest:
             )
             raise DataQualityError(msg)
 
-        rcc_df = adjc.pct_change(fill_method=None)
-        rcc = rcc_df.to_numpy(dtype=float)
+        # `rcc_raw` (sin puentear) alimenta la sigma de costes y la auditoría de
+        # huecos. Los retornos de TENENCIA del bucle diario (`rcc`, `ron`) se
+        # calculan sobre precios FORWARD-FILLEADOS: una posición viva que
+        # atraviesa un hueco de cotización (suspensión, halt) debe realizar en
+        # la sesión de reapertura el movimiento acumulado contra el último
+        # precio conocido — con `pct_change` sin puentear, la reapertura da NaN
+        # (precio previo NaN), el bucle lo convierte en retorno 0 y el
+        # movimiento del hueco (típicamente una caída severa) desaparece del
+        # NAV para siempre. El puenteo DIFIERE el P&L; no lo destruye. La
+        # elegibilidad y `can_trade` siguen usando `valid_price` sin ffill.
+        rcc_raw_df = adjc.pct_change(fill_method=None)
+        rcc_raw = rcc_raw_df.to_numpy(dtype=float)
+        adjc_f = adjc.ffill()
+        rcc = adjc_f.pct_change(fill_method=None).to_numpy(dtype=float)
         adjc_v = adjc.to_numpy(dtype=float)
         if has_open:
-            ron = (adjo / adjc.shift(1) - 1.0).to_numpy(dtype=float)
+            ron = (adjo / adjc_f.shift(1) - 1.0).to_numpy(dtype=float)
             rid = (adjc / adjo - 1.0).to_numpy(dtype=float)
         else:
             ron = rid = np.full((n_dates, n_names), np.nan)
@@ -425,7 +437,7 @@ class CrossSectionalBacktest:
         else:
             adv_m = None
         sig_m = (
-            rcc_df.rolling(vol_window, min_periods=max(5, vol_window // 3))
+            rcc_raw_df.rolling(vol_window, min_periods=max(5, vol_window // 3))
             .std()
             .shift(1)
             .to_numpy(dtype=float)
@@ -564,11 +576,20 @@ class CrossSectionalBacktest:
             contrib = np.zeros(n_names)
 
             held = w != 0.0
-            held_gaps += int((held & ~np.isfinite(rcc[t]) & (last_valid > t)).sum())
+            held_gaps += int((held & ~np.isfinite(rcc_raw[t]) & (last_valid > t)).sum())
 
             if t in targets:
                 if self.execution == "next_open":
-                    r_on_f = np.where(np.isfinite(ron[t]), ron[t], 0.0)
+                    # Posición viva sin 'open' hoy pero con cierre: el retorno
+                    # cierre-a-cierre se atribuye al tramo overnight de la
+                    # posición vieja (r_id queda 0 y `can_trade` ya impide
+                    # operar el nombre). Sin esto, el retorno del día
+                    # desaparecería del backtest sin rastro en la auditoría.
+                    r_on_f = np.where(
+                        np.isfinite(ron[t]),
+                        ron[t],
+                        np.where(np.isfinite(rcc[t]), rcc[t], 0.0),
+                    )
                     port_on = float(w @ r_on_f)
                     self._check_solvent(1.0 + port_on, dates[t], "overnight")
                     w_open = w * (1.0 + r_on_f) / (1.0 + port_on)
