@@ -1,0 +1,210 @@
+{
+ "elecciones": {
+  "líquidas siempre · máx. 1x": {
+   "D1": {
+    "kmin": 2,
+    "uso": "filtro",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 2,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.333
+   }
+  },
+  "líquidas siempre · máx. 1.5x": {
+   "D1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.5
+   }
+  },
+  "líquidas siempre · máx. 2x": {
+   "D1": {
+    "kmin": 2,
+    "uso": "filtro",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.333
+   }
+  },
+  "líquidas / baja vol. · máx. 1x": {
+   "D1": {
+    "kmin": 2,
+    "uso": "filtro",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 2,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.333
+   }
+  },
+  "líquidas / baja vol. · máx. 1.5x": {
+   "D1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.5
+   }
+  },
+  "líquidas / baja vol. · máx. 2x": {
+   "D1": {
+    "kmin": 2,
+    "uso": "filtro",
+    "tam": "base",
+    "frac": 0.5
+   },
+   "C1": {
+    "kmin": 0,
+    "uso": "prioridad",
+    "tam": "base",
+    "frac": 0.333
+   }
+  }
+ },
+ "episodios": {
+  "líquidas siempre · máx. 1x": [
+   {
+    "pico": "2008-07-30",
+    "valle": "2009-03-06",
+    "recupera": "2010-09-24",
+    "caida": -0.602208641901787
+   },
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-23",
+    "recupera": "2020-06-05",
+    "caida": -0.3590657951086662
+   },
+   {
+    "pico": "2022-03-29",
+    "valle": "2023-01-05",
+    "recupera": "2024-03-01",
+    "caida": -0.34470931759019807
+   }
+  ],
+  "líquidas siempre · máx. 1.5x": [
+   {
+    "pico": "2007-07-19",
+    "valle": "2009-03-06",
+    "recupera": "2010-05-12",
+    "caida": -0.5956063820356432
+   },
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-16",
+    "recupera": "2020-08-24",
+    "caida": -0.4753379738817346
+   },
+   {
+    "pico": "2022-01-03",
+    "valle": "2023-03-17",
+    "recupera": "2024-03-01",
+    "caida": -0.3929638768348731
+   }
+  ],
+  "líquidas siempre · máx. 2x": [
+   {
+    "pico": "2007-07-19",
+    "valle": "2009-03-06",
+    "recupera": "2010-12-10",
+    "caida": -0.6661443740716552
+   },
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-18",
+    "recupera": "2020-10-05",
+    "caida": -0.5202913447756046
+   },
+   {
+    "pico": "2022-01-03",
+    "valle": "2023-03-17",
+    "recupera": "2024-03-01",
+    "caida": -0.4071033496167865
+   }
+  ],
+  "líquidas / baja vol. · máx. 1x": [
+   {
+    "pico": "2008-10-01",
+    "valle": "2009-03-09",
+    "recupera": "2009-12-14",
+    "caida": -0.41097196423488813
+   },
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-23",
+    "recupera": "2020-06-08",
+    "caida": -0.3563838121472852
+   },
+   {
+    "pico": "2022-01-03",
+    "valle": "2023-03-17",
+    "recupera": "2024-02-02",
+    "caida": -0.2742721371825426
+   }
+  ],
+  "líquidas / baja vol. · máx. 1.5x": [
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-16",
+    "recupera": "2020-08-26",
+    "caida": -0.47567007902675396
+   },
+   {
+    "pico": "2007-07-19",
+    "valle": "2009-03-09",
+    "recupera": "2009-09-16",
+    "caida": -0.42197573629547913
+   },
+   {
+    "pico": "2018-10-16",
+    "valle": "2018-12-24",
+    "recupera": "2020-02-05",
+    "caida": -0.343601272662038
+   }
+  ],
+  "líquidas / baja vol. · máx. 2x": [
+   {
+    "pico": "2020-02-19",
+    "valle": "2020-03-18",
+    "recupera": "2020-10-09",
+    "caida": -0.5223159500173946
+   },
+   {
+    "pico": "2007-07-19",
+    "valle": "2009-03-05",
+    "recupera": "2010-03-23",
+    "caida": -0.5106004014815542
+   },
+   {
+    "pico": "2025-02-19",
+    "valle": "2025-03-10",
+    "recupera": "2025-10-24",
+    "caida": -0.37883157040411586
+   }
+  ]
+ }
+}

@@ -2,24 +2,27 @@
 
 Investigación sobre **acciones reales del S&P 500 con pertenencia point-in-time**
 (2002-01 → 2026-10), con costes de 10 pb por lado y ejecución a la apertura siguiente.
-Se probaron **~11.000 carteras** en cuatro rondas, y todas cuentan en las
+Se probaron **~11.000 carteras** en cinco rondas, y todas cuentan en las
 correcciones por minería de datos.
 
-> **Estado actual (ronda 4).** Cartera D1 + C1 (50 % cada una, capital separado), con
-> reserva SPY/SHY por tendencia y palanca solo en tendencia. Tres niveles según la
-> **exposición bruta real máxima** (acciones + SPY de la reserva):
+> **Estado actual (ronda 5).** Estrategia **D1 con entradas técnicas, solo acciones**
+> (sin ETFs ni efectivo). Compra caídas ≥15 % desde el máximo de 20 días de acciones
+> en tendencia, con ≥5 módulos de origen de la caída y ≥2 banderas técnicas (estirada
+> bajo EMA5/EMA10/WMA20/VWAP10, Bollinger, estocástico, SMA50, clímax de volumen, OBV).
+> El resto del capital está en acciones: las 100 más líquidas en tendencia y las 50 de
+> menor volatilidad fuera de ella.
 >
-> | | Nivel 1 · máx. 1× (sin deuda) | Nivel 2 · máx. 1,5× | **Nivel 3 · máx. 2×** | SPY |
+> | | Máx. 1× (sin deuda) | **Máx. 1,5×** | Máx. 2× | SPY |
 > |---|---|---|---|---|
-> | CAGR validación 2002-sep21 | 18,7 % | 21,3 % | **23,0 %** | 8,9 % |
-> | CAGR 2002-2025 | 18,2 % | 20,9 % | **22,8 %** | 9,7 % |
-> | CAGR 2002-2026 | 21,0 % | 24,7 % | **26,8 %** | 10,0 % |
-> | Caída máxima | -34 % | -45 % | -46 % | -55 % |
-> | Sharpe | 0,94 | 0,93 | 0,93 | 0,60 |
+> | CAGR validación 2002-sep21 | 20,4 % | **23,0 %** | 24,4 % | 8,9 % |
+> | CAGR 2002-2025 | 21,4 % | **23,6 %** | 24,8 % | 9,7 % |
+> | CAGR 2002-2026 | 25,8 % | **28,3 %** | 30,7 % | 10,0 % |
+> | Caída máxima | -45 % | **-45 %** | -48 % | -55 % |
+> | Sharpe | 0,97 | 0,93 | 0,91 | 0,60 |
 >
-> El Sharpe deflactado supera el listón del repo (0,95) con el número efectivo de
-> pruebas independientes (205), pero no con el bruto (~11.000). Según la regla del repo
-> es **zona gris: prometedora y explicable, no demostrada**.
+> El Sharpe deflactado es el mejor del proyecto (0,54 con N bruto ~10.500; 0,996 con N
+> efectivo 205). Sigue siendo, según la regla del repo, **zona gris: prometedora y
+> explicable, no demostrada**.
 
 ## Datos: por qué fiarse de ellos
 
@@ -272,6 +275,92 @@ próxima apertura, la exposición y la deuda. También muestra el estado de la r
 para cada candidata de D1, **qué módulos cumple**. Con `--refrescar` descarga precios
 nuevos y lo recalcula todo con las banderas y el modelo **congelados**.
 
+## 6. Ronda 5: entradas técnicas y solo acciones (sin ETFs ni efectivo)
+
+**Requisitos:** sin ETFs ni efectivo. La reserva pasa a ser una cesta de acciones del
+S&P 500 y SPY se usa solo como **señal** de régimen, nunca se compra.
+
+**Rasgos técnicos** (`tecnicos.py`, 32 indicadores en las 554.471 caídas, 30 s):
+- medias: distancia a EMA5/10/20/50, SMA50/100 y **WMA20**; canal de Keltner; pendiente
+  de SMA50/200; EMA20 sobre EMA50 antes de la caída;
+- **VWAP de 10 y 20 días** (precio típico × volumen);
+- volatilidad: ATR%, caída en ATR, ATR5/ATR20, z y ancho de Bollinger;
+- osciladores: RSI14, RSI2, estocástico %K, histograma y giro del MACD;
+- volumen: MFI, Chaikin Money Flow, pendiente del OBV, volumen en días bajistas,
+  clímax de volumen;
+- velas: sombra inferior (martillo), cuerpo, giro clave; distancia al mínimo anual.
+
+**Qué mejora la entrada** (`modulos_tec.py`). Se probaron 128 banderas (cuantiles con
+cortes de la búsqueda). **11 salen elegidas solo con la búsqueda**, porque mejoran en
+sus dos mitades y en D1 y C1, y **las 11 mejoran también en la validación 2002-21, en
+los dos componentes**:
+
+| Bandera (cortes de la búsqueda) | Mejora D1 valid. | Mejora C1 valid. |
+|---|---|---|
+| precio ≥5,3 % bajo la **EMA5** | +0,90 pp | +0,80 pp |
+| precio ≥3,4 % bajo la EMA5 | +0,75 pp | +0,32 pp |
+| precio ≥5,5 % bajo la **EMA10** | +0,63 pp | +0,54 pp |
+| precio ≥7,2 % bajo la **WMA20** | +0,57 pp | +0,67 pp |
+| precio ≥6,4 % bajo la **VWAP de 10 días** | +0,80 pp | +0,71 pp |
+| z de **Bollinger** < -1,66 | +0,45 pp | +0,08 pp |
+| **estocástico** %K < 0,11 | +0,85 pp | +0,20 pp |
+| precio ≥12,6 % bajo la **SMA50** | +0,63 pp | +1,71 pp |
+| precio ≥7,1 % bajo la SMA50 | +0,24 pp | +0,21 pp |
+| **clímax de volumen** (≥61 % del máximo de 60 d) | +0,51 pp | +0,09 pp |
+| **OBV** cayendo con fuerza (Q1) | +0,38 pp | +0,21 pp |
+
+**Lectura:** las mejores compras son las acciones **más estiradas por debajo de sus
+medias cortas y de su VWAP**, es decir, por debajo del precio medio de quien compró en
+las últimas dos semanas. Mejor aún si hay **capitulación** (volumen de clímax, OBV
+desplomándose). Con 8 o más banderas, la operación media de D1 gana +3,0 % (búsqueda)
+y +3,1 % (validación), frente a +0,1 % y +0,6 % con ninguna.
+
+**Lo que no funcionó:**
+- **Órdenes límite para comprar más barato** (`limites.py`). Con un límite 0,25-0,5·ATR
+  bajo el cierre, las operaciones ejecutadas ganan +0,6-1,7 puntos más, pero se pierde
+  el 30-65 % de las señales (las que no bajan intradía suelen ser las que rebotan
+  fuerte). Por señal, comprar a mercado en la apertura rinde más. Descartadas.
+- **Ampliar a caídas menores** (≥10-12 %) con la puntuación conjunta (`ronda5c.py`):
+  entran más operaciones, pero con menos ventaja, y desplazan a las buenas.
+- **Mezclar D1 con C1**: con el filtro técnico, D1 tiene tanta ventaja que C1 diluye
+  (22,9 % frente a 25,8 % sin deuda).
+
+**Reserva solo de acciones** (`reservas.py`; CAGR total / validación / caída máx.):
+equiponderada de miembros 9,9 % / 10,1 % / -60 %; 50 más líquidas 10,1 % / 8,1 % /
+-61 %; **100 más líquidas ponderadas por volumen en dólares** 11,7 % / 9,2 % / -63 %;
+50 de menor volatilidad 9,1 % / 9,9 % / -36 %; **líquidas en tendencia y baja
+volatilidad fuera** 10,5 % / 8,9 % / **-42 %**.
+
+### Estrategia definitiva (`definitiva.py`)
+
+Reglas de entrada (señal al cierre, compra a la apertura siguiente): miembro líquido
+sobre su SMA200, caída ≥15 % desde el máximo de 20 d, ≥5 módulos de origen y **≥2
+banderas técnicas**. Hasta 5 posiciones de **medio capital** con convicción (medio
+hueco con 5 módulos, uno con ≥6; nunca más del 50 %). Salida: cierre > SMA10 (máx. 20
+sesiones). Palanca solo en tendencia, escalada por volatilidad, con **mantenimiento**:
+si la exposición supera un 20 % el tope, se vende reserva para devolver deuda.
+
+| D1-técnica | Validación | 2002-25 | **Total** | Caída máx. | Sharpe | Exposición máx. | Costes ×3 | 1 día tarde | Deuda 7 % |
+|---|---|---|---|---|---|---|---|---|---|
+| Máx. 1× | 20,4 % | 21,4 % | **25,8 %** | -45 % | 0,97 | 1,00 | 21,4 % | 19,0 % | — |
+| **Máx. 1,5×** | 23,0 % | 23,6 % | **28,3 %** | -45 % | 0,93 | 1,76 | 23,2 % | 22,2 % | 28,2 % |
+| Máx. 2× | 24,4 % | 24,8 % | **30,7 %** | -48 % | 0,91 | 2,48 | 24,9 % | 23,5 % | 30,4 % |
+| *D1 + C1 técnicas, 1×* | 19,0 % | 19,9 % | 22,9 % | -41 % | 0,93 | | | | |
+| SPY | 8,9 % | 9,7 % | 10,0 % | -55 % | 0,60 | | | | |
+
+- 688 operaciones en 25 años, 69 % de acierto, +2,0 % de media por operación.
+- **Peores episodios:** 2008 (-45 % sin deuda, frente al -55 % de SPY), finales de 2018
+  y el Covid (-30 %).
+- **La ejecución importa:** entrando un día tarde, el nivel sin deuda baja del 25,8 % al
+  19,0 %. Las acciones más estiradas rebotan rápido.
+
+### Señales del último día (`senales_hoy.py`)
+
+`python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]` (nivel 2 por
+defecto) muestra las posiciones abiertas (simulación continua desde 2002), las órdenes
+de la próxima apertura, la exposición, la deuda y el estado de la reserva. Para cada
+candidata, muestra **qué módulos y qué banderas técnicas cumple**.
+
 ## Reproducir
 
 ```bash
@@ -293,6 +382,10 @@ python research/caidas/reservas.py && python research/caidas/ronda4.py && python
 python research/caidas/salidas.py && python research/caidas/etfs.py && python research/caidas/componente_etf.py
 python research/caidas/tres_componentes.py && python research/caidas/unificada.py
 python research/caidas/dsr_efectivo.py && python research/caidas/ronda4_final.py
+# ronda 5 (solo acciones, entradas técnicas)
+python research/caidas/tecnicos.py && python research/caidas/modulos_tec.py && python research/caidas/limites.py
+python research/caidas/ronda5.py && python research/caidas/ronda5b.py && python research/caidas/ronda5c.py
+python research/caidas/dsr_efectivo.py && python research/caidas/ronda5_final.py && python research/caidas/definitiva.py
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 

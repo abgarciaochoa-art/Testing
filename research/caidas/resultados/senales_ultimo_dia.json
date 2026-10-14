@@ -1,80 +1,43 @@
 {
  "fecha_datos": "2026-10-12",
- "nivel": 3,
- "config": {
-  "palanca_off": 1.0,
-  "K": 5,
-  "frac": 0.3333333333333333,
-  "reserva_": "spy_vg_shy",
-  "palanca": 2.0,
-  "vol_objetivo": 0.15
- },
- "componentes": {
-  "D1": {
-   "posiciones_abiertas": [
-    {
-     "ticker": "SNDK",
-     "entrada": "2026-10-12",
-     "px_ent": 1538.114990234375,
-     "px_ultimo": 1487.3299560546875,
-     "ret_latente": -0.03301770966548412,
-     "peso_entrada": 0.16666666666666666
-    },
-    {
-     "ticker": "STX",
-     "entrada": "2026-10-09",
-     "px_ent": 784.1599731445312,
-     "px_ultimo": 753.25,
-     "ret_latente": -0.039417943025809254,
-     "peso_entrada": 0.3333333333333333
-    }
-   ],
-   "ordenes_proxima_apertura": [],
-   "deuda_sobre_capital": 0.502646368008452,
-   "exposicion_acciones": 0.4881346684008778
-  },
-  "C1": {
-   "posiciones_abiertas": [],
-   "ordenes_proxima_apertura": [],
-   "deuda_sobre_capital": 0.0,
-   "exposicion_acciones": 0.0
-  }
- },
- "candidatas_D1_ultimo_dia": [
+ "nivel": 2,
+ "palanca_max": 1.5,
+ "reserva_en_tendencia": true,
+ "posiciones_abiertas": [
   {
    "ticker": "SNDK",
-   "caída desde máx. 20d": "-21.2%",
-   "módulos a favor": 5,
-   "entra (≥5)": true,
-   "detalle": "gemela también cae ≥5 %; z > -2; momentum 12m: mom12 ≥ 30 %; ≥15 % sobre (muy extendida); grandes (tercio superior)"
+   "entrada": "2026-10-12",
+   "px_ent": 1538.114990234375,
+   "px_ultimo": 1487.3299560546875,
+   "ret_latente": -0.03301770966548412,
+   "peso_entrada": 0.25
   },
   {
    "ticker": "STX",
-   "caída desde máx. 20d": "-20.3%",
-   "módulos a favor": 5,
-   "entra (≥5)": true,
-   "detalle": "gemela también cae ≥5 %; z > -2; IBS: cierra en mínimos (IBS ≤0.2); momentum 12m: mom12 ≥ 30 %; grandes (tercio superior)"
+   "entrada": "2026-10-09",
+   "px_ent": 784.1599731445312,
+   "px_ultimo": 753.25,
+   "ret_latente": -0.039417943025809254,
+   "peso_entrada": 0.5
+  }
+ ],
+ "ordenes_proxima_apertura": [],
+ "candidatas_ultimo_dia": [
+  {
+   "ticker": "SNDK",
+   "módulos": 5,
+   "técnicas": 7,
+   "entra": true,
+   "módulos a favor": "gemela también cae ≥5 %; z > -2; momentum 12m: mom12 ≥ 30 %; ≥15 % sobre (muy extendida); grandes (tercio superior)",
+   "técnicas a favor": "bb_z20 < -1.663; dist_ema5 ≤ -0.05319; dist_ema5 < -0.03449; dist_ema10 < -0.05533; dist_wma20 < -0.07219; estoc14 < 0.1087; dist_vwap10 < -0.06401"
   },
   {
-   "ticker": "INTC",
-   "caída desde máx. 20d": "-20.4%",
-   "módulos a favor": 3,
-   "entra (≥5)": false,
-   "detalle": "momentum 12m: mom12 ≥ 30 %; ≥15 % sobre (muy extendida); grandes (tercio superior)"
-  },
-  {
-   "ticker": "CF",
-   "caída desde máx. 20d": "-15.5%",
-   "módulos a favor": 2,
-   "entra (≥5)": false,
-   "detalle": "z > -2; momentum 12m: mom12 ≥ 30 %"
-  },
-  {
-   "ticker": "SWKS",
-   "caída desde máx. 20d": "-18.3%",
-   "módulos a favor": 1,
-   "entra (≥5)": false,
-   "detalle": "IBS: cierra en mínimos (IBS ≤0.2)"
+   "ticker": "STX",
+   "módulos": 5,
+   "técnicas": 6,
+   "entra": true,
+   "módulos a favor": "gemela también cae ≥5 %; z > -2; IBS: cierra en mínimos (IBS ≤0.2); momentum 12m: mom12 ≥ 30 %; grandes (tercio superior)",
+   "técnicas a favor": "dist_ema5 < -0.03449; dist_ema10 < -0.05533; dist_sma50 < -0.07131; dist_wma20 < -0.07219; estoc14 < 0.1087; dist_vwap10 < -0.06401"
   }
  ]
 }

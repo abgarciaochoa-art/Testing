@@ -20,7 +20,14 @@ Candidatas (fijadas ANTES de mirar resultados):
   PIT, líquidas) con mayor momentum 12-1 (Jegadeesh-Titman), formada al cierre de fin
   de mes y comprada a la apertura siguiente; 10 pb sobre lo negociado.
 - ``mom20_tend_shy`` / ``mom50_tend_shy``: momentum en tendencia, SHY fuera.
-- ``ew``: equiponderada mensual de todos los miembros PIT líquidos.
+- ``ew``: equiponderada mensual de todos los miembros PIT líquidos (solo acciones).
+- ``liq50``: las 50 acciones miembro más líquidas (volumen en dólares de 60 d),
+  equiponderadas, mensual (solo acciones).
+- ``liq100_dv``: las 100 más líquidas ponderadas por volumen en dólares, mensual
+  (solo acciones; aproximación a un índice por capitalización).
+- ``minvol50``: las 50 de menor volatilidad (252 d), equiponderadas (solo acciones).
+- ``liq100_tend_minvol``: ``liq100_dv`` con SPY > SMA200 (SPY solo como señal) y
+  ``minvol50`` fuera de tendencia (solo acciones, siempre invertida).
 - ``qqq``: solo como referencia (elegirla sería sesgo retrospectivo).
 - ``spy_vg_shy``: SPY gestionado por volatilidad en tendencia (objetivo 15 %, máx. 1,5x),
   SHY fuera (Moreira y Muir, 2017).
@@ -59,7 +66,7 @@ def etf(ticker: str) -> tuple[np.ndarray, np.ndarray]:
     return o, c
 
 
-def cesta(seleccion: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def cesta(seleccion: np.ndarray, pesos: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Valor de apertura (antes de rebalancear) y de cierre de una cesta equiponderada
     que se rebalancea a la apertura del día siguiente a cada fin de mes.
 
@@ -87,13 +94,18 @@ def cesta(seleccion: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
             elegidas = reb[t]
             po = np.where(np.isnan(O[t]), CF[t - 1] if t else O[t], O[t])
             ok = elegidas[~np.isnan(po[elegidas])]
+            if pesos is None:
+                w = np.full(len(ok), 1.0 / len(ok))
+            else:
+                w = np.nan_to_num(pesos[t - 1, ok])
+                w = w / w.sum() if w.sum() > 0 else np.full(len(ok), 1.0 / len(ok))
             actual = u * np.nan_to_num(po)
             objetivo = np.zeros(N)
-            objetivo[ok] = v_pre / len(ok)
+            objetivo[ok] = v_pre * w
             coste = COSTE_CESTA * (np.abs(objetivo - actual).sum() + (efectivo if empezado else 0.0))
             v_post = v_pre - coste
             u = np.zeros(N)
-            u[ok] = v_post / len(ok) / po[ok]
+            u[ok] = v_post * w / po[ok]
             efectivo = 0.0
             empezado = True
         v_ap[t] = v_pre
@@ -234,6 +246,25 @@ def construir() -> dict:
     shy, ief = etf("SHY"), etf("IEF")
     cestas = {f"mom{n}": cesta(sel[n]) for n in (20, 50)}
     cestas["ew"] = cesta(base | (p.miembro & liq))
+    # cestas SOLO de acciones por liquidez (aprox. a un índice por capitalización)
+    dv = pd.DataFrame(p.raw_close * p.volume).rolling(60, min_periods=20).mean().to_numpy()
+    dv_m = np.where(p.miembro & liq, np.nan_to_num(dv), -1.0)
+    for n in (50, 100):
+        s_n = np.zeros(c.shape, dtype=bool)
+        top = np.argsort(-dv_m, axis=1)[:, :n]
+        s_n[np.arange(len(c))[:, None], top] = True
+        sel[f"liq{n}"] = s_n & p.miembro & liq & (dv_m > 0)
+    cestas["liq50"] = cesta(sel["liq50"])
+    cestas["liq100_dv"] = cesta(sel["liq100"], pesos=np.nan_to_num(dv))
+    # defensiva SOLO de acciones: las 50 miembro de menor volatilidad de 252 d (Baker,
+    # Bradley y Wurgler, 2011), equiponderadas, mensual
+    r1 = pd.DataFrame(c).pct_change()
+    vol252 = r1.rolling(252, min_periods=200).std().to_numpy()
+    v_m = np.where(p.miembro & liq & ~np.isnan(vol252), vol252, np.inf)
+    s_v = np.zeros(c.shape, dtype=bool)
+    bajos = np.argsort(v_m, axis=1)[:, :50]
+    s_v[np.arange(len(c))[:, None], bajos] = True
+    cestas["minvol50"] = cesta(s_v & np.isfinite(v_m))
     R = {
         "spy": componer(spy, None, None, 0.0),
         "spy_tend": componer(spy, None, reg, COSTE_ETF),
@@ -244,6 +275,11 @@ def construir() -> dict:
         "mom20_tend_shy": componer(cestas["mom20"], shy, reg, COSTE_CESTA),
         "mom50_tend_shy": componer(cestas["mom50"], shy, reg, COSTE_CESTA),
         "ew": componer(cestas["ew"], None, None, 0.0),
+        "liq50": componer(cestas["liq50"], None, None, 0.0),
+        "liq100_dv": componer(cestas["liq100_dv"], None, None, 0.0),
+        "minvol50": componer(cestas["minvol50"], None, None, 0.0),
+        # en tendencia las 100 más líquidas; fuera, las 50 de menor volatilidad (todo acciones)
+        "liq100_tend_minvol": _siempre_invertida(componer(cestas["liq100_dv"], cestas["minvol50"], reg, 2 * COSTE_CESTA)),
         "qqq": componer(etf("QQQ"), None, None, 0.0),
         "spy15_tend_shy": _escalar(componer(apalancado(spy, 1.5), shy, reg, COSTE_ETF), 1.5),
         "spy_vg_shy": gestionada(spy, shy, reg, 0.15, 1.5),
@@ -252,6 +288,13 @@ def construir() -> dict:
     np.savez(SALIDA, **{f"{k}__{i}": v for k, arrs in R.items()
                         for i, v in zip(("rn", "rd", "cambio", "activa", "expo"), arrs, strict=True)})
     return R
+
+
+def _siempre_invertida(r: tuple) -> tuple:
+    """Reserva que siempre está en acciones (también en su lado defensivo): activa y con
+    exposición 1 en todo momento (la palanca de las compras se calcula sobre eso)."""
+    T = len(r[0])
+    return r[0], r[1], r[2], np.ones(T, dtype=bool), np.ones(T)
 
 
 def _escalar(r: tuple, L: float) -> tuple:

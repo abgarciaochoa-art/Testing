@@ -82,6 +82,22 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
                 abierta[j] = False
                 pend_sal[j] = False
                 u[j] = 0.0
+        # mantenimiento de margen: si la exposición bruta real supera un 20 % el tope,
+        # se vende reserva a la apertura para devolver deuda hasta volver al tope
+        if deuda > 0:
+            valor_m = 0.0
+            for j in range(N):
+                if abierta[j]:
+                    px = O[t, j] if not np.isnan(O[t, j]) else CF[t - 1, j]
+                    valor_m += u[j] * px
+            eq_m = cash + valor_m - deuda
+            bruto_m = valor_m + cash * expo_res[t]
+            if eq_m > 0 and bruto_m > 1.2 * pal_t[t] * eq_m and expo_res[t] > 0:
+                exceso = bruto_m - pal_t[t] * eq_m
+                vender = min(cash, exceso / expo_res[t], deuda)
+                cash -= vender
+                deuda -= vender
+                mov_res -= vender
         # entradas a la apertura
         if npend > 0:
             valor_ap = 0.0
@@ -227,7 +243,7 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
     t0 = int(np.searchsorted(p.fechas, np.datetime64(inicio)))
     t1 = T if fin is None else int(np.searchsorted(p.fechas, np.datetime64(fin)))
     rn, rd, cb, act, ex = reserva(reserva_)
-    coste_res = 10e-4 if reserva_.startswith(("mom", "ew")) else 2e-4
+    coste_res = 10e-4 if reserva_.startswith(("mom", "ew", "liq")) else 2e-4
     eq, expo, lev, n_tr, suma, gan, reg, pendientes, deuda = _simular(
         p.open, p.close_ff, p.close, p.ultimo, b["salidas"][salida], ptr, j, peso, K,
         (1.0 / K) if frac is None else frac, H, coste_bps / 1e4, t0, t1, rn, rd, cb, act, ex, coste_res,
