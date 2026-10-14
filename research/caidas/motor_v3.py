@@ -28,7 +28,7 @@ import reservas as rs
 
 @numba.njit(cache=True)
 def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, rd, cambio, activa,
-             expo_res, coste_res, pal_t, tasa_dia):
+             expo_res, coste_res, pal_t, tasa_dia, max_t2):
     T, N = C.shape
     MAXR = 50000
     reg = np.full((MAXR, 6), np.nan)  # t_entrada, t_salida, j, px_entrada, px_salida, peso_cartera
@@ -182,8 +182,15 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
                 j = cj[q]
                 if abierta[j]:
                     continue
+                w_q = cw[q]
+                if w_q < 0:
+                    # candidata de SEGUNDA FILA (peso negativo): solo si la cartera de caídas
+                    # está casi vacía (menos de max_t2 posiciones abiertas o ya elegidas)
+                    if (nab - nsal) + npend >= max_t2:
+                        continue
+                    w_q = -w_q
                 pend[npend] = j
-                pend_w[npend] = cw[q]
+                pend_w[npend] = w_q
                 npend += 1
                 if npend >= libres:
                     break
@@ -226,7 +233,7 @@ def vector_palanca(palanca: float, palanca_off: float | None = None, vol_objetiv
 
 def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_bps=10.0, reserva_="spy",
             palanca=1.0, palanca_off=None, vol_objetivo=None, tasa_deuda=0.05, inicio="2002-01-02",
-            fin=None, detalle=False) -> dict:
+            fin=None, detalle=False, max_t2=0) -> dict:
     """``palanca``: exposición bruta máxima con SPY > SMA200 (al cierre anterior);
     ``palanca_off``: la máxima fuera de tendencia (por defecto, la misma);
     ``vol_objetivo``: si se da, la palanca se reduce cuando la volatilidad de SPY sube."""
@@ -247,7 +254,7 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
     eq, expo, lev, n_tr, suma, gan, reg, pendientes, deuda = _simular(
         p.open, p.close_ff, p.close, p.ultimo, b["salidas"][salida], ptr, j, peso, K,
         (1.0 / K) if frac is None else frac, H, coste_bps / 1e4, t0, t1, rn, rd, cb, act, ex, coste_res,
-        vector_palanca(palanca, palanca_off, vol_objetivo), (1 + tasa_deuda) ** (1 / 252) - 1)
+        vector_palanca(palanca, palanca_off, vol_objetivo), (1 + tasa_deuda) ** (1 / 252) - 1, max_t2)
     idx = pd.DatetimeIndex(p.fechas[t0:t1])
     eq = pd.Series(eq, idx)
     out = m.metricas(eq) if eq.iloc[-1] > 0 else {"cagr": -1.0, "vol": np.nan, "sharpe": np.nan,

@@ -5,24 +5,25 @@ Investigación sobre **acciones reales del S&P 500 con pertenencia point-in-time
 Se probaron **~11.000 carteras** en cinco rondas, y todas cuentan en las
 correcciones por minería de datos.
 
-> **Estado actual (ronda 5).** Estrategia **D1 con entradas técnicas, solo acciones**
-> (sin ETFs ni efectivo). Compra caídas ≥15 % desde el máximo de 20 días de acciones
-> en tendencia, con ≥5 módulos de origen de la caída y ≥2 banderas técnicas (estirada
-> bajo EMA5/EMA10/WMA20/VWAP10, Bollinger, estocástico, SMA50, clímax de volumen, OBV).
-> El resto del capital está en acciones: las 100 más líquidas en tendencia y las 50 de
-> menor volatilidad fuera de ella.
+> **Estado actual (ronda 6).** Estrategia **D1 con entradas técnicas, solo acciones**
+> (sin ETFs ni efectivo) y **reserva contracíclica**. Compra caídas ≥15 % desde el
+> máximo de 20 días de acciones en tendencia, con ≥5 módulos de origen de la caída y ≥2
+> banderas técnicas. El resto del capital está siempre en acciones: en calma y en
+> tendencia, hasta 1,5× las 100 más líquidas (según la volatilidad de SPY, usado solo
+> como señal), y el resto y fuera de tendencia, las 50 de menor volatilidad. La deuda
+> trabaja en calma en la reserva y en volatilidad en las caídas.
 >
-> | | Máx. 1× (sin deuda) | **Máx. 1,5×** | Máx. 2× | SPY |
+> | | Nivel 1 · sin deuda | **Nivel 2 · contracíclica (máx. 1,5×)** | Nivel 3 · + caídas hasta 2× | SPY |
 > |---|---|---|---|---|
-> | CAGR validación 2002-sep21 | 20,4 % | **23,0 %** | 24,4 % | 8,9 % |
-> | CAGR 2002-2025 | 21,4 % | **23,6 %** | 24,8 % | 9,7 % |
-> | CAGR 2002-2026 | 25,8 % | **28,3 %** | 30,7 % | 10,0 % |
-> | Caída máxima | -45 % | **-45 %** | -48 % | -55 % |
-> | Sharpe | 0,97 | 0,93 | 0,91 | 0,60 |
+> | CAGR validación 2002-sep21 | 20,4 % | **21,8 %** | 25,8 % | 8,9 % |
+> | CAGR 2002-2025 | 21,4 % | **23,7 %** | 27,2 % | 9,7 % |
+> | CAGR 2002-2026 | 25,8 % | **27,7 %** | 32,7 % | 10,0 % |
+> | Caída máxima | -45 % | **-45 %** | -49 % | -55 % |
+> | Sharpe | 0,97 | **0,99** | 0,94 | 0,60 |
 >
-> El Sharpe deflactado es el mejor del proyecto (0,54 con N bruto ~10.500; 0,996 con N
-> efectivo 205). Sigue siendo, según la regla del repo, **zona gris: prometedora y
-> explicable, no demostrada**.
+> Sharpe deflactado: 0,59 con N bruto (~10.500) y 0,997 con N efectivo (205). Es el
+> mejor del proyecto, pero según la regla del repo sigue siendo **zona gris:
+> prometedora y explicable, no demostrada**.
 
 ## Datos: por qué fiarse de ellos
 
@@ -356,10 +357,53 @@ si la exposición supera un 20 % el tope, se vende reserva para devolver deuda.
 
 ### Señales del último día (`senales_hoy.py`)
 
-`python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]` (nivel 2 por
-defecto) muestra las posiciones abiertas (simulación continua desde 2002), las órdenes
+`python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]` (nivel 2, el de la
+reserva contracíclica, por defecto) muestra las posiciones abiertas (simulación continua desde 2002), las órdenes
 de la próxima apertura, la exposición, la deuda y el estado de la reserva. Para cada
 candidata, muestra **qué módulos y qué banderas técnicas cumple**.
+
+## 7. Ronda 6: complementos para cuando hay pocas caídas
+
+**Problema:** en mercados tranquilos y alcistas apenas hay caídas que comprar. El
+capital queda en la reserva pasiva y la capacidad de deuda sin usar.
+
+**Complementos probados y descartados** (`complementos.py`, `reservas.py`,
+`segunda_fila.py`; misma metodología, solo acciones):
+
+| Idea | Fundamento | Resultado |
+|---|---|---|
+| Saltos al alza con noticia | cara opuesta de "la caída con noticia sigue" | negativo en la búsqueda 1, sin significación en la validación |
+| Máximos de 52 semanas | anclaje (George y Hwang, 2004) | exceso **negativo** en las grandes del S&P (t = -1,9) |
+| Expulsadas del S&P 500 | rebote tras la venta forzada | +24 % a 60 d en la validación, pero t 1,4 y negativo en la búsqueda (60 casos) |
+| Retrocesos suaves de líderes | caídas del 3-8 % en momentum fuerte | +1,4 % en la búsqueda 1, ~0 en el resto |
+| Caídas del propio índice | reversión del mercado | +1,3 % a 20 d en la validación, inestable en la búsqueda |
+| Estacionalidad por acción | Heston y Sadka (2008) | 7,8 % de CAGR como reserva (peor que la equiponderada) |
+| Volumen anómalo | Gervais et al. (2001) | 12,9 % en la validación, 5,5 % en la búsqueda: efecto diluido |
+| Segunda fila solo con la cartera vacía | aprovechar el capital ocioso | empeora: las caídas de peor calidad son las que acaban mal |
+
+**Lo que sí funciona: reserva contracíclica** (`liq100_vg_minvol`). En calma y en
+tendencia, la reserva se apalanca hasta 1,5× en las 100 acciones más líquidas, según la
+volatilidad de SPY (objetivo 15 %, Moreira y Muir 2017). Cuando la volatilidad sube o
+se pierde la tendencia, rota hacia las 50 de menor volatilidad. Es el complemento
+natural de la compra de caídas: las caídas aparecen con volatilidad alta (la reserva se
+desapalanca) y la calma deja la deuda libre para la reserva.
+
+| Reserva sola (solo acciones) | Búsqueda | Validación | Total | Caída máx. | Sharpe |
+|---|---|---|---|---|---|
+| 100 líquidas siempre | 21,9 % | 9,2 % | 11,7 % | -63 % | 0,59 |
+| líquidas / baja vol. por tendencia | 17,1 % | 8,9 % | 10,5 % | -42 % | 0,63 |
+| **contracíclica** | **21,7 %** | **11,1 %** | **13,2 %** | **-41 %** | **0,70** |
+
+### Escalera actual (`definitiva.py`)
+
+| D1-técnica | Validación | 2002-25 | **Total** | Caída máx. | Sharpe | Exposición media / máx. | Costes ×3 | 1 día tarde | Deuda 7 % |
+|---|---|---|---|---|---|---|---|---|---|
+| Nivel 1 · sin deuda | 20,4 % | 21,4 % | **25,8 %** | -45 % | 0,97 | 1,00 / 1,00 | 21,4 % | 19,0 % | — |
+| **Nivel 2 · contracíclica** | 21,8 % | 23,7 % | **27,7 %** | -45 % | **0,99** | 1,19 / 1,50 | 23,2 % | 20,8 % | 27,2 % |
+| Nivel 3 · + caídas hasta 2× | 25,8 % | 27,2 % | **32,7 %** | -49 % | 0,94 | 1,33 / 2,38 | 26,8 % | 25,4 % | 31,8 % |
+| SPY | 8,9 % | 9,7 % | 10,0 % | -55 % | 0,60 | | | | |
+
+En la prueba "deuda 7 %", la deuda interna de la reserva también va al 7 %.
 
 ## Reproducir
 
@@ -386,6 +430,9 @@ python research/caidas/dsr_efectivo.py && python research/caidas/ronda4_final.py
 python research/caidas/tecnicos.py && python research/caidas/modulos_tec.py && python research/caidas/limites.py
 python research/caidas/ronda5.py && python research/caidas/ronda5b.py && python research/caidas/ronda5c.py
 python research/caidas/dsr_efectivo.py && python research/caidas/ronda5_final.py && python research/caidas/definitiva.py
+# ronda 6 (complementos)
+python research/caidas/complementos.py && python research/caidas/reservas.py && python research/caidas/segunda_fila.py
+python research/caidas/definitiva.py
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 

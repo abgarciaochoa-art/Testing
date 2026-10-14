@@ -4,9 +4,12 @@ D1 con ENTRADAS TÉCNICAS, solo acciones (sin ETFs ni efectivo):
 - entra: miembro líquido sobre su SMA200, caída >= 15 % desde el máximo de 20 d,
   >= 5 módulos de origen de la caída y >= 2 banderas técnicas; compra a la apertura;
 - hasta 5 posiciones de 1/2 hueco de convicción; sale con cierre > SMA10 (máx. 20 d);
-- reserva: 100 acciones más líquidas (SPY > SMA200) o 50 de menor volatilidad (si no).
-Niveles de palanca (exposición bruta real máxima, solo en tendencia):
-  1 · máx. 1x (sin deuda) · 2 · máx. 1,5x (por defecto) · 3 · máx. 2x.
+- reserva (solo acciones; SPY solo como señal):
+  nivel 1 · sin deuda: 100 acciones más líquidas (SPY > SMA200) o 50 de menor volatilidad;
+  nivel 2 · CONTRACÍCLICA (por defecto): en calma y en tendencia, hasta 1,5x las 100
+            líquidas según la volatilidad de SPY (objetivo 15 %); el resto y fuera de
+            tendencia, en las 50 de menor volatilidad;
+  nivel 3 · contracíclica + compras de caídas con palanca hasta 2x en tendencia.
 
 Muestra posiciones abiertas (simulación continua desde 2002), órdenes para la próxima
 apertura, estado de la reserva y, para cada candidata del último día, qué módulos y qué
@@ -33,7 +36,7 @@ sys.path.insert(0, str(AQUI))
 import motor as m  # noqa: E402
 import reservas as rs  # noqa: E402
 
-NIVELES = {1: 1.0, 2: 1.5, 3: 2.0}
+NIVELES = {1: (1.0, "liq100_tend_minvol"), 2: (1.0, "liq100_vg_minvol"), 3: (2.0, "liq100_vg_minvol")}
 
 
 def refrescar() -> None:
@@ -51,30 +54,35 @@ def main() -> None:
     if "--refrescar" in sys.argv:
         refrescar()
     nivel = int(sys.argv[sys.argv.index("--nivel") + 1]) if "--nivel" in sys.argv else 2
-    pal = NIVELES[nivel]
+    pal, reserva = NIVELES[nivel]
     import definitiva as df_
     from meta import MODULOS, MODULOS_V2
     from ronda5 import componentes_tec
 
     p = m.cargar()
     comp_tec = componentes_tec()
-    r = df_.curva(comp_tec, "D1", df_.D1_CFG, pal, detalle=True)
+    r = df_.curva(comp_tec, "D1", df_.D1_CFG, pal, detalle=True, reserva=reserva)
     ops = r["operaciones"]
     ab = ops[ops.t_sal < 0][["ticker", "entrada", "px_ent", "px_sal", "ret", "peso"]].rename(
         columns={"px_sal": "px_ultimo", "ret": "ret_latente", "peso": "peso_entrada"})
     reg = rs.regimen_spy()
     spy = pd.Series(p.close_ff[:, p.col["SPY"]])
     en_tendencia = bool(spy.iloc[-1] > spy.rolling(200).mean().iloc[-1])
-    print(f"Datos hasta {p.fechas[-1]} · nivel {nivel} (palanca máx. {pal:g}x en tendencia)")
-    print(f"SPY sobre su SMA200: {en_tendencia} → reserva en "
-          f"{'las 100 acciones más líquidas' if en_tendencia else 'las 50 acciones de menor volatilidad'}"
-          f" (la de hoy se decidió con el cierre anterior: {'líquidas' if reg[-1] else 'baja vol.'})")
+    print(f"Datos hasta {p.fechas[-1]} · nivel {nivel} (caídas hasta {pal:g}x en tendencia · reserva {reserva})")
+    if reserva == "liq100_vg_minvol":
+        e = min(1.5, 0.15 / rs.vol_spy()[-1]) if reg[-1] else 0.0
+        print(f"SPY sobre su SMA200: {en_tendencia} · vol. 20d de SPY {rs.vol_spy()[-1]:.1%} → reserva: "
+              f"{e:.2f}x en las 100 acciones más líquidas" + (f" y {1 - e:.2f}x en las 50 de baja vol." if e < 1 else ""))
+    else:
+        print(f"SPY sobre su SMA200: {en_tendencia} → reserva en "
+              f"{'las 100 acciones más líquidas' if reg[-1] else 'las 50 acciones de menor volatilidad'}")
     print("\nPosiciones abiertas al cierre:")
     print(ab.round({"px_ent": 2, "px_ultimo": 2, "ret_latente": 3, "peso_entrada": 3}).to_string(index=False)
           if len(ab) else "  (ninguna)")
     print("Órdenes para la próxima apertura:", r["pendientes"] or "ninguna",
           f"· exposición en compras {r['exposicion_final']:.0%}"
-          f" · deuda {r['deuda_final'] / r['equity'].iloc[-1]:.0%} del capital")
+          f" · deuda de las compras {r['deuda_final'] / r['equity'].iloc[-1]:.0%} del capital"
+          " (la reserva contracíclica lleva su propia palanca, indicada arriba)")
 
     # explicación de las candidatas del último día
     banderas = json.loads((AQUI / "resultados" / "meta_banderas.json").read_text())["banderas"]
@@ -96,7 +104,7 @@ def main() -> None:
         filas.append({"ticker": fila.ticker, "módulos": int(fila.score_v2), "técnicas": int(fila.score_tec),
                       "entra": bool(fila.score_tec >= df_.D1_CFG["kmin"]),
                       "módulos a favor": "; ".join(mods), "técnicas a favor": "; ".join(tecs)})
-    salida = {"fecha_datos": str(p.fechas[-1]), "nivel": nivel, "palanca_max": pal,
+    salida = {"fecha_datos": str(p.fechas[-1]), "nivel": nivel, "palanca_caidas": pal, "reserva": reserva,
               "reserva_en_tendencia": en_tendencia,
               "posiciones_abiertas": ab.assign(entrada=ab.entrada.astype(str)).to_dict("records"),
               "ordenes_proxima_apertura": r["pendientes"], "candidatas_ultimo_dia": filas}

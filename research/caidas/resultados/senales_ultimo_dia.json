@@ -1,7 +1,8 @@
 {
  "fecha_datos": "2026-10-12",
  "nivel": 2,
- "palanca_max": 1.5,
+ "palanca_caidas": 1.0,
+ "reserva": "liq100_vg_minvol",
  "reserva_en_tendencia": true,
  "posiciones_abiertas": [
   {

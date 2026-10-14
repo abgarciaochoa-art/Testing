@@ -26,6 +26,14 @@ Candidatas (fijadas ANTES de mirar resultados):
 - ``liq100_dv``: las 100 más líquidas ponderadas por volumen en dólares, mensual
   (solo acciones; aproximación a un índice por capitalización).
 - ``minvol50``: las 50 de menor volatilidad (252 d), equiponderadas (solo acciones).
+- ``estac50``: estacionalidad (Heston y Sadka, 2008): las 50 con mejor retorno histórico
+  en el mes siguiente del calendario (5-20 años previos), equiponderadas (solo acciones).
+- ``volanom50``: prima por volumen anómalo (Gervais et al., 2001): 50 con mayor volumen
+  semanal relativo y movimiento < 3 % (solo acciones).
+- ``estac_tend_minvol``: ``estac50`` en tendencia y ``minvol50`` fuera (solo acciones).
+- ``liq100_vg_minvol``: contracíclica: en tendencia, hasta 1,5x las 100 líquidas según la
+  volatilidad de SPY (objetivo 15 %), el resto en las 50 de baja volatilidad; fuera de
+  tendencia, las 50 de baja volatilidad (solo acciones, deuda al 5 % si > 1).
 - ``liq100_tend_minvol``: ``liq100_dv`` con SPY > SMA200 (SPY solo como señal) y
   ``minvol50`` fuera de tendencia (solo acciones, siempre invertida).
 - ``qqq``: solo como referencia (elegirla sería sesgo retrospectivo).
@@ -64,6 +72,33 @@ def etf(ticker: str) -> tuple[np.ndarray, np.ndarray]:
     o = (x.open * f).reindex(idx).to_numpy()
     o = np.where(np.isnan(o), np.r_[np.nan, c[:-1]], o)
     return o, c
+
+
+def estacionalidad(p, elegibles: np.ndarray, n: int, min_años: int = 5, max_años: int = 20) -> np.ndarray:
+    """Selección mensual por estacionalidad: retorno medio en el mismo mes del calendario
+    (el que empieza tras el cierre de t) en los años anteriores. Solo usa datos <= t."""
+    fechas = pd.DatetimeIndex(p.fechas)
+    T, N = p.close.shape
+    fin_mes = np.flatnonzero(fechas.month != np.roll(fechas.month, -1))
+    cierre_mes = p.close_ff[fin_mes]  # cierres de fin de mes
+    ret_mes = np.full_like(cierre_mes, np.nan)
+    ret_mes[1:] = cierre_mes[1:] / cierre_mes[:-1] - 1  # fila k = retorno del mes que acaba en fin_mes[k]
+    mes_de = fechas[fin_mes].month.to_numpy()
+    sel = np.zeros((T, N), dtype=bool)
+    for k, t in enumerate(fin_mes):
+        objetivo = mes_de[k] % 12 + 1  # mes siguiente
+        previos = [q for q in range(k) if mes_de[q] == objetivo][-max_años:]
+        if len(previos) < min_años:
+            continue
+        hist = ret_mes[previos]
+        cuenta = np.sum(~np.isnan(hist), axis=0)
+        with np.errstate(invalid="ignore"):
+            media = np.where(cuenta >= min_años, np.nanmean(hist, axis=0), np.nan)
+        score = np.where(elegibles[t] & ~np.isnan(media), media, -np.inf)
+        top = np.argsort(-score)[:n]
+        top = top[np.isfinite(score[top])]
+        sel[t, top] = True
+    return sel
 
 
 def cesta(seleccion: np.ndarray, pesos: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray]:
@@ -265,6 +300,23 @@ def construir() -> dict:
     bajos = np.argsort(v_m, axis=1)[:, :50]
     s_v[np.arange(len(c))[:, None], bajos] = True
     cestas["minvol50"] = cesta(s_v & np.isfinite(v_m))
+    # ESTACIONALIDAD (Heston y Sadka, 2008): al cierre de cada mes, las acciones con mayor
+    # retorno medio en el MES SIGUIENTE del calendario durante los años anteriores
+    # (mínimo 5 años de historia, máximo 20), equiponderadas.
+    sel["estac"] = estacionalidad(p, p.miembro & liq, 50)
+    cestas["estac50"] = cesta(sel["estac"])
+    # PRIMA POR VOLUMEN ANÓMALO (Gervais, Kaniel y Mingelgrin, 2001): volumen de la última
+    # semana / volumen medio de los 60 días previos, entre las que se movieron < 3 % en la
+    # semana; las 50 mayores, equiponderadas.
+    v = pd.DataFrame(p.volume)
+    anom = (v.rolling(5).mean() / v.shift(5).rolling(60, min_periods=30).mean()).to_numpy()
+    r5 = np.full(c.shape, np.nan)
+    r5[5:] = c[5:] / c[:-5] - 1
+    a_m = np.where(p.miembro & liq & (np.abs(r5) < 0.03) & ~np.isnan(anom), anom, -np.inf)
+    s_a = np.zeros(c.shape, dtype=bool)
+    top_a = np.argsort(-a_m, axis=1)[:, :50]
+    s_a[np.arange(len(c))[:, None], top_a] = True
+    cestas["volanom50"] = cesta(s_a & np.isfinite(a_m))
     R = {
         "spy": componer(spy, None, None, 0.0),
         "spy_tend": componer(spy, None, reg, COSTE_ETF),
@@ -278,6 +330,15 @@ def construir() -> dict:
         "liq50": componer(cestas["liq50"], None, None, 0.0),
         "liq100_dv": componer(cestas["liq100_dv"], None, None, 0.0),
         "minvol50": componer(cestas["minvol50"], None, None, 0.0),
+        "estac50": componer(cestas["estac50"], None, None, 0.0),
+        "volanom50": componer(cestas["volanom50"], None, None, 0.0),
+        "estac_tend_minvol": _siempre_invertida(componer(cestas["estac50"], cestas["minvol50"], reg, 2 * COSTE_CESTA)),
+        # contracíclica a las caídas: en tendencia, exposición min(1,5, 15 % / vol20 de SPY)
+        # a las 100 líquidas (si < 1, el resto en las 50 de baja volatilidad; si > 1, deuda);
+        # fuera de tendencia, todo en las 50 de baja volatilidad. Siempre en acciones.
+        "liq100_vg_minvol": _expo_total(gestionada(cestas["liq100_dv"], cestas["minvol50"], reg, 0.15, 1.5)),
+        "liq100_vg_minvol_7": _expo_total(gestionada(cestas["liq100_dv"], cestas["minvol50"], reg, 0.15, 1.5,
+                                                     tasa=0.07)),  # sensibilidad: deuda al 7 %
         # en tendencia las 100 más líquidas; fuera, las 50 de menor volatilidad (todo acciones)
         "liq100_tend_minvol": _siempre_invertida(componer(cestas["liq100_dv"], cestas["minvol50"], reg, 2 * COSTE_CESTA)),
         "qqq": componer(etf("QQQ"), None, None, 0.0),
@@ -295,6 +356,13 @@ def _siempre_invertida(r: tuple) -> tuple:
     exposición 1 en todo momento (la palanca de las compras se calcula sobre eso)."""
     T = len(r[0])
     return r[0], r[1], r[2], np.ones(T, dtype=bool), np.ones(T)
+
+
+def _expo_total(r: tuple) -> tuple:
+    """Para reservas gestionadas cuyo lado defensivo también son acciones: la exposición
+    bruta real es max(1, e) (la parte no asignada al riesgo está en acciones defensivas)."""
+    T = len(r[0])
+    return r[0], r[1], r[2], np.ones(T, dtype=bool), np.maximum(1.0, r[4])
 
 
 def _escalar(r: tuple, L: float) -> tuple:

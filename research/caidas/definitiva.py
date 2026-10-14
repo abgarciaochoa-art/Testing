@@ -9,12 +9,14 @@ Regla de entrada (señal al cierre, compra a la apertura siguiente):
 Prioridad: módulos + modelo; hasta 5 posiciones de 1/2 hueco de convicción (medio hueco
 con 5 módulos, un hueco con >= 6; nunca > 50 % del capital). Salida: cierre > SMA10
 (máx. 20 sesiones).
-Reserva (sin ETFs ni efectivo): las 100 acciones más líquidas ponderadas por volumen en
-dólares con SPY > SMA200; las 50 de menor volatilidad cuando no (SPY solo como señal).
-Palanca máxima (exposición bruta real) 1 / 1,5 / 2, solo en tendencia y escalada por la
-volatilidad de SPY.
+Reserva (sin ETFs ni efectivo; SPY solo como señal): nivel 1, las 100 acciones más
+líquidas con SPY > SMA200 y las 50 de menor volatilidad cuando no; niveles 2 y 3,
+reserva CONTRACÍCLICA (ronda 6): en tendencia y con volatilidad baja hasta 1,5x las 100
+líquidas (objetivo de volatilidad 15 %), el resto y fuera de tendencia en las de baja
+volatilidad. La deuda trabaja en calma en la reserva y en volatilidad en las caídas.
+Nivel 3: además, compras de caídas con palanca hasta 2x en tendencia.
 
-Comparación: D1-técnica + C1-técnica al 50 %. Pruebas de estrés completas.
+Pruebas de estrés completas; referencias: ronda 5 y D1 + C1.
 
 Uso: python research/caidas/definitiva.py
 """
@@ -44,12 +46,12 @@ sys.path.insert(0, str(m.ROOT))
 from earnings_alpha.stats.performance import deflated_sharpe_ratio  # noqa: E402
 
 OUT = Path(__file__).parent / "resultados"
-RESERVA = "liq100_tend_minvol"
+RESERVA = "liq100_vg_minvol"  # reserva por defecto (contracíclica, ronda 6)
 D1_CFG = dict(kmin=2, uso="filtro", tam="base", frac=0.5)
 C1_CFG = dict(kmin=2, uso="prioridad", tam="base", frac=1 / 3)
 
 
-def curva(comp_tec, nombre, cfg, pal, coste_bps=10.0, tasa=0.05, retraso=0, detalle=False):
+def curva(comp_tec, nombre, cfg, pal, coste_bps=10.0, tasa=0.05, retraso=0, detalle=False, reserva=None):
     x, salida, conv = comp_tec[nombre]
     y, w = preparar(x, conv, cfg["kmin"], cfg["uso"], cfg["tam"], cfg["frac"])
     if retraso:
@@ -57,8 +59,17 @@ def curva(comp_tec, nombre, cfg, pal, coste_bps=10.0, tasa=0.05, retraso=0, deta
         ok = (y.t < len(m.cargar().fechas)).to_numpy()
         y, w = y[ok], w[ok]
     return v3.simular(y.t.to_numpy(), y.j.to_numpy(), y.prio.to_numpy(np.float64), peso=w, K=5, frac=cfg["frac"],
-                      H=20, salida=salida, reserva_=RESERVA, palanca=pal, palanca_off=1.0,
+                      H=20, salida=salida, reserva_=reserva or RESERVA, palanca=pal, palanca_off=1.0,
                       vol_objetivo=0.15 if pal > 1 else None, coste_bps=coste_bps, tasa_deuda=tasa, detalle=detalle)
+
+
+NIVELES = [
+    ("Nivel 1 · sin deuda (máx. 1x)", "D1-técnica", 1.0, "liq100_tend_minvol"),
+    ("Nivel 2 · deuda solo en la reserva en calma (máx. 1,5x)", "D1-técnica", 1.0, "liq100_vg_minvol"),
+    ("Nivel 3 · reserva contracíclica + caídas (máx. 2x)", "D1-técnica", 2.0, "liq100_vg_minvol"),
+    ("ref · ronda 5, caídas hasta 1,5x", "D1-técnica", 1.5, "liq100_tend_minvol"),
+    ("ref · D1 + C1 técnicas, sin deuda", "D1-técnica + C1-técnica", 1.0, "liq100_tend_minvol"),
+]
 
 
 def cartera(comp_tec, tipo, pal, **kw):
@@ -81,18 +92,16 @@ def main() -> None:
     sh = np.concatenate([x[:, -T + 1:].mean(1) / x[:, -T + 1:].std(1) for x in mats])
     n_bruto = sum(len(x) for x in mats) + 720 + 500
     filas, curvas, eps = [], {}, {}
-    for tipo, pal in (("D1-técnica", 1.0), ("D1-técnica", 1.5), ("D1-técnica", 2.0),
-                      ("D1-técnica + C1-técnica", 1.0), ("D1-técnica + C1-técnica", 2.0)):
-        nombre = f"{tipo} · máx. {pal:g}x"
-        eq, bruto = cartera(comp_tec, tipo, pal)
+    for nombre, tipo, pal, reserva in NIVELES:
+        eq, bruto = cartera(comp_tec, tipo, pal, reserva=reserva)
         curvas[nombre] = eq / eq.iloc[0]
         fila = {"cartera": nombre, **es.metricas_ventanas(eq), "exposición bruta media": float(bruto.mean()),
                 "exposición bruta máx.": float(bruto.max())}
-        fila["CAGR coste 20pb"] = m.metricas(cartera(comp_tec, tipo, pal, coste_bps=20)[0])["cagr"]
-        fila["CAGR coste 30pb"] = m.metricas(cartera(comp_tec, tipo, pal, coste_bps=30)[0])["cagr"]
-        fila["CAGR 1 día tarde"] = m.metricas(cartera(comp_tec, tipo, pal, retraso=1)[0])["cagr"]
-        if pal > 1:
-            fila["CAGR deuda 7 %"] = m.metricas(cartera(comp_tec, tipo, pal, tasa=0.07)[0])["cagr"]
+        fila["CAGR coste 20pb"] = m.metricas(cartera(comp_tec, tipo, pal, coste_bps=20, reserva=reserva)[0])["cagr"]
+        fila["CAGR coste 30pb"] = m.metricas(cartera(comp_tec, tipo, pal, coste_bps=30, reserva=reserva)[0])["cagr"]
+        fila["CAGR 1 día tarde"] = m.metricas(cartera(comp_tec, tipo, pal, retraso=1, reserva=reserva)[0])["cagr"]
+        res7 = "liq100_vg_minvol_7" if reserva == "liq100_vg_minvol" else reserva  # deuda de la reserva también al 7 %
+        fila["CAGR deuda 7 %"] = m.metricas(cartera(comp_tec, tipo, pal, tasa=0.07, reserva=res7)[0])["cagr"]
         ret = eq.pct_change().fillna(0).to_numpy()[1:]
         fila["DSR (N bruto)"] = deflated_sharpe_ratio(ret, trial_sharpes=sh, n_trials=n_bruto).dsr
         fila["DSR (N efectivo)"] = deflated_sharpe_ratio(ret, sr_variance=ef["var_sharpe_clusters"],
@@ -100,7 +109,7 @@ def main() -> None:
         eps[nombre] = episodios(eq)
         filas.append(fila)
         print(nombre, "ok", flush=True)
-    r1 = curva(comp_tec, "D1", D1_CFG, 1.0, detalle=True)
+    r1 = curva(comp_tec, "D1", D1_CFG, 1.0, detalle=True, reserva="liq100_vg_minvol")
     ops = r1["operaciones"]
     ops.drop(columns=["t_ent", "t_sal", "j"]).to_csv(OUT / "operaciones_definitiva.csv", index=False,
                                                        float_format="%.4f")
@@ -124,7 +133,7 @@ def main() -> None:
 
     fig, (ax, ax2) = plt.subplots(2, 1, figsize=(11, 8), sharex=True, gridspec_kw={"height_ratios": [3, 1]})
     for k, v in curvas.items():
-        if "C1" in k:
+        if k.startswith("ref"):
             continue
         kw = dict(lw=2.4, color="black") if k.startswith("SPY") else dict(lw=1.4)
         ax.plot(v.index, v.values, label=k, **kw)
@@ -133,7 +142,7 @@ def main() -> None:
     for a in (ax, ax2):
         a.axvline(pd.Timestamp("2021-10-01"), color="grey", ls=":")
         a.grid(alpha=0.3)
-    ax.set_title("Definitiva — compra de caídas con entradas técnicas, solo acciones — 1 $ en 2002 (log), costes 10 pb")
+    ax.set_title("Definitiva — caídas con entradas técnicas + reserva contracíclica, solo acciones — 1 $ en 2002 (log)")
     ax.legend(fontsize=8)
     ax2.set_ylabel("caída desde máximo (%)")
     fig.tight_layout()

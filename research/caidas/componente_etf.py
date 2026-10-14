@@ -78,7 +78,7 @@ def simular(c: pd.DataFrame, K=3, frac=None, H=20, salida="sma5", reserva_="spy_
     eq, expo, lev, n_tr, suma, gan, _, _, _ = v3._simular(
         D["O"], D["CF"], D["C"], D["ultimo"], D["sal"][salida], ptr, j, np.ones(len(t)), K,
         (1.0 / K) if frac is None else frac, H, coste_bps / 1e4, t0, t1, rn, rd, cb, act, ex, 2e-4,
-        v3.vector_palanca(palanca, palanca_off), (1.05) ** (1 / 252) - 1)
+        v3.vector_palanca(palanca, palanca_off), (1.05) ** (1 / 252) - 1, 0)
     idx = pd.DatetimeIndex(p.fechas[t0:t1])
     eq = pd.Series(eq, idx)
     out = m.metricas(eq)
