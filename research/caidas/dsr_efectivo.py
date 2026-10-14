@@ -21,7 +21,8 @@ import eventos as ev
 
 OUT = Path(__file__).parent / "resultados"
 CACHE = ev.SALIDA.parent
-FICHEROS = ("rejilla_retornos.npy", "rejilla_retornos_fase2.npy", "ronda2_retornos.npy", "ronda3_retornos.npy")
+FICHEROS = ("rejilla_retornos.npy", "rejilla_retornos_fase2.npy", "ronda2_retornos.npy", "ronda3_retornos.npy",
+            "ronda4_retornos.npy")
 
 
 def main(umbral: float = 0.9) -> dict:

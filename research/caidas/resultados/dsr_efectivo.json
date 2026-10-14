@@ -1,7 +1,7 @@
 {
- "n_bruto": 9966,
+ "n_bruto": 10134,
  "n_efectivo": 205,
  "umbral_corr": 0.9,
- "var_sharpe_bruto": 0.00023430094006471336,
- "var_sharpe_clusters": 9.864461026154459e-05
+ "var_sharpe_bruto": 0.00023530791804660112,
+ "var_sharpe_clusters": 9.871155634755269e-05
 }

@@ -1,0 +1,182 @@
+{
+ "base (sin deuda, ronda 3)": {
+  "D1": {
+   "reserva_": "spy_tend",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 3.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.2
+  }
+ },
+ "IEF-1.0": {
+  "D1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "IEF-1.5": {
+  "D1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "IEF-2.0": {
+  "D1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_ief",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "SHY-1.0": {
+  "D1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "SHY-1.5": {
+  "D1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "SHY-2.0": {
+  "D1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ },
+ "SHY-1.5 deuda 7 %": {
+  "D1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333,
+   "tasa_deuda": 0.07
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.5,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333,
+   "tasa_deuda": 0.07
+  }
+ },
+ "SHY-2.0 deuda 7 %": {
+  "D1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333,
+   "tasa_deuda": 0.07
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 2.0,
+   "palanca_off": 1.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333,
+   "tasa_deuda": 0.07
+  }
+ },
+ "regla A": {
+  "D1": {
+   "reserva_": "spy",
+   "palanca": 1.25,
+   "palanca_off": 1.0,
+   "K": 3.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 1.5,
+   "palanca_off": 1.5,
+   "K": 8.0,
+   "frac": 0.25
+  }
+ },
+ "regla B": {
+  "D1": {
+   "reserva_": "spy",
+   "palanca": 2.0,
+   "palanca_off": 2.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  },
+  "C1": {
+   "reserva_": "spy_tend_shy",
+   "palanca": 2.0,
+   "palanca_off": 2.0,
+   "K": 5.0,
+   "frac": 0.3333333333333333
+  }
+ }
+}

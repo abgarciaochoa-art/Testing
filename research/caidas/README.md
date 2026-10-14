@@ -2,21 +2,23 @@
 
 Investigación sobre **acciones reales del S&P 500 con pertenencia point-in-time**
 (2002-01 → 2026-10), con costes de 10 pb por lado y ejecución a la apertura siguiente.
-Se probaron **~10.700 carteras** en tres rondas, y todas cuentan en las correcciones
-por minería de datos.
+Se probaron **~11.000 carteras** en cuatro rondas, y todas cuentan en las
+correcciones por minería de datos.
 
-> **Estado actual (ronda 3).** La mejor propuesta es una cartera combinada, al 50 %
-> entre D1-def50 y C1.
+> **Estado actual (ronda 4).** Cartera D1 + C1 (50 % cada una, capital separado), con
+> reserva SPY/SHY por tendencia y palanca solo en tendencia. Tres niveles según la
+> **exposición bruta real máxima** (acciones + SPY de la reserva):
 >
-> | | Combinada | SPY |
-> |---|---|---|
-> | CAGR 2002-2026 | **20,3 %** | 10,0 % |
-> | CAGR 2002-2025 | 17,4 % | 9,7 % |
-> | Caída máxima | **-35 %** | -55 % |
-> | Sharpe | **0,97** | 0,60 |
+> | | Nivel 1 · máx. 1× (sin deuda) | Nivel 2 · máx. 1,5× | **Nivel 3 · máx. 2×** | SPY |
+> |---|---|---|---|---|
+> | CAGR validación 2002-sep21 | 18,7 % | 21,3 % | **23,0 %** | 8,9 % |
+> | CAGR 2002-2025 | 18,2 % | 20,9 % | **22,8 %** | 9,7 % |
+> | CAGR 2002-2026 | 21,0 % | 24,7 % | **26,8 %** | 10,0 % |
+> | Caída máxima | -34 % | -45 % | -46 % | -55 % |
+> | Sharpe | 0,94 | 0,93 | 0,93 | 0,60 |
 >
 > El Sharpe deflactado supera el listón del repo (0,95) con el número efectivo de
-> pruebas independientes (205), pero no con el bruto (10.686). Según la regla del repo
+> pruebas independientes (205), pero no con el bruto (~11.000). Según la regla del repo
 > es **zona gris: prometedora y explicable, no demostrada**.
 
 ## Datos: por qué fiarse de ellos
@@ -207,11 +209,68 @@ prioridad por módulos y modelo; K=3 con convicción; sale > SMA10 (máx. 20 d).
   17,8 % en la validación. La falta de datos no favorecía el resultado; era algo
   conservadora.
 
+## 5. Ronda 4: más CAGR con reserva, capacidad y apalancamiento
+
+**Diagnóstico.** La compra de caídas ocupa de media solo el ~20-30 % del capital; el
+resto espera en la reserva. Por eso hay dos palancas: rendir más con la reserva y meter
+más capital en cada oportunidad buena. El estudio de salidas (`salidas.py`) muestra que
+**el cuello de botella son las oportunidades, no el capital**. La salida más rápida
+(SMA5) rinde más por día, pero empeora la cartera: no hay suficientes candidatas buenas
+para reinvertir. D1 sigue saliendo con SMA10 y C1 con RSI2.
+
+**Reservas** (`reservas.py`, fijadas de antemano; CAGR 2002-2026 / validación):
+
+| Reserva | CAGR total | Validación | Caída máx. | Lectura |
+|---|---|---|---|---|
+| SPY | 10,0 % | 8,9 % | -55 % | referencia |
+| SPY en tendencia, efectivo fuera | 7,5 % | 6,7 % | -24 % | |
+| SPY en tendencia, **SHY** fuera | 8,0 % | 7,3 % | -24 % | efectivo con interés: +0,5 puntos |
+| SPY en tendencia, IEF fuera | 8,2 % | 7,9 % | -26 % | ayudado por 20 años de bajada de tipos; peor en 2022 |
+| Cesta momentum top-20 (12-1) | 9,9 % | **6,1 %** | -66 % | 25,7 % en 2021-26: apuesta de régimen, **descartada** |
+| SPY gestionado por volatilidad (15 %, máx. 1,5×) | 8,5 % | 7,7 % | **-19 %** | Moreira y Muir (2017) |
+| SPY 2× solo en tendencia | 10,5 % | 8,9 % | -43 % | Gayed y Bilello (2016): no compensa aquí |
+
+**Motor v3** (`motor_v3.py`): reserva configurable y compras financiadas con deuda
+(5 % anual; con 7 % el CAGR baja ~0,3 puntos). El tope de palanca cuenta la exposición
+**real** (incluida la palanca interna de la reserva), y el cambio de régimen se ejecuta
+en la apertura siguiente a la señal. El motor anterior lo aplicaba en el mismo cierre,
+lo que inflaba ~0,4 puntos las versiones con reserva por tendencia.
+
+**Qué funcionó y qué no** (`ronda4.py`, `escalera.py`, `tres_componentes.py`, `unificada.py`):
+
+- ✅ **Capacidad:** hasta 5 huecos de 1/3 por componente, sin deuda: +1-2 puntos de CAGR
+  con la misma caída máxima (19,8 % → 21,0 % con SHY; 21,7 % con IEF).
+- ✅ **Palanca solo en tendencia, aplicada a las compras de caídas:** sube el CAGR
+  manteniendo el Sharpe en ~0,93. Apalancar la reserva rinde menos, y apalancar SPY
+  empeora el Sharpe (0,47 a 2×).
+- ✅ **Gestión por volatilidad:** recorta 1-2 puntos de caída máxima con el mismo CAGR.
+- ➖ **Caídas de ETFs (E1, `etfs.py`, `componente_etf.py`):** rebotan en las dos ventanas
+  (+1,1-2,4 % a 5 días, t ≈ 3). Como tercer componente diversifica, pero diluye el CAGR.
+- ❌ **Un único fondo de capital** para todas las señales: concentra el capital en las
+  ventas generales y empeora la caída máxima (-52 % frente a -34 %). Descartado.
+- ❌ **Cesta de momentum como reserva:** falla en la validación.
+
+### Escalera final (`ronda4_final.py`)
+
+| D1 + C1 (50/50) | Validación | 2002-25 | Total | Caída máx. | Exposición real media / p95 / máx. | Costes ×3 | 1 día tarde |
+|---|---|---|---|---|---|---|---|
+| Nivel 1 · máx. 1× | 18,7 % | 18,2 % | 21,0 % | -34 % | 0,86 / 1,00 / 1,00 | 16,0 % | 17,0 % |
+| Nivel 2 · máx. 1,5× | 21,3 % | 20,9 % | 24,7 % | -45 % | 1,10 / 1,50 / 1,69 | 18,4 % | 20,0 % |
+| **Nivel 3 · máx. 2×** | **23,0 %** | **22,8 %** | **26,8 %** | -46 % | 1,17 / 1,86 / 2,28 | 20,0 % | 21,2 % |
+| SPY | 8,9 % | 9,7 % | 10,0 % | -55 % | | | |
+
+Los tres niveles se definieron antes de mirar la validación. En 2008 pierden un -3,5/-3,8 %
+(SPY, -37 %). Su peor episodio es el crash del Covid (feb-mar 2020), que llega en
+tendencia alcista y con palanca. Con palanca, la exposición puede superar
+momentáneamente el tope por la subida de precios tras la entrada (máx. 2,28×).
+
 ### Señales del último día (`senales_hoy.py`)
 
-Muestra las posiciones abiertas de cada componente, las órdenes de la próxima apertura
-y, para cada candidata, **qué módulos cumple**. Con `--refrescar` descarga precios
-nuevos y recalcula todo con las banderas y el modelo **congelados**.
+`python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]` muestra, para cada
+componente, las posiciones abiertas (simulación continua desde 2002), las órdenes de la
+próxima apertura, la exposición y la deuda. También muestra el estado de la reserva y,
+para cada candidata de D1, **qué módulos cumple**. Con `--refrescar` descarga precios
+nuevos y lo recalcula todo con las banderas y el modelo **congelados**.
 
 ## Reproducir
 
@@ -229,7 +288,12 @@ python research/caidas/combinada.py && python research/caidas/ronda2.py && pytho
 python research/caidas/meta.py && python research/caidas/ronda3.py   # ronda 3 (≈3 min)
 python research/caidas/dsr_efectivo.py && python research/caidas/finalistas3.py && python research/caidas/combinar.py
 python research/caidas/sesgo_faltantes.py
-python research/caidas/senales_hoy.py [--refrescar]
+# ronda 4
+python research/caidas/reservas.py && python research/caidas/ronda4.py && python research/caidas/escalera.py
+python research/caidas/salidas.py && python research/caidas/etfs.py && python research/caidas/componente_etf.py
+python research/caidas/tres_componentes.py && python research/caidas/unificada.py
+python research/caidas/dsr_efectivo.py && python research/caidas/ronda4_final.py
+python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 
 Los datos crudos, el panel, los rasgos, los eventos y las matrices de retornos van a
