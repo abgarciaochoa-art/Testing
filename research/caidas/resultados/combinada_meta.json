@@ -1,0 +1,17 @@
+{
+ "n_carteras": 720,
+ "spy_cagr": {
+  "busq": 0.13799469012326604,
+  "valid": 0.08948841893181436
+ },
+ "banderas": [
+  "cae con su grupo (rel. pares > -6 %)",
+  "pares caen ≥7 %",
+  "gemela también cae ≥5 %",
+  "cierra en mínimos (IBS ≤ 0.2)",
+  "venta general (≥20 % miembros caen)",
+  "momentum 12m ≥ 30 %",
+  "beta ≥ 1.3",
+  "sin noticia (no hueco+volumen)"
+ ]
+}

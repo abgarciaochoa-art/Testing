@@ -281,8 +281,7 @@ def backtest(cfg: dict, coste_bps: float = 10.0, inicio=INICIO, fin=None) -> Res
             cand = np.flatnonzero(ent[t])
             if cand.size:
                 cand = cand[[j not in pos for j in cand]]
-                if cand.size > libres:
-                    cand = cand[np.argsort(-score[t, cand], kind="stable")[:libres]]
+                cand = cand[np.argsort(-score[t, cand], kind="stable")[:libres]]
                 pend_ent = [int(j) for j in cand]
 
     for j, (u, te, pe) in pos.items():  # posiciones abiertas al final, a precio de cierre

@@ -104,6 +104,87 @@ Retornos por año natural: `resultados/finalistas_anual.csv`. Operaciones una a 
 - **Concentración:** con K = 3 cada posición pesa un 33 % mientras dura. El riesgo
   idiosincrático por operación es alto.
 
+## 4. Ronda 2: módulos de mejora de la entrada ("¿por qué cae?")
+
+Metodología nueva, más rápida y más estricta:
+
+- **Búsqueda** solo en oct-2021 → oct-2026; **validación** en 2002 → sep-2021, que no se
+  usa para elegir.
+- **Rasgos PIT** (`rasgos.py`, 44 matrices, 85 s). Grupo de pares = las 10 acciones más
+  correlacionadas (252 d, recalculado cada mes, sin sesgo de supervivencia). Ejemplos:
+  HD→LOW, V→MA, XOM→CVX, JPM→GS, DAL→UAL, KO→PEP.
+- **Tabla de eventos** (`eventos.py`): 499.003 caídas candidatas, cada una con sus rasgos
+  y su retorno posterior. Evaluar un módulo es un filtro de milisegundos.
+- **Motor compilado** (`motor_rapido.py`, numba): da exactamente el mismo equity que el
+  motor de referencia y tarda 0,015 s por backtest de 25 años (×22).
+
+### Qué tipo de caída rebota (`modulos.py`, operación real neta de 20 pb)
+
+Se cumple en las 4 definiciones de caída y en las dos ventanas:
+
+| Mejora la entrada | Empeora la entrada |
+|---|---|
+| sus **pares caen también** (≥7 % en 10 d) | cae **sola** (pares planos, ≥80 % de la caída propia) |
+| su **gemela también cae** | su gemela sube (divergencia) |
+| sin divergencia de la gemela (spread z > -2) | spread con la gemela z ≤ -3 |
+| **venta general** (≥20 % de miembros caen ≥5 %) | caída aislada (<5 % de miembros) |
+| cierra en mínimos (IBS ≤ 0,2) | día de giro (IBS > 0,6) |
+| momentum 12 m ≥ 30 %, beta ≥ 1,3 | **noticia**: hueco ≤ -5 % con volumen ≥3× |
+
+**Lectura:** cuando una acción cae arrastrada por su sector o el mercado, la causa
+suele ser presión de flujos (ventas forzadas, rebalanceos), y revierte. Cuando cae sola
+y con una noticia, la caída lleva información y continúa, como en la deriva
+post-resultados. Es lo mismo que documentan Da, Liu y Schaumburg (2014): la reversión
+de corto plazo se concentra en la parte no fundamental del movimiento.
+
+**La idea KO/PEP** no sirve como filtro de compra, pero **sí como estrategia propia de
+pares** (`gemelas.py`). Con correlación ≥ 0,8 y spread z ≤ -2/-2,5, el spread converge
++0,4-0,5 % en 20 d con t ≈ 3 en las dos ventanas. Queda como familia largo-corto para
+la estrategia combinada.
+
+### Puntuación combinada (`combinada.py`)
+
+- `score_limpio`: 13 banderas elegidas **solo con la ventana de búsqueda**. Una primera
+  versión las elegía con las dos ventanas; se descartó para la validación porque
+  contaminaba 2002-2021.
+- `score_ridge`: regresión sobre los 29 rasgos, entrenada solo en la búsqueda. Pesos
+  positivos: momentum, beta, gemela correlacionada, caída no propia. Pesos negativos:
+  caída de 1-3 días más brusca, pares que caen.
+
+Retorno neto por operación según `score_limpio` (base: -10 % en 10 d en tendencia):
+pasa de -0,3 % (0 banderas) a +1,1-1,4 % (7-9 banderas) en la búsqueda, y de 0,0 % a
++1,0 % en la validación.
+
+Con 2.304 carteras (`ronda2.py`, 2 min), la correlación entre el ranking de búsqueda y
+el de validación es **0,52**, y las 20 mejores de la búsqueda baten a SPY en la validación.
+
+### Finalistas (`finalistas2.py`, reserva en SPY solo cuando SPY > SMA200)
+
+| | C1 explicable | C2 máximo CAGR | SPY |
+|---|---|---|---|
+| Regla | cae ≥7 % en 5 d, en tendencia, **≥6 módulos a favor**, K=5, sale RSI2>70 (máx 20 d) | cae ≥15 % en 10 d, en tendencia, prioridad por ridge, **K=2**, sale >SMA10 (máx 10 d) | |
+| CAGR búsqueda (oct21-oct26) | 30,4 % | 40,2 % | 13,8 % |
+| **CAGR validación (2002-sep21)** | **15,7 %** | **17,8 %** | 8,9 % |
+| CAGR total 2002-2026 | 18,5 % | 22,1 % | 10,0 % |
+| CAGR 2002-2025 (sin el año en curso) | 16,5 % | 18,9 % | 9,7 % |
+| Caída máxima | **-40 %** | **-38 %** | -55 % |
+| Sharpe | 0,89 | 0,90 | 0,60 |
+| 2008 | -15,7 % | +11,9 % | -36,8 % |
+| Operaciones/año · acierto | 54 · 71 % | 22 · 66 % | |
+| CAGR con 20 / 30 pb | 16,0 / 13,5 % | 19,4 / 16,8 % | |
+| CAGR sin la reserva en SPY | 13,0 % | 16,3 % | |
+| Sharpe deflactado (N = 5.502) | 0,57 | 0,59 | |
+
+C2 está en una meseta: con caída ≥15 % en 10 d y ridge, cualquier K de 2 a 5 y
+cualquier salida dan un 14-22 % total y un 13-18 % en la validación. Su punto débil es
+la concentración: con K=2 cada posición pesa un 50 %. C1 diversifica más y explica
+cada entrada.
+
+**Sigue sin estar demostrado.** El DSR ≈ 0,6 está lejos de 0,95. Con ~5.500 pruebas, el
+listón estadístico es muy alto. Pero la validación en 2002-2021, que no se usó para
+elegir, y la mejora sobre la ronda 1 (caída máxima -40 % frente a -50 %, CAGR +3-5
+puntos) apuntan a un efecto real.
+
 ## Reproducir
 
 ```bash
@@ -113,7 +194,17 @@ python research/caidas/rejilla.py      # fase 1: 1.788 variantes (≈4 min, 4 n�
 python research/caidas/rejilla.py --fase2   # fase 2: 690 variantes
 python research/caidas/analisis.py     # selección IS, DSR, PBO, figuras
 python research/caidas/finalistas.py   # finalistas a fondo
+# ronda 2 (módulos)
+python research/caidas/rasgos.py       # 44 rasgos PIT, pares por correlación (≈1,5 min)
+python research/caidas/eventos.py      # tabla de 499k eventos (≈30 s)
+python research/caidas/modulos.py r10_10_tend   # y r5_7_tend, r10_10, dd20_15
+python research/caidas/gemelas.py      # estrategia de pares (≈1 min)
+python research/caidas/combinada.py    # puntuaciones + 720 carteras
+python research/caidas/ronda2.py       # 2.304 carteras (≈2 min)
+python research/caidas/finalistas2.py  # validación a fondo
 ```
+
+Dependencias extra: `pip install numba matplotlib`.
 
 Los datos crudos y las matrices de retornos van a `data/cache/caidas/`, que está fuera de git.
 
