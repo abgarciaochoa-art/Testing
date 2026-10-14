@@ -47,6 +47,9 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
     eq = np.empty(t1 - t0)
     expo = np.empty(t1 - t0)
     lev = np.empty(t1 - t0)
+    caja = np.empty(t1 - t0)  # valor de la reserva al cierre
+    deu = np.empty(t1 - t0)  # deuda de las compras de caídas al cierre
+    npos = np.zeros(t1 - t0, dtype=np.int64)  # posiciones de caídas abiertas al cierre
     n_tr = 0
     suma_ret = 0.0
     gan = 0
@@ -57,6 +60,8 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
             eq[t - t0] = 0.0
             expo[t - t0] = 0.0
             lev[t - t0] = 0.0
+            caja[t - t0] = 0.0
+            deu[t - t0] = 0.0
             continue
         if t > t0:
             cash *= rn[t] * (1 - cambio[t])
@@ -170,6 +175,9 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
         eq[t - t0] = equity
         expo[t - t0] = valor / equity if equity > 0 else 0.0
         lev[t - t0] = (valor + cash * expo_res[t]) / equity if equity > 0 else 0.0  # exposición bruta real
+        caja[t - t0] = cash
+        deu[t - t0] = deuda
+        npos[t - t0] = nab
         nsal = 0
         for q in range(nab):
             j = abiertas[q]
@@ -199,7 +207,7 @@ def _simular(O, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, 
             reg[nreg, 0], reg[nreg, 1], reg[nreg, 2] = te[j], -1, j
             reg[nreg, 3], reg[nreg, 4], reg[nreg, 5] = pe[j], CF[t1 - 1, j], peso_ent[j]
             nreg += 1
-    return eq, expo, lev, n_tr, suma_ret, gan, reg[:nreg], pend[:npend].copy(), deuda
+    return eq, expo, lev, n_tr, suma_ret, gan, reg[:nreg], pend[:npend].copy(), deuda, caja, deu, npos
 
 
 _RES: dict = {}
@@ -233,10 +241,12 @@ def vector_palanca(palanca: float, palanca_off: float | None = None, vol_objetiv
 
 def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_bps=10.0, reserva_="spy",
             palanca=1.0, palanca_off=None, vol_objetivo=None, tasa_deuda=0.05, inicio="2002-01-02",
-            fin=None, detalle=False, max_t2=0) -> dict:
+            fin=None, detalle=False, max_t2=0, coste_reserva=None) -> dict:
     """``palanca``: exposición bruta máxima con SPY > SMA200 (al cierre anterior);
     ``palanca_off``: la máxima fuera de tendencia (por defecto, la misma);
-    ``vol_objetivo``: si se da, la palanca se reduce cuando la volatilidad de SPY sube."""
+    ``vol_objetivo``: si se da, la palanca se reduce cuando la volatilidad de SPY sube;
+    ``coste_reserva``: coste de mover dinero entre la reserva y las acciones (por defecto,
+    10 pb en cestas de acciones y 2 pb en ETFs)."""
     b = mr._base()
     p = b["p"]
     T = len(p.fechas)
@@ -251,7 +261,9 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
     t1 = T if fin is None else int(np.searchsorted(p.fechas, np.datetime64(fin)))
     rn, rd, cb, act, ex = reserva(reserva_)
     coste_res = 10e-4 if reserva_.startswith(("mom", "ew", "liq")) else 2e-4
-    eq, expo, lev, n_tr, suma, gan, reg, pendientes, deuda = _simular(
+    if coste_reserva is not None:
+        coste_res = coste_reserva
+    eq, expo, lev, n_tr, suma, gan, reg, pendientes, deuda, caja, deu, npos = _simular(
         p.open, p.close_ff, p.close, p.ultimo, b["salidas"][salida], ptr, j, peso, K,
         (1.0 / K) if frac is None else frac, H, coste_bps / 1e4, t0, t1, rn, rd, cb, act, ex, coste_res,
         vector_palanca(palanca, palanca_off, vol_objetivo), (1 + tasa_deuda) ** (1 / 252) - 1, max_t2)
@@ -263,7 +275,9 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
     out |= {"trades_año": n_tr / años, "acierto": gan / max(n_tr, 1), "ret_medio_trade": suma / max(n_tr, 1),
             "exposicion": float(expo.mean()), "palanca_media": float(lev.mean()),
             "palanca_max": float(lev.max()), "equity": eq,
-            "serie_expo": pd.Series(expo, idx), "serie_lev": pd.Series(lev, idx)}
+            "serie_expo": pd.Series(expo, idx), "serie_lev": pd.Series(lev, idx),
+            "serie_reserva": pd.Series(caja, idx), "serie_deuda": pd.Series(deu, idx),
+            "serie_posiciones": pd.Series(npos, idx)}
     if detalle:
         ops = pd.DataFrame(reg, columns=["t_ent", "t_sal", "j", "px_ent", "px_sal", "peso"])
         ops["ticker"] = p.tickers[ops.j.astype(int)]

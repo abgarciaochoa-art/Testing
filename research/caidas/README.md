@@ -405,6 +405,30 @@ desapalanca) y la calma deja la deuda libre para la reserva.
 
 En la prueba "deuda 7 %", la deuda interna de la reserva también va al 7 %.
 
+### Fichas con 100.000 $ (`fichas.py`)
+
+Cada estrategia simulada DESDE CERO (100.000 $ en caja, sin posiciones heredadas) a 1 año
+(13-oct-2025), 5 años (12-oct-2021) y desde 2002, con valor diario en $, dónde está el
+dinero (caídas, reserva, caja libre, deuda), caída desde máximo, rentabilidad por año y
+todas las operaciones (retornos netos de costes). Salida en `resultados/fichas/`.
+
+| 100.000 $ en… | 1 año | 5 años | Desde 2002 | Caída máx. (2002) | En caídas / caja libre (media) |
+|---|---|---|---|---|---|
+| Nivel 3 | 382.988 $ | 1.281.393 $ | 109,9 M$ (32,7 %) | -49 % | 31 % / 0 % (deuda media 33 %) |
+| **Nivel 2** | 281.719 $ | 965.406 $ | 42,6 M$ (27,7 %) | -45 % | 23 % / 0 % (deuda media 19 %) |
+| Nivel 1 | 303.468 $ | 832.372 $ | 29,3 M$ (25,8 %) | -45 % | 23 % / 0 % |
+| Solo caídas (resto en efectivo) | 329.083 $ | 522.026 $ | 6,1 M$ (18,1 %) | -34 % | 23 % / **77 %** |
+| D1 ronda 3 (SPY / efectivo) | 278.172 $ | 504.661 $ | 9,9 M$ (20,4 %) | -41 % | 21 % / 15 % |
+| C1 ronda 2 (SPY / efectivo) | 180.492 $ | 376.310 $ | 7,1 M$ (18,8 %) | -40 % | 22 % / 14 % |
+| F1 ronda 1 (SPY) | 151.880 $ | 243.903 $ | 2,5 M$ (13,9 %) | -52 % | 18 % / 0 % |
+| SPY | 119.049 $ | 190.953 $ | 1,06 M$ (10,0 %) | -55 % | — |
+
+Las compras de caídas solo ocupan de media un 23 % del capital y el 65 % de los días no
+hay ninguna abierta: sin reserva, tres cuartas partes del dinero estarían paradas. En el
+último año la reserva apenas aportó (los días buenos coincidieron con las compras y moverla
+cuesta), por eso "solo caídas" gana a 1 año; a 5 años y desde 2002 la reserva suma mucho.
+Ojo: 1 y 5 años están dentro de la muestra con la que se eligieron las reglas.
+
 ## Reproducir
 
 ```bash
@@ -433,6 +457,7 @@ python research/caidas/dsr_efectivo.py && python research/caidas/ronda5_final.py
 # ronda 6 (complementos)
 python research/caidas/complementos.py && python research/caidas/reservas.py && python research/caidas/segunda_fila.py
 python research/caidas/definitiva.py
+python research/caidas/fichas.py       # fichas con 100.000 $ a 1 año, 5 años y desde 2002
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 
