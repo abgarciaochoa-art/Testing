@@ -1,0 +1,28 @@
+{
+ "banderas": [
+  "origen: componente propia (idio/total): 50-80 % propia",
+  "gemela (par nº1, corr ≥ 0.6): gemela también cae ≥5 %",
+  "spread con gemela (z 60d): z > -2",
+  "naturaleza: noticia (hueco + volumen): hueco ≤-5 % sin volumen",
+  "día de entrada: IBS: cierra en mínimos (IBS ≤0.2)",
+  "calidad: momentum 12m: mom12 ≥ 30 %",
+  "distancia a SMA200: ≥15 % sobre (muy extendida)",
+  "amplitud en su grupo (% pares caen ≥5 %): ≥60 % del grupo",
+  "tamaño/liquidez en el índice: grandes (tercio superior)",
+  "mercado: SPY desde su máximo anual: SPY en corrección ≥10 %",
+  "mercado: SPY desde su máximo anual: SPY -10..-3 %"
+ ],
+ "cv": {
+  "ridge": {
+   "Q5": 0.005407867953181267,
+   "Q1": -0.0006354135693982244,
+   "Q5-Q1": 0.006043281406164169
+  },
+  "gbm": {
+   "Q5": 0.005789169110357761,
+   "Q1": -0.000273547790129669,
+   "Q5-Q1": 0.006062716944143176
+  }
+ },
+ "modelo": "gbm"
+}

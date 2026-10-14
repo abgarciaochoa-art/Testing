@@ -1,21 +1,21 @@
 ,"C1 · explicable (≥6 módulos, K=5)","C2 · máximo CAGR (ridge, K=2)"
 CAGR búsqueda oct21-oct26,0.3036,0.4021
 maxDD búsqueda oct21-oct26,-0.1977,-0.2711
-CAGR validación 2002-sep21,0.1571,0.1780
-maxDD validación 2002-sep21,-0.4014,-0.3806
-CAGR total,0.1852,0.2209
-maxDD total,-0.4014,-0.3806
-Sharpe,0.8898,0.8997
-vol,0.2181,0.2595
-operaciones/año,53.9257,21.9174
-acierto,0.7118,0.6630
-ret. medio op.,0.0145,0.0179
-% tiempo en acciones,0.2219,0.2771
-CAGR coste 20pb,0.1599,0.1944
-CAGR coste 30pb,0.1351,0.1685
-CAGR sin las que luego salieron del índice,0.1726,0.2103
-CAGR reserva SPY siempre,0.1822,0.2269
-CAGR sin reserva (efectivo),0.1301,0.1630
-DSR,0.5703,0.5912
+CAGR validación 2002-sep21,0.1668,0.1543
+maxDD validación 2002-sep21,-0.4027,-0.3843
+CAGR total,0.1931,0.2013
+maxDD total,-0.4027,-0.3843
+Sharpe,0.9133,0.8160
+vol,0.2203,0.2695
+operaciones/año,55.2174,23.1687
+acierto,0.7149,0.6481
+ret. medio op.,0.0148,0.0161
+% tiempo en acciones,0.2248,0.2940
+CAGR coste 20pb,0.1670,0.1738
+CAGR coste 30pb,0.1415,0.1469
+CAGR sin las que luego salieron del índice,0.1714,0.2012
+CAGR reserva SPY siempre,0.1889,0.1979
+CAGR sin reserva (efectivo),0.1373,0.1476
+DSR,0.6690,0.4814
 N pruebas,5502.0000,5502.0000
 PSR(0),1.0000,1.0000

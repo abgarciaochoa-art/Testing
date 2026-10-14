@@ -175,6 +175,7 @@ def construir() -> None:
     R["vol_rel5"] = (v.rolling(5).mean() / v.rolling(60, min_periods=30).mean().shift(5)).to_numpy()
     noche = np.full_like(c, np.nan)
     noche[1:] = p.open[1:] / c[:-1] - 1
+    noche[p.sin_apertura] = np.nan  # sin apertura real (CRSP): no hay hueco medible
     R["noche1"] = noche
     for n in (5, 10):
         ln = pd.DataFrame(np.log1p(noche)).rolling(n).sum().to_numpy()
@@ -193,7 +194,33 @@ def construir() -> None:
         R["dd20"] = c / m.maximo(20) - 1
         R["dd252"] = c / m.maximo(252) - 1
         R["mom252"] = _ret(c, 252)
-    R["ibs"] = m.ibs()
+    R["ibs"] = np.where(p.sin_apertura, np.nan, m.ibs())
+
+    # ---- módulos v2 ----------------------------------------------------------------
+    r1 = pd.DataFrame(_ret(c, 1))
+    for n in (5, 10):
+        # volatilidad diaria de 60 sesiones medida ANTES de la caída (termina en t-n)
+        vol_previa = r1.rolling(60, min_periods=40).std().shift(n).to_numpy()
+        with np.errstate(invalid="ignore", divide="ignore"):
+            R[f"sigma{n}"] = R[f"r{n}"] / (vol_previa * np.sqrt(n))  # caída en desviaciones típicas
+    R["vol60"] = (r1.rolling(60, min_periods=40).std().shift(10) * np.sqrt(252)).to_numpy()
+    with np.errstate(invalid="ignore"):
+        R["dist_sma200"] = c / m.sma(200) - 1
+        R["dist_sma50"] = c / m.sma(50) - 1
+    R["pares_mom252"] = media_pares(R["mom252"], pares)
+    R["rel_mom252"] = R["mom252"] - R["pares_mom252"]
+    with np.errstate(invalid="ignore"):
+        R["pares_frac_caen"] = media_pares(np.where(np.isnan(R["r10"]), np.nan, (R["r10"] <= -0.05) * 1.0), pares)
+    dv = pd.DataFrame(p.raw_close * p.volume).rolling(60, min_periods=20).mean()
+    R["tam"] = dv.where(p.miembro).rank(axis=1, pct=True).to_numpy()  # tamaño/liquidez relativo (0-1)
+    spy_s = pd.Series(spy)
+    spy_dd = (spy_s / spy_s.rolling(252, min_periods=60).max() - 1).to_numpy()
+    R["spy_dd252"] = np.repeat(spy_dd[:, None], c.shape[1], 1)
+    vr = (sr.rolling(20).std() / sr.rolling(120).std()).to_numpy()
+    R["vol_pico_spy"] = np.repeat(vr[:, None], c.shape[1], 1)  # >1: la volatilidad se dispara
+    mes = pd.DatetimeIndex(p.fechas).to_period("M")
+    pos = pd.Series(np.arange(len(mes))).groupby(np.asarray(mes)).transform("max").to_numpy()
+    R["sesiones_fin_mes"] = np.repeat((pos - np.arange(len(mes)))[:, None].astype(float), c.shape[1], 1)
     np.savez(SALIDA, pares=pares, **{k: np.asarray(v, dtype=np.float32) for k, v in R.items()})
     print(f"{len(R)} rasgos -> {SALIDA}  ({time.time() - t0:.0f}s)")
 

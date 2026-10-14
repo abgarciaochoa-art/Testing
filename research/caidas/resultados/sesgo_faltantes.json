@@ -1,0 +1,30 @@
+{
+ "fraccion_sin_datos_validacion": 0.1556769092835602,
+ "score_medio_con_datos": 3.9149531808089586,
+ "score_medio_sin_datos": 2.681675392670157,
+ "tasas_imputadas": {
+  "naturaleza: noticia (hueco + volumen): hueco ≤-5 % sin volumen": 0.04618081153053395,
+  "día de entrada: IBS: cierra en mínimos (IBS ≤0.2)": 0.3325033475258399,
+  "tamaño/liquidez en el índice: grandes (tercio superior)": 0.41152752493718686
+ },
+ "score_v2_validacion": {
+  "cagr": 0.17070054255030986,
+  "maxdd": -0.39127456051604237,
+  "sharpe": 0.8214195451983216
+ },
+ "score_v2_total": {
+  "cagr": 0.20771608905706218,
+  "maxdd": -0.39127456051604237,
+  "sharpe": 0.9175653216772416
+ },
+ "score_imp_validacion": {
+  "cagr": 0.1778185263582004,
+  "maxdd": -0.39127456051604215,
+  "sharpe": 0.841727975099255
+ },
+ "score_imp_total": {
+  "cagr": 0.21356403479955377,
+  "maxdd": -0.39127456051604215,
+  "sharpe": 0.9324874185308282
+ }
+}

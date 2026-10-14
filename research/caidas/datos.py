@@ -92,6 +92,17 @@ def construir() -> None:
     for c in ("open", "high", "low"):
         p[f"{c}_adj"] = p[c] * f
 
+    # Precio REAL negociado (para filtros de precio). Convención por fuente, medida en
+    # las fechas de split: en Yahoo `close` viene ajustado por splits (sin salto en el
+    # split), en CRSP/Tiingo/Wiki es el precio real (salta 1/f). Real en Yahoo = close ×
+    # producto de los splits POSTERIORES a la fecha. Sin esto, AAPL cotizaba a 0,31 $ en
+    # 2003 y NVDA a 0,21 $, y un filtro "precio >= 5 $" las expulsaba durante años.
+    p = p.sort_values(["ticker", "date"])
+    fs = p["stock_splits"].where(~p["stock_splits"].isin([0, 1]) & p["stock_splits"].notna(), 1.0)
+    desde_t = fs[::-1].groupby(p["ticker"][::-1]).cumprod()[::-1]  # producto de splits >= t
+    posteriores = desde_t / fs
+    p["precio_real"] = np.where(p["source"].str.startswith("yahoo"), p["close"] * posteriores, p["close"])
+
     def ancho(col: str) -> pd.DataFrame:
         return p.pivot(index="date", columns="ticker", values=col).sort_index()
 
@@ -101,7 +112,7 @@ def construir() -> None:
     tick = close.columns
     mats = {"close": close}
     for src, dst in (("open_adj", "open"), ("high_adj", "high"), ("low_adj", "low"),
-                     ("close", "raw_close"), ("volume", "volume")):
+                     ("close", "raw_close"), ("precio_real", "precio_real"), ("volume", "volume")):
         mats[dst] = ancho(src).reindex(index=fechas, columns=tick)
 
     # Limpieza de picos: subida >150 % que revierte >60 % al día siguiente -> NaN.
@@ -111,7 +122,7 @@ def construir() -> None:
     pico[1:-1] = (r[:-1] > 1.5) & (r[1:] < -0.6)
     n_picos = int(pico.sum())
     for k in mats:
-        if k != "volume":
+        if k not in ("volume", "precio_real"):
             mats[k] = mats[k].mask(pico)
     print(f"picos eliminados: {n_picos}")
 
@@ -122,7 +133,11 @@ def construir() -> None:
             fin = row.end if pd.notna(row.end) else fechas[-1] + pd.Timedelta(days=1)
             miembro.loc[(fechas >= row.start) & (fechas < fin), row.ticker] = True
 
-    # open/high/low ausentes en algunas fuentes: rellenar con close (conservador).
+    # open/high/low ausentes en algunas fuentes (CRSP): se marca para que los rasgos
+    # intradía (hueco nocturno, IBS) queden como no disponibles, y se rellenan con close
+    # (la ejecución "a la apertura" pasa a ser al cierre de esa sesión: más tarde, nunca antes).
+    sin_apertura = (mats["open"].isna() | mats["high"].isna() | mats["low"].isna()) & mats["close"].notna()
+    mats["sin_apertura"] = sin_apertura.astype(float)
     for k in ("open", "high", "low"):
         mats[k] = mats[k].fillna(mats["close"].where(mats[k].isna()))
 

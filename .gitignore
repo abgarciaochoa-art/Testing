@@ -9,3 +9,4 @@ data/cache/
 .venv/
 data/cache/
 .guardian-stop
+research/caidas/resultados/_log_*

@@ -41,12 +41,15 @@ class Panel:
     high: np.ndarray
     low: np.ndarray
     raw_close: np.ndarray
+    precio_real: np.ndarray
     volume: np.ndarray
+    sin_apertura: np.ndarray
     close_ff: np.ndarray = field(init=False)
     ultimo: np.ndarray = field(init=False)
 
     def __post_init__(self) -> None:
         self.close_ff = pd.DataFrame(self.close).ffill().to_numpy()
+        self.sin_apertura = self.sin_apertura > 0.5
         valido = ~np.isnan(self.close)
         T = len(self.fechas)
         # último índice con precio de cada ticker (para liquidar deslistados)
@@ -58,7 +61,8 @@ class Panel:
 def cargar() -> Panel:
     z = np.load(PANEL, allow_pickle=True)
     return Panel(**{k: z[k] for k in ("fechas", "tickers", "miembro", "close", "open",
-                                       "high", "low", "raw_close", "volume")})
+                                       "high", "low", "raw_close", "precio_real", "volume",
+                                       "sin_apertura")})
 
 
 # ------------------------------------------------------------------- indicadores
@@ -118,10 +122,17 @@ def ibs() -> np.ndarray:
 
 @lru_cache(maxsize=1)
 def liquido() -> np.ndarray:
-    """Precio crudo >= 5 $ y volumen en dólares medio de 20 días >= 5 M$."""
+    """Precio REAL >= 5 $ y volumen en dólares medio de 20 días >= 5 M$.
+
+    Si la fuente no informa volumen (CRSP: la mayoría de deslistadas), NO se excluye:
+    son miembros del S&P 500 y excluirlas reintroduce sesgo de supervivencia. El
+    volumen en dólares es close × volume en la convención de cada fuente (ambos
+    ajustados en Yahoo, ambos reales en el resto), por lo que es el real.
+    """
     p = cargar()
     dv = _df(p.raw_close * p.volume).rolling(20, min_periods=10).mean().to_numpy()
-    return (p.raw_close >= 5) & (np.nan_to_num(dv) >= 5e6)
+    sin_volumen = _df(p.volume).rolling(20, min_periods=1).count().to_numpy() == 0
+    return (np.nan_to_num(p.precio_real) >= 5) & ((np.nan_to_num(dv) >= 5e6) | sin_volumen)
 
 
 @lru_cache(maxsize=4)
