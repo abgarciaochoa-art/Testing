@@ -1,0 +1,50 @@
+{
+ "todas": {
+  "n": 4701,
+  "acierto": 0.711976175281855,
+  "ret_medio": 0.022120093526434563,
+  "ret_mediana": 0.030417065653075115,
+  "sesiones_media": 6.313975749840459,
+  "mfe_medio": 0.058204270710030266,
+  "mae_medio": -0.06888594572477916,
+  "mae_mediano": -0.042342342823041945,
+  "ganadoras_mae_mediano": -0.027123483226266898,
+  "ganadoras_que_pasaron_por_-5%": 0.2793546459515984,
+  "perdedoras_mfe_mediano": 0.022820704861054364,
+  "perdedoras_que_llegaron_a_+3%": 0.3766617429837518,
+  "dia_mae_mediano": 2.0,
+  "peor_mae": -0.5773615496679885
+ },
+ "búsqueda": {
+  "n": 1625,
+  "acierto": 0.6676923076923077,
+  "ret_medio": 0.02009505381943265,
+  "ret_mediana": 0.026380163668835,
+  "sesiones_media": 6.517538461538462,
+  "mfe_medio": 0.05943844189101539,
+  "mae_medio": -0.07301874703767988,
+  "mae_mediano": -0.049999961713804164,
+  "ganadoras_mae_mediano": -0.02965120432140611,
+  "ganadoras_que_pasaron_por_-5%": 0.3142857142857143,
+  "perdedoras_mfe_mediano": 0.022995634810653587,
+  "perdedoras_que_llegaron_a_+3%": 0.3907407407407407,
+  "dia_mae_mediano": 2.0,
+  "peor_mae": -0.43246592317224286
+ },
+ "validación": {
+  "n": 3076,
+  "acierto": 0.735370611183355,
+  "ret_medio": 0.02318988856020508,
+  "ret_mediana": 0.03322839055992888,
+  "sesiones_media": 6.206436931079324,
+  "mfe_medio": 0.05755227845739671,
+  "mae_medio": -0.06670265504419927,
+  "mae_mediano": -0.03833140210972236,
+  "ganadoras_mae_mediano": -0.026116104696587206,
+  "ganadoras_que_pasaron_por_-5%": 0.2625994694960212,
+  "perdedoras_mfe_mediano": 0.022551279073103392,
+  "perdedoras_que_llegaron_a_+3%": 0.36732186732186733,
+  "dia_mae_mediano": 2.0,
+  "peor_mae": -0.5773615496679885
+ }
+}

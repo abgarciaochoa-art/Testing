@@ -2,7 +2,7 @@
 
 Investigación sobre **acciones reales del S&P 500 con pertenencia point-in-time**
 (2002-01 → 2026-10), con costes de 10 pb por lado y ejecución a la apertura siguiente.
-Se probaron **~11.000 carteras** en cinco rondas, y todas cuentan en las
+Se probaron **~11.000 carteras** en siete rondas, y todas cuentan en las
 correcciones por minería de datos.
 
 > **Estado actual (ronda 6).** Estrategia **D1 con entradas técnicas, solo acciones**
@@ -24,6 +24,11 @@ correcciones por minería de datos.
 > Sharpe deflactado: 0,59 con N bruto (~10.500) y 0,997 con N efectivo (205). Es el
 > mejor del proyecto, pero según la regla del repo sigue siendo **zona gris:
 > prometedora y explicable, no demostrada**.
+>
+> **Ronda 7 (comportamiento):** ninguna salida, tamaño, entrada escalonada ni filtro por
+> rasgos mejora la estrategia fuera de muestra; se queda como está. Comprar en dos tramos
+> es la mejor forma de bajar el riesgo (caída máxima -36 % en vez de -45 %, ~2 puntos
+> menos al año). Ver la sección 8.
 
 ## Datos: por qué fiarse de ellos
 
@@ -429,6 +434,70 @@ hay ninguna abierta: sin reserva, tres cuartas partes del dinero estarían parad
 cuesta), por eso "solo caídas" gana a 1 año; a 5 años y desde 2002 la reserva suma mucho.
 Ojo: 1 y 5 años están dentro de la muestra con la que se eligieron las reglas.
 
+## 8. Ronda 7: cómo se comporta (rasgos, tamaño, entrada y salida)
+
+**Anatomía** (`anatomia.py`). Las 4.701 candidatas del nivel 2 evaluadas como operación
+aislada con las reglas reales (no solo las 687 que hizo la cartera):
+
+| | Búsqueda 2021-26 | Validación 2002-21 |
+|---|---|---|
+| Acierto · retorno medio · mediano | 67 % · +2,0 % · +2,6 % | 74 % · +2,3 % · +3,3 % |
+| Sesiones en cartera | 6,5 | 6,2 |
+| Peor punto intradía (mediana) · sesión mediana del peor punto | -5,0 % · 2 | -3,8 % · 2 |
+| Ganadoras que pasaron por -5 % | 31 % | 26 % |
+| Perdedoras que llegaron a +3 % | 39 % | 37 % |
+
+**Rasgos que separan ganadoras de perdedoras.** 104 rasgos; IC de rangos con errores
+agrupados por mes. Se eligen con la búsqueda (|t| ≥ 2,5 y mismo signo en sus dos
+mitades): salen 17 y **14 se mantienen en la validación**. Retorno medio del quintil
+bajo → alto en la validación:
+
+| Rasgo | Lectura | IC búsqueda / validación | Q1 → Q5 (validación) |
+|---|---|---|---|
+| Beta frente a SPY | más beta, mejor | +0,19 / +0,17 | +0,0 % → +5,2 % |
+| Hueco de apertura en la compra | si abre aún más abajo, mejor | -0,15 / -0,14 | +4,6 % → +1,3 % |
+| Caída medida en ATR | desmesurada para su rango, peor | -0,18 / -0,10 | +2,6 % → +1,0 % |
+| Caída del último día | cuanto más cae ese día, mejor | -0,12 / -0,12 | +2,6 % → +1,4 % |
+| Distancia a la EMA5 | más estirada, mejor | -0,13 / -0,14 | +3,0 % → +1,6 % |
+| Volumen alto 5 días (noticia) | peor | -0,18 / -0,08 | +2,7 % → +1,7 % |
+| Gemela cayendo también | mejor | -0,11 / -0,10 | +2,1 % → +1,4 % |
+| Modelo de la ronda 3 | más alto, mejor | +0,22 / +0,06 | +1,4 % → +3,3 % |
+
+No se mantienen el tamaño, el volumen en dólares y el precio (en 2021-26 ganan las
+grandes; en 2002-21, las pequeñas). Sin relación estable: profundidad de la caída,
+contexto de mercado, resultados empresariales y su sorpresa.
+
+**Cartera** (`motor_v4.py`, `ronda7.py`; 55 variantes, una cosa cada vez; elegible si
+supera a la actual en la búsqueda y en sus dos mitades):
+
+| Variante (nivel 2) | Validación | 2002-2026 | Caída máx. | Sharpe |
+|---|---|---|---|---|
+| **Actual** (de golpe, SMA10, tamaño por módulos) | **21,8 %** | **27,7 %** | -45 % | **0,99** |
+| Salida solo por tiempo (5 sesiones) | 9,7 % | 16,4 % | -61 % | 0,67 |
+| Stop -8 % intradía | 13,1 % | 16,8 % | -60 % | 0,69 |
+| Trailing 5 % | 15,8 % | 19,0 % | -57 % | 0,76 |
+| Objetivo +5 % intradía | 19,9 % | 23,7 % | -50 % | 0,91 |
+| Stop de catástrofe -20 % al cierre | 21,2 % | 26,4 % | -39 % | 0,96 |
+| Dos tramos (2.ª mitad si cae ≥3 % más) | 20,0 % | 24,7 % | **-36 %** | 0,96 |
+| 50 % fijo por operación | 22,4 % | 28,6 % | -42 % | 0,97 |
+| Tamaño por volatilidad (el elegido en la búsqueda) | 20,7 % | 27,1 % | -42 % | 0,97 |
+| Sin el quintil bajo de la puntuación de rasgos | 21,4 % | 27,5 % | -44 % | 0,99 |
+
+- **Por qué los rasgos no mejoran la cartera:** hasta el peor quintil gana de media
+  +1,4 % en ~6 sesiones, más que la reserva en ese tiempo. El límite son las
+  oportunidades, no el capital: filtrar deja dinero parado.
+- **Los stops venden a las ganadoras:** una de cada cuatro pasa por -5 % antes de ganar.
+- La única variante elegida por la regla (tamaño por volatilidad) **no aguanta** en la
+  validación (20,7 % frente a 21,8 %). Se mantiene la estrategia como está.
+
+**Qué esperar** (`que_esperar.py`, simulación continua desde 2002): 64 % de meses en
+positivo (mediana +2,2 %; peor mes -24 %, oct-2018); hasta 4 meses negativos seguidos y 7
+operaciones perdedoras seguidas; en el 37 % de los meses no hay compras y la racha más
+larga sin ninguna posición fue de 180 sesiones (2014-15). Fuera de muestra, a 12 meses:
+mediana +22,7 %, 1 de cada 10 por debajo de -6 %; a 3 años, el 3 % de los tramos en
+negativo; a 5 años, ninguno. Hay caídas del 25-30 % cada 2-3 años, a veces mucho peores
+que las de SPY (2018: -30 % frente a -17 %; 2023: -25 % frente a -9 %).
+
 ## Reproducir
 
 ```bash
@@ -458,6 +527,9 @@ python research/caidas/dsr_efectivo.py && python research/caidas/ronda5_final.py
 python research/caidas/complementos.py && python research/caidas/reservas.py && python research/caidas/segunda_fila.py
 python research/caidas/definitiva.py
 python research/caidas/fichas.py       # fichas con 100.000 $ a 1 año, 5 años y desde 2002
+# ronda 7 (comportamiento)
+python research/caidas/anatomia.py && python research/caidas/motor_v4.py && python research/caidas/ronda7.py
+python research/caidas/que_esperar.py && python research/caidas/exportar_comportamiento.py
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 
