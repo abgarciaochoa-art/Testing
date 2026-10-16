@@ -17,6 +17,10 @@ por defecto (con ellas apagadas reproduce el v3 al céntimo):
   objetivo ``obj_i`` y stop ``stop_i``. Si el mismo día se tocan los dos, cuenta el stop.
 - **Venta parcial**: al tocar el objetivo se vende ``parcial`` (1 = todo); el resto sigue
   con la salida normal.
+- **Añadir según un calendario por candidata** (``add_t``, ``add_f``): en la apertura
+  indicada se compra ``add_f`` veces el tamaño previsto, con tope opcional de peso por
+  posición (``tope_pos``); y vender según otro calendario (``sal_t``). Lo usa la ronda 8
+  (``ronda8.py``).
 
 Registro por posición: retorno NETO de costes con todos los flujos (tramos y parciales).
 """
@@ -43,7 +47,7 @@ def _vender(cash, deuda, ingreso):
 @numba.njit(cache=True)
 def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, t1, rn, rd, cambio, activa,
              expo_res, coste_res, pal_t, tasa_dia, max_t2, w_ini, add_modo, add_umbral, add_dia, add_cond,
-             obj_c, stop_c, trail_c, obj_i, stop_i, parcial):
+             obj_c, stop_c, trail_c, obj_i, stop_i, parcial, c_add_t, c_add_f, tope_pos, c_sal_t):
     T, N = C.shape
     MAXR = 60000
     # t_ent, t_sal, j, px_medio, px_salida, peso previsto, ret neto, tramos, parcial hecho
@@ -66,6 +70,11 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
     pend_sal = np.zeros(N, dtype=np.bool_)
     pend_par = np.zeros(N, dtype=np.bool_)
     pend_add = np.zeros(N, dtype=np.bool_)
+    frac_add = np.zeros(N)  # fracción del tamaño previsto que se compra al añadir
+    add_t_pos = np.full(N, -1)  # apertura en la que toca añadir según el calendario de la candidata
+    add_f_pos = np.zeros(N)
+    sal_t_pos = np.full(N, -1)  # apertura en la que toca vender según el calendario de la candidata
+    pend_q = np.full(N, -1)
     pend = np.full(N, -1)
     pend_w = np.zeros(N)
     npend = 0
@@ -159,7 +168,9 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
                         px = O[t, j]
                         if np.isnan(px) or not abierta[j] or eq_ap <= 0:
                             continue
-                        imp = previsto[j] * (1 - w_ini)
+                        imp = previsto[j] * frac_add[j]
+                        if tope_pos < INF:  # tope de peso por posición
+                            imp = min(imp, max(0.0, tope_pos * eq_ap - u[j] * px))
                     else:
                         j = pend[q]
                         px = O[t, j]
@@ -200,6 +211,9 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
                         decidido[j] = w_ini >= 1.0
                         hecho_parcial[j] = False
                         maxc[j] = px
+                        add_t_pos[j] = c_add_t[pend_q[q]]
+                        add_f_pos[j] = c_add_f[pend_q[q]]
+                        sal_t_pos[j] = c_sal_t[pend_q[q]]
                     valor_ap += imp
             npend = 0
         cash -= abs(mov_res) * coste_res
@@ -288,7 +302,8 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
             c = CF[t, j]
             maxc[j] = max(maxc[j], c)
             rc = c / pe[j] - 1
-            if (t - te[j] + 1 >= H) or sal[t, j] or rc <= -stop_c or c <= maxc[j] * (1 - trail_c):
+            if (t - te[j] + 1 >= H) or sal[t, j] or rc <= -stop_c or c <= maxc[j] * (1 - trail_c) or (
+                    sal_t_pos[j] == t + 1):
                 pend_sal[j] = True
                 pend_add[j] = False
                 nsal += 1
@@ -310,6 +325,11 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
                 elif add_modo == 3:
                     ok = add_cond[t, j]
                 pend_add[j] = ok
+                frac_add[j] = 1 - w_ini
+            if add_t_pos[j] == t + 1:  # calendario de la candidata: añadir en la próxima apertura
+                pend_add[j] = True
+                frac_add[j] = add_f_pos[j]
+                add_t_pos[j] = -1
         libres = K - (nab - nsal)
         if libres > 0 and t + 1 < t1:
             for q in range(ptr[t], ptr[t + 1]):
@@ -323,6 +343,7 @@ def _simular(O, Hi, Lo, CF, C, ultimo, sal, ptr, cj, cw, K, frac, H, coste, t0, 
                     w_q = -w_q
                 pend[npend] = j
                 pend_w[npend] = w_q
+                pend_q[npend] = q
                 npend += 1
                 if npend >= libres:
                     break
@@ -340,10 +361,13 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
             palanca=1.0, palanca_off=None, vol_objetivo=None, tasa_deuda=0.05, inicio="2002-01-02", fin=None,
             detalle=False, max_t2=0, coste_reserva=None, sal_matriz=None, w_ini=1.0, add_modo=0, add_umbral=0.0,
             add_dia=0, add_cond=None, obj_c=INF, stop_c=INF, trail_c=INF, obj_i=INF, stop_i=INF,
-            parcial=1.0) -> dict:
+            parcial=1.0, add_t=None, add_f=None, tope_pos=INF, sal_t=None) -> dict:
     """Como ``motor_v3.simular`` más los parámetros de tramos y salidas del docstring del
     módulo. ``sal_matriz`` sustituye a la salida por nombre (matriz T×N de cierres que
-    disparan la venta)."""
+    disparan la venta). ``add_t`` (por candidata): sesión en cuya APERTURA se añade a la
+    posición ``add_f`` veces su tamaño previsto (-1 = no añadir), con un tope opcional
+    del peso de la posición sobre el capital (``tope_pos``). ``sal_t`` (por candidata):
+    sesión en cuya apertura se vende si sigue abierta (-1 = nunca)."""
     b = mr._base()
     p = b["p"]
     T = len(p.fechas)
@@ -351,8 +375,12 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
     j = np.asarray(j)
     score = np.asarray(score, dtype=np.float64)
     peso = np.ones(len(t)) if peso is None else np.asarray(peso, dtype=np.float64)
+    add_t = np.full(len(t), -1, dtype=np.int64) if add_t is None else np.asarray(add_t, dtype=np.int64)
+    add_f = np.broadcast_to(np.asarray(0.0 if add_f is None else add_f, dtype=np.float64), (len(t),))
     orden = np.lexsort((-score, t))
     t, j, peso = t[orden], j[orden].astype(np.int64), peso[orden]
+    sal_t = np.full(len(t), -1, dtype=np.int64) if sal_t is None else np.asarray(sal_t, dtype=np.int64)
+    add_t, add_f, sal_t = add_t[orden].copy(), add_f[orden].copy(), sal_t[orden].copy()
     ptr = np.searchsorted(t, np.arange(T + 1)).astype(np.int64)
     t0 = int(np.searchsorted(p.fechas, np.datetime64(inicio)))
     t1 = T if fin is None else int(np.searchsorted(p.fechas, np.datetime64(fin)))
@@ -367,7 +395,7 @@ def simular(t, j, score, peso=None, K=3, frac=None, H=20, salida="sma10", coste_
         (1.0 / K) if frac is None else frac, H, coste_bps / 1e4, t0, t1, rn, rd, cb, act, ex, coste_res,
         v3.vector_palanca(palanca, palanca_off, vol_objetivo), (1 + tasa_deuda) ** (1 / 252) - 1, max_t2,
         float(w_ini), int(add_modo), float(add_umbral), int(add_dia), cond, float(obj_c), float(stop_c),
-        float(trail_c), float(obj_i), float(stop_i), float(parcial))
+        float(trail_c), float(obj_i), float(stop_i), float(parcial), add_t, add_f, float(tope_pos), sal_t)
     idx = pd.DatetimeIndex(p.fechas[t0:t1])
     eq = pd.Series(eq, idx)
     out = m.metricas(eq) if eq.iloc[-1] > 0 else {"cagr": -1.0, "vol": np.nan, "sharpe": np.nan,

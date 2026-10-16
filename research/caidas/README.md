@@ -2,7 +2,7 @@
 
 Investigación sobre **acciones reales del S&P 500 con pertenencia point-in-time**
 (2002-01 → 2026-10), con costes de 10 pb por lado y ejecución a la apertura siguiente.
-Se probaron **~11.000 carteras** en siete rondas, y todas cuentan en las
+Se probaron **~11.000 carteras** en ocho rondas, y todas cuentan en las
 correcciones por minería de datos.
 
 > **Estado actual (ronda 6).** Estrategia **D1 con entradas técnicas, solo acciones**
@@ -29,6 +29,11 @@ correcciones por minería de datos.
 > rasgos mejora la estrategia fuera de muestra; se queda como está. Comprar en dos tramos
 > es la mejor forma de bajar el riesgo (caída máxima -36 % en vez de -45 %, ~2 puntos
 > menos al año). Ver la sección 8.
+>
+> **Ronda 8 (gestión dentro de la operación):** cortar perdedoras empeora de forma
+> significativa (-5,6 puntos al año fuera de muestra si se vende lo que sigue en
+> pérdidas al 5.º día) y añadir a las que siguen cayendo, aunque tiene ventaja por
+> dólar, apenas mueve la cartera. Ver la sección 9.
 
 ## Datos: por qué fiarse de ellos
 
@@ -498,6 +503,59 @@ mediana +22,7 %, 1 de cada 10 por debajo de -6 %; a 3 años, el 3 % de los tramo
 negativo; a 5 años, ninguno. Hay caídas del 25-30 % cada 2-3 años, a veces mucho peores
 que las de SPY (2018: -30 % frente a -17 %; 2023: -25 % frente a -9 %).
 
+## 9. Ronda 8: gestión dentro de la operación (salir de perdedoras, añadir tamaño)
+
+**Pregunta:** con lo que ha pasado desde la compra, ¿se puede saber qué operaciones
+conviene cerrar antes o reforzar? (`gestion.py`). Para cada operación aún abierta al
+cierre del día k (1, 2, 3, 5) se mide el **exceso restante**: lo que gana desde la
+apertura siguiente hasta la venta normal, menos lo que da la reserva en ese mismo
+tramo. 21 condiciones × 4 días = 84 pruebas, t con errores agrupados por mes, FDR del
+10 % en la búsqueda y mismo signo en sus dos mitades; luego, validación.
+
+| Condición al cierre del día k | Búsqueda | Validación | Acaban ganando |
+|---|---|---|---|
+| Todas las abiertas, día 2 | +0,8 % | +1,4 % | 70 % |
+| Va perdiendo ≥5 % (día 2) | **+2,6 %** (t 3,0) | **+2,8 %** (t 2,8) | 34 % |
+| Va perdiendo ≥8 % (día 5) | **+3,4 %** (t 4,8) | **+4,3 %** (t 2,1) | 10 % |
+| Día de caída ≥3 % con volumen ≥1,5× (día 2) | **+3,7 %** (t 2,6) | **+3,2 %** (t 3,1) | 43 % |
+| Cierra bajo el mínimo del día de la señal (día 2) | +1,7 % (t 2,2) | +2,3 % (t 3,3) | 52 % |
+| Sigue en pérdidas (día 5) | +1,2 % (t 1,7) | +2,2 % (t 2,3) | 36 % |
+| Confirma: gana ≥4 % (día 3) | -0,6 % (t -1,0) | +0,1 % (t 0,3) | 89 % |
+
+- **Ninguna** de las 84 pruebas da un exceso restante significativamente negativo: no
+  hay ninguna señal para cortar perdedoras. Las que van perdiendo casi nunca acaban
+  ganando, pero sí recuperan parte, y venderlas fija la pérdida en el peor momento.
+- **Añadir a las que siguen cayendo** tiene ventaja real por dólar añadido (13 reglas
+  elegidas, 10 se mantienen en la validación). Un ridge con todo el recorrido predice el
+  exceso fuera de muestra (IC 0,18, t 4,7), pero su peor decil no pierde (≈0 %).
+
+**En la cartera del nivel 2** (`ronda8.py`; motor v4 con calendario de compra/venta por
+candidata; diferencia diaria frente a la actual con t de Newey-West e IC del 90 % por
+bootstrap pareado):
+
+| Cambio | Validación | Dif. anual valid. (t) | Dif. anual búsq. (t) | Caída máx. |
+|---|---|---|---|---|
+| **Actual** | **21,8 %** | | | -45 % |
+| Salir si sigue en pérdidas al día 5 | 15,3 % | **-5,6 pp (-2,8)** | -7,3 pp (-2,0) | -45 % |
+| Salir si pierde ≥5 % al día 2 | 21,4 % | -0,3 pp (-0,4) | -0,4 pp (-0,2) | -47 % |
+| Añadir +50 % si pierde ≥5 % al día 2 | 21,9 % | +0,2 pp (0,6) | -1,0 pp (-1,1) | -46 % |
+| Añadir +100 % si día de caída con volumen | 22,0 % | +0,2 pp (1,3) | +0,5 pp (0,4) | -45 % |
+| Añadir +100 % al quintil alto del modelo | 22,2 % | +0,5 pp (1,0) | +2,4 pp (1,3) | -45 % |
+| Salir del quintil bajo del modelo (día 2) | 23,7 % | +1,6 pp (1,7) | +2,4 pp (1,4) | -45 % |
+| · vecindario: 10 % / 30 % / 40 % más bajo, día 2 | 22,5 / 22,4 / 21,1 % | +0,6 / +0,6 / -0,5 pp | | |
+| · vecindario: 20 % más bajo, día 1 / día 3 | 20,4 / 19,8 % | -1,2 / -1,6 pp | | |
+| Tamaño al entrar: fijo 50 % / por modelo / por beta | 22,4 / 21,4 / 21,4 % | +1,0 / 0,0 / -0,1 pp (t ≤ 0,7) | | |
+
+- **Cortar perdedoras empeora** de forma significativa.
+- **Añadir apenas cambia la cartera:** en 25 años solo hay 9-61 ocasiones en
+  posiciones que la cartera tiene, y con tope de peso por posición (60-75 %).
+- La única mejora cercana a la significancia (vender a partir del 3.er día el quintil
+  bajo del modelo: recicla huecos para caídas nuevas, P(no mejora) = 5 % en el
+  bootstrap) **es un pico**: sus vecinas dan entre -1,6 y +0,6 puntos. Se descarta.
+- **Conclusión:** con estas reglas no se gana rentabilidad sin subir la exposición.
+  El límite está en el número de oportunidades: cada operación ya rinde mucho más que
+  el capital parado.
+
 ## Reproducir
 
 ```bash
@@ -530,6 +588,8 @@ python research/caidas/fichas.py       # fichas con 100.000 $ a 1 año, 5 años 
 # ronda 7 (comportamiento)
 python research/caidas/anatomia.py && python research/caidas/motor_v4.py && python research/caidas/ronda7.py
 python research/caidas/que_esperar.py && python research/caidas/exportar_comportamiento.py
+# ronda 8 (gestión dentro de la operación)
+python research/caidas/gestion.py && python research/caidas/ronda8.py
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 
