@@ -1,0 +1,17 @@
+estrategia,familia,palanca,nota,CAGR 2002-2026,CAGR fuera de muestra,peor caída,Sharpe,valor final de 100.000 $
+Nivel 3 · caídas a 2×,Caídas Técnicas,hasta 2×,,0.32654,0.25830,-0.48554,0.94128,109735935.39362
+"Caídas a 1,5× (ronda 5)",Caídas Técnicas,"hasta 1,5× (caídas)",,0.28314,0.23021,-0.45125,0.93342,48134912.80102
+Nivel 2 · reserva contracíclica,Caídas Técnicas,"hasta 1,5× (reserva)",recomendada,0.27677,0.21750,-0.45125,0.98832,42555615.44521
+Escalera ronda 4 · 2× (SPY y SHY),Combinada D1 + C1,hasta 2×,usa SPY y SHY,0.26767,0.22968,-0.45894,0.92491,35640049.32594
+Nivel 1 · reserva de acciones sin deuda,Caídas Técnicas,1×,,0.25761,0.20362,-0.45125,0.96529,29259745.11374
+"Escalera ronda 4 · 1,5× (SPY y SHY)",Combinada D1 + C1,"hasta 1,5×",usa SPY y SHY,0.24722,0.21246,-0.45277,0.92703,23819955.25358
+Nivel 2 en dos tramos (menos riesgo),Caídas Técnicas,"hasta 1,5× (reserva)",,0.24720,0.19975,-0.35496,0.96107,23810570.98960
+Combinada técnica ronda 5 · 1× (solo acciones),Combinada D1 + C1,1×,,0.22910,0.18956,-0.41097,0.93117,16575814.43710
+D1 · SPY siempre,Módulos de origen (rondas 2-3),1× (siempre invertida),usa SPY,0.22061,0.18018,-0.54241,0.87308,13961496.37121
+Escalera ronda 4 · 1× (SPY y SHY),Combinada D1 + C1,1×,usa SPY y SHY,0.21023,0.18718,-0.34380,0.94284,11298781.39299
+D1-def · SPY en tendencia,Módulos de origen (rondas 2-3),1×,usa SPY y efectivo,0.20556,0.16728,-0.39339,0.90451,10267459.26705
+"D1-def50 · SPY en tendencia, tope 50 %",Módulos de origen (rondas 2-3),1×,usa SPY y efectivo,0.20375,0.16604,-0.40650,0.90377,9892383.34264
+Combinada ronda 3 · 1× (SPY y efectivo),Combinada D1 + C1,1×,usa SPY y efectivo,0.19843,0.16573,-0.36215,0.94804,8864028.69821
+C1 · caída de 5 días con banderas (ronda 2),Módulos de origen (rondas 2-3),1×,usa SPY y efectivo,0.18756,0.16053,-0.40268,0.89151,7073277.85181
+Solo Caídas Técnicas (resto en efectivo),Caídas Técnicas,1× (efectivo),usa efectivo,0.18078,0.13790,-0.34182,0.82346,6136636.94810
+SPY (comprar y mantener),referencia,1×,,0.09968,0.08949,-0.55189,0.59815,1052827.26042
