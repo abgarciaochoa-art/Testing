@@ -1,0 +1,40 @@
+estrategia,escenario,cagr_total,cagr_fuera_de_muestra,peor_caida,sharpe_rf0,dif_cagr_total,dif_cagr_fuera_de_muestra
+CAI_N1,base,0.25761,0.20362,-0.45125,0.96529,0.00000,0.00000
+CAI_N1,compras y ventas a 20 pb por lado (×2),0.23555,0.18500,-0.45819,0.90145,-0.02207,-0.01862
+CAI_N1,compras y ventas a 30 pb por lado (×3),0.21385,0.16665,-0.46504,0.83750,-0.04376,-0.03697
+CAI_N1,mover dinero entre reserva y compras a 20 pb (×2),0.23994,0.18821,-0.45549,0.91392,-0.01767,-0.01541
+CAI_N1,gestión de la reserva a ×2 de su coste real,0.24681,0.19251,-0.45125,0.93396,-0.01080,-0.01111
+CAI_N1,"todo a ×2 a la vez (compras, mover reserva y gestión de la reserva)",0.20772,0.15902,-0.46530,0.81877,-0.04989,-0.04460
+CAI_N1,entrar 1 día tarde,0.19043,0.15104,-0.47755,0.77013,-0.06718,-0.05258
+CAI_N1,deuda al 7 %,0.25761,0.20362,-0.45125,0.96529,0.00000,0.00000
+CAI_N1,sin el modelo: desempate por distancia a la EMA5,0.23642,0.19206,-0.47662,0.90170,-0.02120,-0.01156
+CAI_N1,sin el modelo: desempate neutro,0.23047,0.19088,-0.51451,0.88696,-0.02715,-0.01274
+CAI_N2,base,0.27677,0.21750,-0.45125,0.98832,0.00000,0.00000
+CAI_N2,reserva con su coste real de cesta (10 pb por lado sobre lo negociado),0.26379,0.20441,-0.45125,0.95297,-0.01298,-0.01309
+CAI_N2,"ídem, ajustando solo si la exposición se desvía más de 0,10",0.26607,0.20613,-0.45125,0.96064,-0.01071,-0.01137
+CAI_N2,compras y ventas a 20 pb por lado (×2),0.25438,0.19867,-0.45819,0.92726,-0.02240,-0.01883
+CAI_N2,compras y ventas a 30 pb por lado (×3),0.23236,0.18011,-0.46504,0.86608,-0.04441,-0.03739
+CAI_N2,mover dinero entre reserva y compras a 20 pb (×2),0.25884,0.20191,-0.45549,0.93919,-0.01794,-0.01559
+CAI_N2,gestión de la reserva a ×2 de su coste real,0.24908,0.18959,-0.45136,0.91236,-0.02770,-0.02791
+CAI_N2,"todo a ×2 a la vez (compras, mover reserva y gestión de la reserva)",0.20992,0.15619,-0.48015,0.80220,-0.06685,-0.06131
+CAI_N2,entrar 1 día tarde,0.20839,0.16436,-0.47923,0.80028,-0.06838,-0.05314
+CAI_N2,deuda al 7 %,0.27218,0.21284,-0.45125,0.97584,-0.00460,-0.00466
+CAI_N2,sin el modelo: desempate por distancia a la EMA5,0.25514,0.20594,-0.47662,0.92717,-0.02163,-0.01156
+CAI_N2,sin el modelo: desempate neutro,0.24941,0.20504,-0.51451,0.91381,-0.02737,-0.01246
+CAI_N3,base,0.32654,0.25830,-0.48554,0.94128,0.00000,0.00000
+CAI_N3,reserva con su coste real de cesta (10 pb por lado sobre lo negociado),0.31211,0.24399,-0.49727,0.91199,-0.01443,-0.01432
+CAI_N3,"ídem, ajustando solo si la exposición se desvía más de 0,10",0.31514,0.24615,-0.49720,0.91887,-0.01140,-0.01216
+CAI_N3,con la reserva del nivel 1 (deuda solo en las compras),0.30677,0.24352,-0.48445,0.91212,-0.01977,-0.01478
+CAI_N3,compras y ventas a 20 pb por lado (×2),0.29682,0.23373,-0.50350,0.88066,-0.02972,-0.02458
+CAI_N3,compras y ventas a 30 pb por lado (×3),0.26774,0.20960,-0.52085,0.81995,-0.05880,-0.04870
+CAI_N3,mover dinero entre reserva y compras a 20 pb (×2),0.31345,0.24663,-0.49563,0.91457,-0.01309,-0.01167
+CAI_N3,gestión de la reserva a ×2 de su coste real,0.29573,0.22778,-0.51011,0.87834,-0.03080,-0.03052
+CAI_N3,"todo a ×2 a la vez (compras, mover reserva y gestión de la reserva)",0.25420,0.19262,-0.53648,0.79105,-0.07234,-0.06568
+CAI_N3,entrar 1 día tarde,0.25359,0.20097,-0.52588,0.78617,-0.07295,-0.05733
+CAI_N3,deuda al 7 %,0.31846,0.25095,-0.48636,0.92493,-0.00807,-0.00735
+CAI_N3,sin el modelo: desempate por distancia a la EMA5,0.30563,0.24782,-0.51914,0.90272,-0.02091,-0.01049
+CAI_N3,sin el modelo: desempate neutro,0.31286,0.24686,-0.53749,0.91876,-0.01367,-0.01144
+CAI_N2_TRAMOS,base,0.24720,0.19975,-0.35496,0.96107,0.00000,0.00000
+CAI_N2_TRAMOS,reserva con su coste real de cesta (10 pb por lado sobre lo negociado),0.23348,0.18591,-0.36999,0.91952,-0.01372,-0.01384
+CAI_N2_TRAMOS,"ídem, ajustando solo si la exposición se desvía más de 0,10",0.23590,0.18742,-0.37018,0.92851,-0.01129,-0.01233
+CAI_N2_TRAMOS,con la reserva del nivel 1 (sin deuda),0.22726,0.18513,-0.35491,0.93760,-0.01994,-0.01462

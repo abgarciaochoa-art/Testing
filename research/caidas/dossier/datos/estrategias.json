@@ -1,0 +1,1103 @@
+{
+ "convenciones": {
+  "datos": "release pública Johnbrick123/sp500-data (Yahoo + CRSP + Tiingo + Wiki): ~1.040 tickers con pertenencia point-in-time al S&P 500 (intervalos [alta, baja)), quiebras incluidas; 2002-01-02 → 2026-10-12 (6.234 sesiones)",
+  "precios": "cierre ajustado por splits y dividendos (rentabilidad total) en ~83 % de las series; el resto, sin ajuste de dividendos (conservador); filtro de 5 $ con el precio REAL",
+  "universo": "miembros del S&P 500 en esa fecha y líquidos: precio real >= 5 $ y volumen medio en dólares de 20 sesiones >= 5 M$ (si la fuente no da volumen, no se excluye)",
+  "senal": "al cierre de t, solo con datos <= t",
+  "ejecucion": "compras y ventas a la apertura de t+1; deslistadas, al último cierre",
+  "costes": "10 pb por lado en cada compra y venta de acciones; 10 pb por mover dinero entre la reserva de acciones y las compras (2 pb con ETF); 10 pb sobre lo negociado en el rebalanceo mensual de las cestas; 20 pb por cambio de régimen de la reserva del nivel 1; 2 pb por unidad en los ajustes diarios de la reserva contracíclica (optimista: ver estres.csv)",
+  "deuda": "5 % anual, día a día; el tope de palanca cuenta la exposición real (incluida la palanca interna de la reserva); si la exposición supera un 20 % el tope, se vende reserva para devolver deuda",
+  "regimen": "tendencia = SPY > SMA200 al cierre de t-1; en las versiones solo acciones SPY es solo una señal",
+  "rentabilidad": "neta de costes, sobre el valor de la cartera al cierre; sin impuestos",
+  "ventanas": "búsqueda (donde se eligió todo) = 2021-10-01 → fin, en dos mitades con corte 2024-04-01; fuera de muestra (validación, nunca usada para elegir) = 2002-01-02 → 2021-09-30"
+ },
+ "bloques": {
+  "rasgos": {
+   "dd20": "C / máximo de los cierres de 20 sesiones - 1",
+   "r5, r10": "retorno de 5 / 10 sesiones",
+   "sobre_sma200": "C > SMA200",
+   "beta": "beta a SPY con 252 sesiones, recalculada a fin de mes",
+   "idio10": "r10 - beta · retorno de SPY en 10 sesiones",
+   "pares": "las 10 acciones más correlacionadas (252 sesiones, miembros de ese momento, recalculado a fin de mes y usado el mes siguiente); la nº 1 es la gemela",
+   "gem10, gem_corr": "retorno de 10 sesiones de la gemela y su correlación",
+   "gem_z": "z (60 sesiones) del log(precio / precio de la gemela)",
+   "noche_min10": "peor hueco de apertura (O_t / C_t-1 - 1) de las 10 últimas sesiones",
+   "volmax10": "máximo de 10 sesiones de (volumen / media de 20 sesiones previas)",
+   "ibs": "(C - L) / (H - L) del día de la señal",
+   "mom252": "retorno de 252 sesiones",
+   "dist_sma200": "C / SMA200 - 1",
+   "pares_frac_caen": "fracción de sus 10 pares con r10 <= -5 %",
+   "tam": "percentil del volumen medio en dólares de 60 sesiones entre los miembros",
+   "spy_dd252": "SPY / máximo de 252 sesiones de SPY - 1",
+   "spy10": "retorno de SPY en 10 sesiones",
+   "pares10": "retorno medio de los 10 pares en 10 sesiones",
+   "rel_pares10": "r10 - pares10",
+   "volreal_spy": "volatilidad realizada anualizada de SPY en 20 sesiones",
+   "frac_caen": "fracción de miembros con r5 <= -5 %",
+   "dist_ema5, dist_ema10": "C / EMA(5 | 10) - 1 (EMA con span n)",
+   "dist_wma20": "C / media ponderada lineal de 20 sesiones - 1",
+   "dist_vwap10": "C / VWAP de 10 sesiones - 1 (precio típico (H+L+C)/3 × volumen)",
+   "bb_z20": "(C - SMA20) / desviación típica de 20 sesiones",
+   "estoc14": "(C - mínimo de 14) / (máximo de 14 - mínimo de 14)",
+   "dist_sma50": "C / SMA50 - 1",
+   "vol_climax": "volumen de hoy / máximo del volumen de las 60 sesiones previas",
+   "obv_pend20": "(OBV - OBV de hace 20) / (20 × volumen medio de 20)",
+   "meta_pct": "percentil, entre las candidatas del día, de un gradient boosting sobre 41 rasgos en rango entrenado SOLO con la búsqueda (solo desempata; ver estres.csv para quitarlo)"
+  },
+  "modulos_score_v2": [
+   "componente propia de la caída entre el 50 % y el 80 %: 0,5 <= idio10 / r10 < 0,8",
+   "gemela también cae: gem_corr >= 0,6 y gem10 <= -5 %",
+   "sin divergencia con la gemela: gem_corr >= 0,6 y gem_z > -2",
+   "hueco sin noticia: noche_min10 <= -5 % y volmax10 < 3",
+   "cierra en mínimos: ibs <= 0,2",
+   "momentum 12 meses fuerte: mom252 >= 30 %",
+   "muy extendida sobre su SMA200: dist_sma200 >= 15 %",
+   "cae con su grupo: pares_frac_caen >= 60 %",
+   "grande del índice: tam >= 2/3",
+   "SPY en corrección: spy_dd252 <= -10 %",
+   "SPY algo caído: -10 % < spy_dd252 <= -3 %"
+  ],
+  "banderas_tecnicas": [
+   "dist_ema5 <= -5,319 %",
+   "dist_ema5 < -3,449 %",
+   "dist_ema10 < -5,533 %",
+   "dist_wma20 < -7,219 %",
+   "dist_vwap10 < -6,401 %",
+   "bb_z20 < -1,663",
+   "estoc14 < 0,1087",
+   "dist_sma50 <= -12,58 %",
+   "dist_sma50 < -7,131 %",
+   "vol_climax >= 0,609",
+   "obv_pend20 <= -0,3111"
+  ],
+  "banderas_c1": [
+   "spy10 <= -5 %",
+   "pares10 <= -7 %",
+   "rel_pares10 > -6 %",
+   "0,5 <= idio10 / r10 < 0,8",
+   "idio10 / r10 < 0,5",
+   "gem_corr >= 0,6 y gem10 <= -5 %",
+   "gem_corr >= 0,6 y gem_z > -2",
+   "noche_min10 <= -5 % y volmax10 < 3",
+   "ibs <= 0,2",
+   "volreal_spy >= 25 %",
+   "frac_caen >= 20 %",
+   "mom252 >= 30 %",
+   "beta >= 1,3"
+  ],
+  "entradas": {
+   "D1_tecnica": "miembro líquido, C > SMA200, dd20 <= -15 %, score_v2 >= 5 (de 11 módulos) y >= 2 de las 11 banderas técnicas; prioridad = score_v2 + 0,99 · meta_pct; peso = clip((score_v2 - 4) / 2, 0,5, 2), con tope 1 → posición = 50 % × peso del capital (25 % con 5 módulos, 50 % con >= 6)",
+   "D1_r3": "miembro líquido, C > SMA200, dd20 <= -15 %, score_v2 >= 5; prioridad = score_v2 + 0,99 · meta_pct; peso = clip((score_v2 - 4) / 2, 0,5, 2) sobre un hueco de 1/3 (K=3); def50: peso <= 1,5",
+   "C1": "miembro líquido, C > SMA200, r5 <= -7 %, >= 6 de las 13 banderas_c1; prioridad = nº de banderas + clip(-r10, 0, 0,99); hueco 1/K, peso 1",
+   "C1_tecnica": "C1 con >= 2 banderas técnicas, que suman también a la prioridad"
+  },
+  "salidas": {
+   "sma10": "vender a la apertura siguiente al primer cierre > SMA10 (se mira desde el cierre del día de compra) o tras 20 sesiones en cartera",
+   "rsi2": "ídem con RSI(2) de Wilder >= 70"
+  },
+  "reservas": {
+   "liq100_dv": "100 miembros más líquidos (volumen en dólares de 60 sesiones), ponderados por ese volumen; se elige al cierre de fin de mes y se rebalancea a la apertura siguiente",
+   "minvol50": "50 miembros líquidos con menor volatilidad de 252 sesiones, equiponderados, mensual",
+   "liq100_tend_minvol": "liq100_dv si SPY > SMA200, minvol50 si no (siempre en acciones)",
+   "liq100_vg_minvol": "contracíclica: en tendencia, exposición e = min(1,5; 15 % / vol20 de SPY) a liq100_dv (si e < 1, el resto en minvol50; si e > 1, deuda al 5 %); fuera de tendencia, todo en minvol50; e se decide al cierre de t-1 y se ajusta a la apertura de t",
+   "spy, spy_tend": "SPY siempre / SPY en tendencia y efectivo al 0 % fuera (usan ETF y efectivo)",
+   "spy_tend_shy": "SPY en tendencia, SHY fuera (usa ETF)",
+   "spy_vg_shy": "SPY gestionado por volatilidad en tendencia (15 %, máx. 1,5×), SHY fuera (usa ETF)",
+   "efectivo": "efectivo al 0 %"
+  }
+ },
+ "estrategias": [
+  {
+   "id": "CAI_N2",
+   "nombre": "Nivel 2 · reserva contracíclica",
+   "familia": "Caídas Técnicas",
+   "estado": "central; con los costes reales de su reserva empata con el nivel 1 fuera de muestra",
+   "veredicto": "sí",
+   "ronda": 6,
+   "solo_acciones": true,
+   "entrada": "D1_tecnica",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "liq100_vg_minvol",
+   "palanca_caidas": "1× (no se pide deuda para las compras)",
+   "deuda": "solo dentro de la reserva, en calma y en tendencia (máx. 1,5× en total)",
+   "codigo": "definitiva.curva(componentes_tec(), 'D1', D1_CFG, 1.0, reserva='liq100_vg_minvol')",
+   "metricas": {
+    "total": {
+     "cagr": 0.2767742077872546,
+     "peor_caida": -0.4512455557379367,
+     "sharpe_rf0": 0.9883222580733456,
+     "volatilidad": 0.2901810404468728,
+     "calmar": 0.6133560857671754
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.21750097327361306,
+     "peor_caida": -0.4512455557379367,
+     "sharpe_rf0": 0.861206737110648,
+     "volatilidad": 0.27158642354356655,
+     "calmar": 0.4820013637983128
+    },
+    "2002_2025": {
+     "cagr": 0.23662652104878457,
+     "peor_caida": -0.4512455557379367,
+     "sharpe_rf0": 0.8970361185734931,
+     "volatilidad": 0.28113101176705785,
+     "calmar": 0.5243852666023967
+    },
+    "busqueda": {
+     "cagr": 0.5573686488046259,
+     "peor_caida": -0.25880091791318516,
+     "sharpe_rf0": 1.4368619104323501,
+     "volatilidad": 0.3529876029836069,
+     "calmar": 2.153657928646124
+    },
+    "ultimos_5_años": {
+     "cagr": 0.5792996601916751,
+     "peor_caida": -0.25880091791318516,
+     "sharpe_rf0": 1.4765394492958261,
+     "volatilidad": 0.35286552796120313,
+     "calmar": 2.2383987849146707
+    },
+    "ultimo_año": {
+     "cagr": 1.8091578159722954,
+     "peor_caida": -0.1704868687367077,
+     "sharpe_rf0": 2.4891676584510956,
+     "volatilidad": 0.45945097444515637,
+     "calmar": 10.61171355529016
+    }
+   },
+   "dsr_n_bruto": 0.5890047741966847,
+   "dsr_n_efectivo": 0.9970760576345796
+  },
+  {
+   "id": "CAI_N1",
+   "nombre": "Nivel 1 · reserva de acciones sin deuda",
+   "familia": "Caídas Técnicas",
+   "estado": "recomendada por sencillez: sin deuda y, con costes reales, igual que el nivel 2 fuera de muestra",
+   "veredicto": "sí",
+   "ronda": 6,
+   "solo_acciones": true,
+   "entrada": "D1_tecnica",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "liq100_tend_minvol",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "definitiva.curva(componentes_tec(), 'D1', D1_CFG, 1.0, reserva='liq100_tend_minvol')",
+   "metricas": {
+    "total": {
+     "cagr": 0.257614391394696,
+     "peor_caida": -0.4512455557379361,
+     "sharpe_rf0": 0.9652882167243485,
+     "volatilidad": 0.277700085683234,
+     "calmar": 0.5708962406807775
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.20362216905433472,
+     "peor_caida": -0.4512455557379361,
+     "sharpe_rf0": 0.844861700991915,
+     "volatilidad": 0.25939332497499773,
+     "calmar": 0.45124470804226524
+    },
+    "2002_2025": {
+     "cagr": 0.21443188699176585,
+     "peor_caida": -0.4512455557379361,
+     "sharpe_rf0": 0.8581466305791949,
+     "volatilidad": 0.26871518368098446,
+     "calmar": 0.4751999975736018
+    },
+    "busqueda": {
+     "cagr": 0.5121898062922747,
+     "peor_caida": -0.2793910597143511,
+     "sharpe_rf0": 1.3933850511268655,
+     "volatilidad": 0.33928175463305016,
+     "calmar": 1.8332362059685685
+    },
+    "ultimos_5_años": {
+     "cagr": 0.5330849271485449,
+     "peor_caida": -0.2793910597143512,
+     "sharpe_rf0": 1.4341242193296788,
+     "volatilidad": 0.3390945796150971,
+     "calmar": 1.9080242857218475
+    },
+    "ultimo_año": {
+     "cagr": 2.030952786279361,
+     "peor_caida": -0.16903319456907084,
+     "sharpe_rf0": 2.7309364081109977,
+     "volatilidad": 0.44429402303368676,
+     "calmar": 12.015112129052657
+    }
+   },
+   "dsr_n_bruto": 0.5438138787087422,
+   "dsr_n_efectivo": 0.995963526022446
+  },
+  {
+   "id": "CAI_N3",
+   "nombre": "Nivel 3 · caídas a 2×",
+   "familia": "Caídas Técnicas",
+   "estado": "alternativa agresiva",
+   "veredicto": "quizás",
+   "ronda": 6,
+   "solo_acciones": true,
+   "entrada": "D1_tecnica",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "liq100_vg_minvol",
+   "palanca_caidas": "hasta 2× en tendencia, el exceso sobre 1 escalado por min(1, 15 % / vol20 de SPY); 1× fuera de tendencia",
+   "deuda": "reserva y compras (exposición real máx. 2,38×)",
+   "codigo": "definitiva.curva(componentes_tec(), 'D1', D1_CFG, 2.0, reserva='liq100_vg_minvol')",
+   "metricas": {
+    "total": {
+     "cagr": 0.3265369542893626,
+     "peor_caida": -0.4855448688367551,
+     "sharpe_rf0": 0.9412822414496632,
+     "volatilidad": 0.3749245358269628,
+     "calmar": 0.6725165381145187
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.2583038845099386,
+     "peor_caida": -0.4855448688367551,
+     "sharpe_rf0": 0.851654239441615,
+     "volatilidad": 0.33616839124742437,
+     "calmar": 0.5319876721769721
+    },
+    "2002_2025": {
+     "cagr": 0.27166890182240566,
+     "peor_caida": -0.4855448688367551,
+     "sharpe_rf0": 0.8568480188508462,
+     "volatilidad": 0.353745785094549,
+     "calmar": 0.5595134852794488
+    },
+    "busqueda": {
+     "cagr": 0.6506227983541895,
+     "peor_caida": -0.4384678609494842,
+     "sharpe_rf0": 1.2570858491786379,
+     "volatilidad": 0.4985036471629779,
+     "calmar": 1.4838551608897683
+    },
+    "ultimos_5_años": {
+     "cagr": 0.6758560618890703,
+     "peor_caida": -0.4384678609494842,
+     "sharpe_rf0": 1.287023255176203,
+     "volatilidad": 0.49864495133269504,
+     "calmar": 1.5414038794668592
+    },
+    "ultimo_año": {
+     "cagr": 2.8229915508225667,
+     "peor_caida": -0.3645807423227998,
+     "sharpe_rf0": 2.192738004481103,
+     "volatilidad": 0.7357432141611501,
+     "calmar": 7.7431175679682225
+    }
+   },
+   "dsr_n_bruto": 0.4958085969353179,
+   "dsr_n_efectivo": 0.9944533282993934
+  },
+  {
+   "id": "CAI_N2_TRAMOS",
+   "nombre": "Nivel 2 en dos tramos (menos riesgo)",
+   "familia": "Caídas Técnicas",
+   "estado": "modo prudente",
+   "veredicto": "quizás",
+   "ronda": 7,
+   "solo_acciones": true,
+   "entrada": "D1_tecnica (primera mitad) + segunda mitad a la apertura siguiente si el cierre del día de compra queda >= 3 % por debajo del precio de compra",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "liq100_vg_minvol",
+   "palanca_caidas": "1×",
+   "deuda": "como el nivel 2",
+   "codigo": "motor_v4.simular(..., reserva_='liq100_vg_minvol', w_ini=0.5, add_modo=1, add_umbral=0.03)",
+   "metricas": {
+    "total": {
+     "cagr": 0.24719663108246337,
+     "peor_caida": -0.3549634312445772,
+     "sharpe_rf0": 0.9610713560048777,
+     "volatilidad": 0.2674619263956493,
+     "calmar": 0.6964002748557492
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.19974896569155165,
+     "peor_caida": -0.3549634312445772,
+     "sharpe_rf0": 0.8544190645917961,
+     "volatilidad": 0.2500019468087916,
+     "calmar": 0.5627311100503771
+    },
+    "2002_2025": {
+     "cagr": 0.22270788083453796,
+     "peor_caida": -0.3549634312445772,
+     "sharpe_rf0": 0.9066883082207039,
+     "volatilidad": 0.25916588956753145,
+     "calmar": 0.6274107731426779
+    },
+    "busqueda": {
+     "cagr": 0.460224788484193,
+     "peor_caida": -0.26255142133444487,
+     "sharpe_rf0": 1.3262384630573776,
+     "volatilidad": 0.32708272897956947,
+     "calmar": 1.7528939136762343
+    },
+    "ultimos_5_años": {
+     "cagr": 0.4725625931527706,
+     "peor_caida": -0.262551421334445,
+     "sharpe_rf0": 1.3503268443597234,
+     "volatilidad": 0.3274898474306081,
+     "calmar": 1.799885869026806
+    },
+    "ultimo_año": {
+     "cagr": 1.0043247571620215,
+     "peor_caida": -0.2073865745436244,
+     "sharpe_rf0": 1.8541307170985457,
+     "volatilidad": 0.42535969045984845,
+     "calmar": 4.8427665068104915
+    }
+   }
+  },
+  {
+   "id": "CAI_15X",
+   "nombre": "Caídas a 1,5× (ronda 5)",
+   "familia": "Caídas Técnicas",
+   "estado": "vigente: la palanca más sencilla (deuda solo en las compras, reserva del nivel 1, costes reales); entre los niveles 1 y 3",
+   "veredicto": "quizás",
+   "ronda": 5,
+   "solo_acciones": true,
+   "entrada": "D1_tecnica",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "liq100_tend_minvol",
+   "palanca_caidas": "hasta 1,5× en tendencia, escalado por volatilidad; 1× fuera",
+   "deuda": "solo en las compras",
+   "codigo": "definitiva.curva(componentes_tec(), 'D1', D1_CFG, 1.5, reserva='liq100_tend_minvol')",
+   "metricas": {
+    "total": {
+     "cagr": 0.2831389430837479,
+     "peor_caida": -0.45124555573793756,
+     "sharpe_rf0": 0.9334225249194392,
+     "volatilidad": 0.3234107257546245,
+     "calmar": 0.6274609012397272
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.23021397742879968,
+     "peor_caida": -0.45124555573793756,
+     "sharpe_rf0": 0.8515743878380656,
+     "volatilidad": 0.2944351287240858,
+     "calmar": 0.5101745036631391
+    },
+    "2002_2025": {
+     "cagr": 0.23599548210451848,
+     "peor_caida": -0.45124555573793756,
+     "sharpe_rf0": 0.8407382243017941,
+     "volatilidad": 0.3091865622143763,
+     "calmar": 0.5229868285762657
+    },
+    "busqueda": {
+     "cagr": 0.5315893658057969,
+     "peor_caida": -0.3599845491816387,
+     "sharpe_rf0": 1.232836912413729,
+     "volatilidad": 0.4177244432557587,
+     "calmar": 1.4767005056585663
+    },
+    "ultimos_5_años": {
+     "cagr": 0.5535806156454364,
+     "peor_caida": -0.3599845491816389,
+     "sharpe_rf0": 1.26680105265196,
+     "volatilidad": 0.41767621900444313,
+     "calmar": 1.5377899326621207
+    },
+    "ultimo_año": {
+     "cagr": 2.3380605729672563,
+     "peor_caida": -0.291602952359454,
+     "sharpe_rf0": 2.365889257403914,
+     "volatilidad": 0.5834233681481807,
+     "calmar": 8.017959194340285
+    }
+   },
+   "dsr_n_bruto": 0.4801170093719212,
+   "dsr_n_efectivo": 0.9935462548768444
+  },
+  {
+   "id": "CAI_SOLO",
+   "nombre": "Solo Caídas Técnicas (resto en efectivo)",
+   "familia": "Caídas Técnicas",
+   "estado": "motor de señales (sin reserva); base para combinar con otras estrategias",
+   "veredicto": "no como cartera (de media, 77 % del capital en efectivo)",
+   "ronda": 5,
+   "solo_acciones": false,
+   "entrada": "D1_tecnica",
+   "K": 5,
+   "hueco": 0.5,
+   "salida": "sma10",
+   "reserva": "efectivo",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "fichas.simular(fichas.configuraciones()['pura'], '2002-01-02')",
+   "metricas": {
+    "total": {
+     "cagr": 0.1807753167707309,
+     "peor_caida": -0.3418241989458717,
+     "sharpe_rf0": 0.8234619476537988,
+     "volatilidad": 0.2356218474818712,
+     "calmar": 0.5288546490512127
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.13789967455395669,
+     "peor_caida": -0.3350685374057799,
+     "sharpe_rf0": 0.7055421578100485,
+     "volatilidad": 0.21636935564051982,
+     "calmar": 0.4115566194952983
+    },
+    "2002_2025": {
+     "cagr": 0.13485187237550988,
+     "peor_caida": -0.3418241989458717,
+     "sharpe_rf0": 0.6758361220538383,
+     "volatilidad": 0.22454304703772962,
+     "calmar": 0.39450651180159385
+    },
+    "busqueda": {
+     "cagr": 0.382124474781101,
+     "peor_caida": -0.3418241989458717,
+     "sharpe_rf0": 1.236894098254219,
+     "volatilidad": 0.2984261694348493,
+     "calmar": 1.1178976677470718
+    },
+    "ultimos_5_años": {
+     "cagr": 0.39896693886999435,
+     "peor_caida": -0.3418241989458717,
+     "sharpe_rf0": 1.2782257751371564,
+     "volatilidad": 0.29811669335282553,
+     "calmar": 1.167169966609565
+    },
+    "ultimo_año": {
+     "cagr": 2.304319262512948,
+     "peor_caida": -0.16189912933678607,
+     "sharpe_rf0": 3.042445368172428,
+     "volatilidad": 0.42463158976530535,
+     "calmar": 14.23305531013359
+    }
+   }
+  },
+  {
+   "id": "CAI_COMB_TEC",
+   "nombre": "Combinada técnica ronda 5 · 1× (solo acciones)",
+   "familia": "Combinada D1 + C1",
+   "estado": "descartada: C1 diluye a D1",
+   "veredicto": "no",
+   "ronda": 5,
+   "solo_acciones": true,
+   "entrada": "50 % D1_tecnica (K=5, hueco 1/2) + 50 % C1_tecnica (K=5, hueco 1/3), rebalanceo mensual",
+   "K": 5,
+   "hueco": null,
+   "salida": "sma10 (D1) / rsi2 (C1)",
+   "reserva": "liq100_tend_minvol",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "definitiva.cartera(componentes_tec(), 'D1-técnica + C1-técnica', 1.0, reserva='liq100_tend_minvol')",
+   "metricas": {
+    "total": {
+     "cagr": 0.22909638982208103,
+     "peor_caida": -0.41097196423488813,
+     "sharpe_rf0": 0.931167935722443,
+     "volatilidad": 0.2575251004231159,
+     "calmar": 0.557450166335781
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.18956168720098554,
+     "peor_caida": -0.41097196423488813,
+     "sharpe_rf0": 0.8325573010514722,
+     "volatilidad": 0.24471527947787286,
+     "calmar": 0.4612521137637576
+    },
+    "2002_2025": {
+     "cagr": 0.19861684452028006,
+     "peor_caida": -0.41097196423488813,
+     "sharpe_rf0": 0.8487222037719935,
+     "volatilidad": 0.25090870450499053,
+     "calmar": 0.4832856296902092
+    },
+    "busqueda": {
+     "cagr": 0.4050984839192242,
+     "peor_caida": -0.2742721371825425,
+     "sharpe_rf0": 1.2806502533142092,
+     "volatilidad": 0.30255875745196054,
+     "calmar": 1.4769946669778196
+    },
+    "ultimos_5_años": {
+     "cagr": 0.41713222957377627,
+     "peor_caida": -0.27427213718254273,
+     "sharpe_rf0": 1.307831232823121,
+     "volatilidad": 0.30275992878419167,
+     "calmar": 1.5208698698262322
+    },
+    "ultimo_año": {
+     "cagr": 1.3674328374361049,
+     "peor_caida": -0.12804843003062283,
+     "sharpe_rf0": 2.430027225188566,
+     "volatilidad": 0.3871989254970026,
+     "calmar": 10.679028529354735
+    }
+   },
+   "dsr_n_bruto": 0.4757794714177435,
+   "dsr_n_efectivo": 0.9930176841541184
+  },
+  {
+   "id": "CAI_ESC_1X",
+   "nombre": "Escalera ronda 4 · 1× (SPY y SHY)",
+   "familia": "Combinada D1 + C1",
+   "estado": "histórica (usa ETF)",
+   "veredicto": "no",
+   "ronda": 4,
+   "solo_acciones": false,
+   "entrada": "50 % D1_r3 + 50 % C1, cada una K=5 y hueco 1/3, rebalanceo mensual",
+   "K": 5,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10 (D1) / rsi2 (C1)",
+   "reserva": "spy_tend_shy",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "ronda4_final.cartera(NIVELES['Nivel 1 · máx. 1x (sin deuda)'])",
+   "metricas": {
+    "total": {
+     "cagr": 0.21022939563694987,
+     "peor_caida": -0.34380268845161,
+     "sharpe_rf0": 0.9428391225315002,
+     "volatilidad": 0.2310213280165555,
+     "calmar": 0.6114826983574898
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.18718280190273884,
+     "peor_caida": -0.34380268845161,
+     "sharpe_rf0": 0.8882725175903685,
+     "volatilidad": 0.22083699300224327,
+     "calmar": 0.5444483367647798
+    },
+    "2002_2025": {
+     "cagr": 0.18189873095937292,
+     "peor_caida": -0.34380268845161,
+     "sharpe_rf0": 0.8587627471798459,
+     "volatilidad": 0.2241887311355988,
+     "calmar": 0.5290788497861763
+    },
+    "busqueda": {
+     "cagr": 0.3092879646838995,
+     "peor_caida": -0.31336355089467394,
+     "sharpe_rf0": 1.1458698214234742,
+     "volatilidad": 0.26742409082502633,
+     "calmar": 0.9869940642453842
+    },
+    "ultimos_5_años": {
+     "cagr": 0.3194114184732477,
+     "peor_caida": -0.31336355089467394,
+     "sharpe_rf0": 1.1736077991894345,
+     "volatilidad": 0.2676530615844077,
+     "calmar": 1.019299843779874
+    },
+    "ultimo_año": {
+     "cagr": 1.2252744709428178,
+     "peor_caida": -0.14811735457099107,
+     "sharpe_rf0": 2.3740753553432885,
+     "volatilidad": 0.36684391389445814,
+     "calmar": 8.272322135996271
+    }
+   }
+  },
+  {
+   "id": "CAI_ESC_15X",
+   "nombre": "Escalera ronda 4 · 1,5× (SPY y SHY)",
+   "familia": "Combinada D1 + C1",
+   "estado": "histórica (usa ETF)",
+   "veredicto": "no",
+   "ronda": 4,
+   "solo_acciones": false,
+   "entrada": "como CAI_ESC_1X",
+   "K": 5,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10 / rsi2",
+   "reserva": "spy_vg_shy",
+   "palanca_caidas": "hasta 1,5× gestionada por volatilidad (15 %)",
+   "deuda": "compras y reserva",
+   "codigo": "ronda4_final.cartera(NIVELES['Nivel 2 · máx. 1,5x gestionada'])",
+   "metricas": {
+    "total": {
+     "cagr": 0.24721646793920016,
+     "peor_caida": -0.4527690100288143,
+     "sharpe_rf0": 0.9270331061948901,
+     "volatilidad": 0.28144556309142077,
+     "calmar": 0.546010134225987
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.2124627167508264,
+     "peor_caida": -0.4527690100288143,
+     "sharpe_rf0": 0.8593571428113265,
+     "volatilidad": 0.26556675427215637,
+     "calmar": 0.4692518967614529
+    },
+    "2002_2025": {
+     "cagr": 0.20925957556766184,
+     "peor_caida": -0.4527690100288143,
+     "sharpe_rf0": 0.8403767551370983,
+     "volatilidad": 0.2699120436636052,
+     "calmar": 0.4621773375221606
+    },
+    "busqueda": {
+     "cagr": 0.39707583238914945,
+     "peor_caida": -0.34490278410006125,
+     "sharpe_rf0": 1.1648662292937837,
+     "volatilidad": 0.33686602515039815,
+     "calmar": 1.1512688522512826
+    },
+    "ultimos_5_años": {
+     "cagr": 0.40792710416874756,
+     "peor_caida": -0.34490278410006125,
+     "sharpe_rf0": 1.1866997686788892,
+     "volatilidad": 0.3371915028304617,
+     "calmar": 1.1827306794090768
+    },
+    "ultimo_año": {
+     "cagr": 1.7706507884056233,
+     "peor_caida": -0.21203234286333006,
+     "sharpe_rf0": 2.3181950974139385,
+     "volatilidad": 0.4938101525508274,
+     "calmar": 8.350852348723675
+    }
+   }
+  },
+  {
+   "id": "CAI_ESC_2X",
+   "nombre": "Escalera ronda 4 · 2× (SPY y SHY)",
+   "familia": "Combinada D1 + C1",
+   "estado": "histórica (usa ETF)",
+   "veredicto": "no",
+   "ronda": 4,
+   "solo_acciones": false,
+   "entrada": "como CAI_ESC_1X",
+   "K": 5,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10 / rsi2",
+   "reserva": "spy_vg_shy",
+   "palanca_caidas": "hasta 2× gestionada por volatilidad (15 %)",
+   "deuda": "compras y reserva",
+   "codigo": "ronda4_final.cartera(NIVELES['Nivel 3 · máx. 2x gestionada'])",
+   "metricas": {
+    "total": {
+     "cagr": 0.2676674982709011,
+     "peor_caida": -0.45893534050837514,
+     "sharpe_rf0": 0.9249145964674309,
+     "volatilidad": 0.3081094769156802,
+     "calmar": 0.5832357516298451
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.22968282985241384,
+     "peor_caida": -0.45893534050837514,
+     "sharpe_rf0": 0.8634567572898945,
+     "volatilidad": 0.28769388887039715,
+     "calmar": 0.5004688233379193
+    },
+    "2002_2025": {
+     "cagr": 0.22748974481835926,
+     "peor_caida": -0.45893534050837514,
+     "sharpe_rf0": 0.8477998297041895,
+     "volatilidad": 0.29279465589328346,
+     "calmar": 0.49569018713259844
+    },
+    "busqueda": {
+     "cagr": 0.4316777733389212,
+     "peor_caida": -0.36927517915378216,
+     "sharpe_rf0": 1.1412485316187826,
+     "volatilidad": 0.37805741740661447,
+     "calmar": 1.1689867007258343
+    },
+    "ultimos_5_años": {
+     "cagr": 0.44266339489527584,
+     "peor_caida": -0.36927517915378216,
+     "sharpe_rf0": 1.1604141460189183,
+     "volatilidad": 0.3784151600134374,
+     "calmar": 1.1987358476398753
+    },
+    "ultimo_año": {
+     "cagr": 1.939374632067076,
+     "peor_caida": -0.2571235908718986,
+     "sharpe_rf0": 2.1669919650582083,
+     "volatilidad": 0.575020792318779,
+     "calmar": 7.542577581040748
+    }
+   }
+  },
+  {
+   "id": "CAI_COMB_R3",
+   "nombre": "Combinada ronda 3 · 1× (SPY y efectivo)",
+   "familia": "Combinada D1 + C1",
+   "estado": "histórica (usa SPY y efectivo)",
+   "veredicto": "no",
+   "ronda": 3,
+   "solo_acciones": false,
+   "entrada": "50 % D1_r3 def50 (K=3) + 50 % C1 (K=5), rebalanceo mensual",
+   "K": null,
+   "hueco": null,
+   "salida": "sma10 / rsi2",
+   "reserva": "spy_tend",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "combinar.mezclar({'D1': D1-def50, 'C1': C1}, {'D1': 0.5, 'C1': 0.5})",
+   "metricas": {
+    "total": {
+     "cagr": 0.19843189348559842,
+     "peor_caida": -0.3621487417744269,
+     "sharpe_rf0": 0.9480408228360151,
+     "volatilidad": 0.21588622694696766,
+     "calmar": 0.5479292638525761
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.16573412781160912,
+     "peor_caida": -0.3621487417744269,
+     "sharpe_rf0": 0.8493306427529502,
+     "volatilidad": 0.20573866100974894,
+     "calmar": 0.4576410427371873
+    },
+    "2002_2025": {
+     "cagr": 0.16938546271777044,
+     "peor_caida": -0.3621487417744269,
+     "sharpe_rf0": 0.8560273681746557,
+     "volatilidad": 0.2085564558150962,
+     "calmar": 0.46772346049810737
+    },
+    "busqueda": {
+     "cagr": 0.340328470318384,
+     "peor_caida": -0.2289654260358739,
+     "sharpe_rf0": 1.2944992761522618,
+     "volatilidad": 0.25184868262307447,
+     "calmar": 1.4863749353365776
+    },
+    "ultimos_5_años": {
+     "cagr": 0.3499669533742471,
+     "peor_caida": -0.2289654260358739,
+     "sharpe_rf0": 1.3216368053754983,
+     "volatilidad": 0.2520743946427084,
+     "calmar": 1.5284707365356327
+    },
+    "ultimo_año": {
+     "cagr": 1.2850686816504435,
+     "peor_caida": -0.1349265218568546,
+     "sharpe_rf0": 2.5302544403447254,
+     "volatilidad": 0.3527752978412717,
+     "calmar": 9.524211133329224
+    }
+   }
+  },
+  {
+   "id": "CAI_D1_SPY",
+   "nombre": "D1 · SPY siempre",
+   "familia": "Módulos de origen (rondas 2-3)",
+   "estado": "histórica (usa SPY)",
+   "veredicto": "no",
+   "ronda": 3,
+   "solo_acciones": false,
+   "entrada": "D1_r3",
+   "K": 3,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10",
+   "reserva": "spy",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "motor_v3.simular(d1, K=3, salida='sma10', reserva_='spy')",
+   "metricas": {
+    "total": {
+     "cagr": 0.22061056501600151,
+     "peor_caida": -0.5424056978813991,
+     "sharpe_rf0": 0.8730814778062351,
+     "volatilidad": 0.27067882805050814,
+     "calmar": 0.40672612009367126
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.18017834296936663,
+     "peor_caida": -0.5424056978813991,
+     "sharpe_rf0": 0.7686145666935905,
+     "volatilidad": 0.2597690750238319,
+     "calmar": 0.332183720917998
+    },
+    "2002_2025": {
+     "cagr": 0.18087889760904474,
+     "peor_caida": -0.5424056978813991,
+     "sharpe_rf0": 0.7659449464173974,
+     "volatilidad": 0.26238404758623357,
+     "calmar": 0.3334752903878882
+    },
+    "busqueda": {
+     "cagr": 0.4027812559132653,
+     "peor_caida": -0.2879207957809121,
+     "sharpe_rf0": 1.2522852488141518,
+     "volatilidad": 0.30961478433733625,
+     "calmar": 1.3989307539277367
+    },
+    "ultimos_5_años": {
+     "cagr": 0.4159747343906406,
+     "peor_caida": -0.2879207957809121,
+     "sharpe_rf0": 1.2814228288202525,
+     "volatilidad": 0.3098642577909262,
+     "calmar": 1.4447540451616725
+    },
+    "ultimo_año": {
+     "cagr": 1.9117290059460004,
+     "peor_caida": -0.19190207072556742,
+     "sharpe_rf0": 2.7481023706094105,
+     "volatilidad": 0.42348368149717863,
+     "calmar": 9.96200300871114
+    }
+   }
+  },
+  {
+   "id": "CAI_D1_DEF",
+   "nombre": "D1-def · SPY en tendencia",
+   "familia": "Módulos de origen (rondas 2-3)",
+   "estado": "histórica (usa SPY y efectivo)",
+   "veredicto": "no",
+   "ronda": 3,
+   "solo_acciones": false,
+   "entrada": "D1_r3",
+   "K": 3,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10",
+   "reserva": "spy_tend",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "motor_v3.simular(d1, K=3, salida='sma10', reserva_='spy_tend')",
+   "metricas": {
+    "total": {
+     "cagr": 0.2055628024347056,
+     "peor_caida": -0.39339037136925625,
+     "sharpe_rf0": 0.9045141733167198,
+     "volatilidad": 0.23847928483667366,
+     "calmar": 0.5225415195578182
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.16728259650716315,
+     "peor_caida": -0.39339037136925625,
+     "sharpe_rf0": 0.80329363967211,
+     "volatilidad": 0.22410451482082533,
+     "calmar": 0.4252330730030583
+    },
+    "2002_2025": {
+     "cagr": 0.16750594263869067,
+     "peor_caida": -0.39339037136925625,
+     "sharpe_rf0": 0.794888237649691,
+     "volatilidad": 0.22784107124365321,
+     "calmar": 0.4258008198209332
+    },
+    "busqueda": {
+     "cagr": 0.3777900072529412,
+     "peor_caida": -0.29826163440374776,
+     "sharpe_rf0": 1.2619852635394302,
+     "volatilidad": 0.2878358141714008,
+     "calmar": 1.2666396333815375
+    },
+    "ultimos_5_años": {
+     "cagr": 0.39059784161430655,
+     "peor_caida": -0.29826163440374776,
+     "sharpe_rf0": 1.2933105269713605,
+     "volatilidad": 0.2879811117537421,
+     "calmar": 1.3095812419694786
+    },
+    "ultimo_año": {
+     "cagr": 1.8139372053300447,
+     "peor_caida": -0.1919020707255673,
+     "sharpe_rf0": 2.664565963553838,
+     "volatilidad": 0.42389770730375353,
+     "calmar": 9.452410797192988
+    }
+   }
+  },
+  {
+   "id": "CAI_D1_DEF50",
+   "nombre": "D1-def50 · SPY en tendencia, tope 50 %",
+   "familia": "Módulos de origen (rondas 2-3)",
+   "estado": "histórica (usa SPY y efectivo)",
+   "veredicto": "no",
+   "ronda": 3,
+   "solo_acciones": false,
+   "entrada": "D1_r3 con peso <= 1,5 (ninguna posición > 50 %)",
+   "K": 3,
+   "hueco": 0.3333333333333333,
+   "salida": "sma10",
+   "reserva": "spy_tend",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "motor_v3.simular(d1, peso=min(peso, 1.5), K=3, salida='sma10', reserva_='spy_tend')",
+   "metricas": {
+    "total": {
+     "cagr": 0.20375327362427376,
+     "peor_caida": -0.40650418599291693,
+     "sharpe_rf0": 0.903774029776547,
+     "volatilidad": 0.23649275770282865,
+     "calmar": 0.5012329039775841
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.1660357607849603,
+     "peor_caida": -0.40650418599291693,
+     "sharpe_rf0": 0.8035453033066814,
+     "volatilidad": 0.2221704198540557,
+     "calmar": 0.40844785000037703
+    },
+    "2002_2025": {
+     "cagr": 0.1662595160130338,
+     "peor_caida": -0.40650418599291693,
+     "sharpe_rf0": 0.7946297378191076,
+     "volatilidad": 0.2260648541829468,
+     "calmar": 0.40899828769765917
+    },
+    "busqueda": {
+     "cagr": 0.37338242034970115,
+     "peor_caida": -0.2900659580211856,
+     "sharpe_rf0": 1.2582351611880151,
+     "volatilidad": 0.28563974760974503,
+     "calmar": 1.2872328173112624
+    },
+    "ultimos_5_años": {
+     "cagr": 0.38612252672545977,
+     "peor_caida": -0.29006595802118573,
+     "sharpe_rf0": 1.2897762767533558,
+     "volatilidad": 0.2857743457498956,
+     "calmar": 1.331154229057304
+    },
+    "ultimo_año": {
+     "cagr": 1.7814171003272263,
+     "peor_caida": -0.19190207072556742,
+     "sharpe_rf0": 2.661999209551783,
+     "volatilidad": 0.41917815995116225,
+     "calmar": 9.282948816507405
+    }
+   }
+  },
+  {
+   "id": "CAI_C1",
+   "nombre": "C1 · caída de 5 días con banderas (ronda 2)",
+   "familia": "Módulos de origen (rondas 2-3)",
+   "estado": "histórica (usa SPY y efectivo)",
+   "veredicto": "no",
+   "ronda": 2,
+   "solo_acciones": false,
+   "entrada": "C1",
+   "K": 5,
+   "hueco": 0.2,
+   "salida": "rsi2",
+   "reserva": "spy_tend",
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "motor_v3.simular(c1, K=5, salida='rsi2', reserva_='spy_tend')",
+   "metricas": {
+    "total": {
+     "cagr": 0.18756477314659992,
+     "peor_caida": -0.4026823817368159,
+     "sharpe_rf0": 0.8915113934025667,
+     "volatilidad": 0.22044189367192643,
+     "calmar": 0.46578837727543787
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.16053405807019283,
+     "peor_caida": -0.4026823817368159,
+     "sharpe_rf0": 0.8013973048416421,
+     "volatilidad": 0.21476433761134398,
+     "calmar": 0.3986617377641177
+    },
+    "2002_2025": {
+     "cagr": 0.16747545774151273,
+     "peor_caida": -0.4026823817368159,
+     "sharpe_rf0": 0.8269529413831739,
+     "volatilidad": 0.21571626435474386,
+     "calmar": 0.4158996403546925
+    },
+    "busqueda": {
+     "cagr": 0.29965926475401106,
+     "peor_caida": -0.1976710903534642,
+     "sharpe_rf0": 1.2112834876953362,
+     "volatilidad": 0.24160301926548391,
+     "calmar": 1.5159488634285236
+    },
+    "ultimos_5_años": {
+     "cagr": 0.3063599613417878,
+     "peor_caida": -0.19767109035346409,
+     "sharpe_rf0": 1.2310079799714313,
+     "volatilidad": 0.24189578214780352,
+     "calmar": 1.5498470757356198
+    },
+    "ultimo_año": {
+     "cagr": 0.8506625089734667,
+     "peor_caida": -0.10804586860807863,
+     "sharpe_rf0": 2.108401869091135,
+     "volatilidad": 0.31715344854302924,
+     "calmar": 7.873160907791179
+    }
+   }
+  },
+  {
+   "id": "SPY",
+   "nombre": "SPY (comprar y mantener)",
+   "familia": "referencia",
+   "estado": "referencia",
+   "veredicto": "—",
+   "ronda": null,
+   "solo_acciones": false,
+   "entrada": "comprar y mantener",
+   "K": null,
+   "hueco": null,
+   "salida": null,
+   "reserva": null,
+   "palanca_caidas": "1×",
+   "deuda": "ninguna",
+   "codigo": "motor.benchmark('SPY')",
+   "metricas": {
+    "total": {
+     "cagr": 0.09967914640770625,
+     "peor_caida": -0.5518944026470529,
+     "sharpe_rf0": 0.5981511928283112,
+     "volatilidad": 0.1890170307200581,
+     "calmar": 0.18061271491360456
+    },
+    "fuera_de_muestra": {
+     "cagr": 0.08948841893181392,
+     "peor_caida": -0.5518944026470529,
+     "sharpe_rf0": 0.5405946760561215,
+     "volatilidad": 0.19328047852514602,
+     "calmar": 0.16214771974964834
+    },
+    "2002_2025": {
+     "cagr": 0.09667763028554344,
+     "peor_caida": -0.5518944026470529,
+     "sharpe_rf0": 0.5802271259626011,
+     "volatilidad": 0.19062923181659064,
+     "calmar": 0.17517414531085693
+    },
+    "busqueda": {
+     "cagr": 0.13799469012326604,
+     "peor_caida": -0.2449638674662934,
+     "sharpe_rf0": 0.8442820421973504,
+     "volatilidad": 0.17124201208537482,
+     "calmar": 0.5633267124273088
+    },
+    "ultimos_5_años": {
+     "cagr": 0.1392067512035846,
+     "peor_caida": -0.2449638674662934,
+     "sharpe_rf0": 0.8493068892278252,
+     "volatilidad": 0.17146644598787203,
+     "calmar": 0.5682746302278201
+    },
+    "ultimo_año": {
+     "cagr": 0.1868906235821577,
+     "peor_caida": -0.08884975531624695,
+     "sharpe_rf0": 1.4215981612404538,
+     "volatilidad": 0.12673832118609069,
+     "calmar": 2.1034455628712703
+    }
+   }
+  }
+ ],
+ "pruebas_totales": {
+  "carteras_simuladas": 11000,
+  "n_bruto_dsr": 10470,
+  "n_efectivo_dsr": 205,
+  "nota": "todas las variantes probadas en las ocho rondas cuentan en la corrección por minería de datos"
+ }
+}

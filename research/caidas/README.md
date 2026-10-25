@@ -34,6 +34,14 @@ correcciones por minería de datos.
 > significativa (-5,6 puntos al año fuera de muestra si se vende lo que sigue en
 > pérdidas al 5.º día) y añadir a las que siguen cayendo, aunque tiene ventaja por
 > dólar, apenas mueve la cartera. Ver la sección 9.
+>
+> **Dossier (costes reales de la reserva):** los ajustes diarios de la reserva
+> contracíclica se cobraban a 2 pb por unidad, como un ETF. Con el coste real de mover
+> cestas de acciones (10 pb por lado sobre lo negociado), el nivel 2 baja a 26,4 % (20,4 %
+> fuera de muestra), lo mismo que el nivel 1. **Recomendación actualizada: nivel 1** (sin
+> deuda) y, si se quiere palanca, ponerla en las compras: caídas a 1,5× con la reserva del
+> nivel 1 da 28,3 % (23,0 % fuera de muestra, peor caída -45 %). Ver la sección 10 y
+> `dossier/DOSSIER.md`.
 
 ## Datos: por qué fiarse de ellos
 
@@ -556,6 +564,32 @@ bootstrap pareado):
   El límite está en el número de oportunidades: cada operación ya rinde mucho más que
   el capital parado.
 
+## 10. Dossier para comparar con otras estrategias (`dossier.py`)
+
+`dossier/DOSSIER.md` reúne todo para llevarse las estrategias a otro estudio y compararlas
+en un marco común: reglas de juego, ventanas y métricas estándar, nivel de evidencia,
+plantilla de ficha, reglas replicables, resultados, historia, descartes, cómo combinarlas
+con otras y próximos pasos. `dossier.py` genera `dossier/datos/`: rentabilidad diaria,
+mensual y anual de las 15 estrategias y SPY, métricas por ventana, crisis, correlaciones,
+exposición, estrés y fichas en JSON.
+
+**Estrés con costes reales** (CAGR total / fuera de muestra):
+
+| | Nivel 1 | Nivel 2 | Nivel 3 |
+|---|---|---|---|
+| Costes del estudio | 25,8 % / 20,4 % | 27,7 % / 21,8 % | 32,7 % / 25,8 % |
+| Reserva con su coste real de cesta | (ya lo tenía) | 26,4 % / 20,4 % | 31,2 % / 24,4 % |
+| Ídem, ajustando solo con desvíos > 0,10 | | 26,6 % / 20,6 % | 31,5 % / 24,6 % |
+| Con la reserva del nivel 1 | | (= nivel 1) | 30,7 % / 24,4 % |
+| Todo a ×2 (compras, mover reserva y gestión de la reserva) | 20,8 % / 15,9 % | 21,0 % / 15,6 % | 25,4 % / 19,3 % |
+| Sin el modelo de desempate (por distancia a la EMA5) | 23,6 % / 19,2 % | 25,5 % / 20,6 % | 30,6 % / 24,8 % |
+
+- La reserva contracíclica rota 17,5 veces su valor al año; casi todo viene de los
+  cambios de régimen (6,7 al año por los cruces repetidos de SPY con su SMA200), que
+  también cuestan ~1,3 % al año del dinero en reserva en el nivel 1. Una banda o
+  confirmación en el cambio de régimen queda como siguiente prueba.
+- El modelo de desempate aporta ~1,2 puntos fuera de muestra.
+
 ## Reproducir
 
 ```bash
@@ -590,6 +624,8 @@ python research/caidas/anatomia.py && python research/caidas/motor_v4.py && pyth
 python research/caidas/que_esperar.py && python research/caidas/exportar_comportamiento.py
 # ronda 8 (gestión dentro de la operación)
 python research/caidas/gestion.py && python research/caidas/ronda8.py
+# dossier para comparar con otras estrategias
+python research/caidas/estrategias_buenas.py && python research/caidas/dossier.py
 python research/caidas/senales_hoy.py [--nivel 1|2|3] [--refrescar]
 ```
 
@@ -604,3 +640,5 @@ Los datos crudos, el panel, los rasgos, los eventos y las matrices de retornos v
 2. Validar en otro universo (S&P 400 / Russell 1000) si se consiguen datos PIT.
 3. Cruzar con la deriva post-resultados (PEAD) del resto del repo como tercera pata de
    la cartera combinada.
+
+La lista actualizada, con lo que salió del dossier, está en `dossier/DOSSIER.md` (sección 10).
