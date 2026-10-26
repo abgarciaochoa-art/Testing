@@ -41,32 +41,88 @@ métricas y ventanas, qué falló por el camino y qué queda por hacer.
 | `datos/crisis.csv` | rentabilidad en 10 caídas de SPY y 3 rebotes |
 | `datos/correlaciones_mensuales.csv`, `datos/correlaciones_diarias.csv` | correlaciones entre todas |
 | `datos/exposicion.csv` | dónde está el dinero y cómo son las operaciones (familia Caídas Técnicas) |
+| `datos/exposicion_diaria.csv` | capital en caídas al cierre de cada día y rentabilidad diaria de la reserva del nivel 1 (para combinar el motor con otras estrategias, sección 9.3) |
 | `datos/estres.csv` | niveles 1-3 con costes más altos, reserva con costes reales, un día de retraso, deuda más cara y sin el modelo |
 | `datos/estrategias.json` | lo mismo en formato máquina: convenciones, bloques de reglas, ficha y métricas de cada estrategia |
 | `graficas/` | ranking por CAGR y una gráfica por familia (valor de 100.000 $ y caída desde máximos) |
+| `PROMPT_OTRO_CHAT.md` | el texto para pegar en el otro chat |
 
-**Para el otro chat.** Pásale `DOSSIER.md` y la carpeta `datos/` (o el zip) y pega esto:
+**Para el otro chat.** Pásale el zip (o, si no lo acepta, `DOSSIER.md` y los archivos de
+`datos/` sueltos) y pega el texto de `PROMPT_OTRO_CHAT.md`, que es este:
 
-> Te paso el dossier de mis estrategias de compra de caídas del S&P 500 (`DOSSIER.md` y la
-> carpeta `datos/`). Quiero comparar todas mis estrategias, las de este chat y las tuyas,
-> en un mismo marco y ver cómo combinarlas.
-> 1. Lee la sección 2 (marco común) y usa sus convenciones. Si alguna de tus estrategias
->    usa otras (otro universo, sin costes, ejecución al cierre de la señal, sin dividendos,
->    universo de hoy en vez de point-in-time…), dilo y, si puedes, recalcúlala con las del
->    marco.
-> 2. Rellena para cada estrategia tuya la plantilla de la sección 2.5, con reglas exactas,
->    la ventana con la que se eligieron, cuántas variantes se probaron y su nivel de
->    evidencia (sección 2.4).
-> 3. Calcula las métricas de la sección 2.3 en las ventanas de la 2.2 y exporta la
->    rentabilidad diaria neta en el formato de `datos/diario.csv` (sección 2.7), con un
->    prefijo propio en los identificadores.
-> 4. Haz una tabla única con todas las estrategias de los dos chats, ordenada por CAGR
->    fuera de muestra, con peor caída, Sharpe, Calmar y nivel de evidencia.
-> 5. Cruza las rentabilidades (correlación mensual y comportamiento en los tramos de
->    `datos/crisis.csv`) y propón combinaciones según la sección 9, empezando por probar tus
->    estrategias siempre invertidas como reserva del motor de caídas (`CAI_SOLO`).
-> 6. No des por buena ninguna cifra sin validación fuera de muestra; marca lo que esté
->    dentro de la muestra con la que se eligieron las reglas.
+```text
+Hola. Vengo de otro chat en el que investigué estrategias de compra de caídas en acciones
+del S&P 500. Te adjunto su dossier: DOSSIER.md, que es la referencia y conviene leer
+entero, y la carpeta datos/ con CSV y JSON. Si no puedes abrir el zip o ejecutar código,
+trabaja con las tablas de DOSSIER.md.
+
+Objetivo: juntar esas estrategias con las tuyas, compararlas todas con las mismas reglas y
+decidir cuáles combinar en una sola cartera.
+
+LO ESENCIAL DEL DOSSIER
+- Universo: acciones que eran miembros del S&P 500 en cada fecha (point-in-time, incluidas
+  las que quebraron), de 2002-01-02 a 2026-10-12. Señal al cierre, compra y venta a la
+  apertura siguiente, 10 pb por lado, dividendos incluidos, sin impuestos.
+- Las reglas se eligieron con oct-2021 → oct-2026 y se validaron hacia atrás con 2002 →
+  sep-2021. Esa ventana ("fuera de muestra") es la que cuenta. 2021-2026 está dentro de
+  muestra, y 2024-2026 fue extraordinario.
+- Estrategias vigentes, todas solo con acciones (CAGR fuera de muestra / peor caída):
+  · CAI_N1, nivel 1, la recomendada, sin deuda: 20,4 % / -45 % (25,8 % en 2002-2026).
+  · CAI_15X, caídas a 1,5× (deuda solo en las compras): 23,0 % / -45 %.
+  · CAI_N3, caídas a 2×: 24,4 % con costes reales / -48 a -50 %.
+  · CAI_N2_TRAMOS, modo prudente: 18,5 % con costes reales / -35 %.
+  · Referencia, SPY: 8,9 % / -55 %.
+- CAI_SOLO es solo el "motor" de compras de caídas, sin reserva. Usa de media el 23 % del
+  capital, tiene alguna posición el 35 % de los días y su correlación mensual con SPY es
+  0,21. El resto del dinero puede esperar en otra estrategia: es la pieza natural para
+  combinar con las tuyas.
+- Nivel de evidencia B: sólido en histórico (unas 11.000 carteras probadas, con corrección
+  por minería de datos), pero todavía sin paper trading.
+
+MIS PREFERENCIAS
+- La cartera final, solo con acciones: sin ETFs ni efectivo (SPY solo como señal o
+  referencia). Si una estrategia tuya usa ETFs o efectivo, dilo y propón su versión solo
+  acciones si existe.
+- Prefiero reglas claras y robustas fuera de muestra a un CAGR más alto que solo existe
+  dentro de muestra.
+
+QUÉ TE PIDO, POR FASES
+1. Entender. Resume en unas 10 líneas cómo funcionan CAI_N1 y CAI_SOLO y el marco común
+   (sección 2 del dossier). Lista tus estrategias con: universo, periodo, ejecución,
+   costes, dividendos, ventana con la que elegiste las reglas y cuántas variantes
+   probaste. Señala en qué se aparta cada una del marco (lista de la sección 2.6).
+2. Fichas. Rellena la plantilla de la sección 2.5 para cada estrategia tuya, con reglas
+   exactas y nivel de evidencia (sección 2.4). Si alguna hay que recalcularla con las
+   reglas del marco (point-in-time, apertura siguiente, 10 pb, dividendos), hazlo o dime
+   qué datos faltan.
+3. Mismas métricas. Calcula las de la sección 2.3 en las ventanas de la 2.2 y exporta la
+   rentabilidad diaria neta de cada estrategia en el formato de datos/diario.csv
+   (sección 2.7), con un prefijo propio en el identificador (por ejemplo OTR_).
+4. Tabla única. Todas las estrategias de los dos chats en una tabla ordenada por CAGR fuera
+   de muestra (la ventana fuera de muestra de cada una y, si se puede, la común), con peor
+   caída, Sharpe, Calmar, correlación con SPY, si es solo acciones y nivel de evidencia.
+5. Combinar (sección 9). Correlaciones mensuales con las nuestras y comportamiento en los
+   tramos de datos/crisis.csv. Prueba primero tus estrategias siempre invertidas como
+   reserva del motor CAI_SOLO, con la fórmula de la sección 9.3 y
+   datos/exposicion_diaria.csv; después, mezclas por pesos (50/50 y pesos inversos a la
+   volatilidad, con rebalanceo mensual). Fija las reglas de mezcla antes de mirar
+   resultados, valídalas fuera de muestra y cuenta todas las que pruebes.
+6. Propuesta. Una o dos carteras finales con reglas claras, qué esperar (meses positivos,
+   peor caída, años malos) y los próximos pasos.
+
+REGLAS
+- Ninguna cifra vale sin validación fuera de muestra; marca lo que esté dentro de la
+  muestra con la que se eligieron las reglas.
+- Si comparas estrategias con convenciones distintas, dilo y cuantifica el efecto.
+- Si algo no se puede calcular con lo que tienes, dilo y pídeme lo que falta; no lo
+  supongas.
+
+CÓMO RESPONDER
+En español, simple y con tablas. Termina siempre con un "Resumen por temas": una tabla de
+tres columnas (Tema | Qué descubrimos | ¿Nos ayuda?), corta y bien explicada.
+
+Haz solo la fase 1 y espera mi visto bueno antes de seguir.
+```
 
 Si el otro chat es otra sesión de Claude Code con acceso a este repositorio, basta con
 decirle que lea `research/caidas/dossier/`.
@@ -243,6 +299,9 @@ cierre de la ventana:
   día vale 0. Identificadores con prefijo por estudio (`CAI_` aquí). La curva de valor es
   el producto acumulado de (1 + r).
 - Si la estrategia usa efectivo o deuda, añadir su exposición diaria (bruta y % invertido).
+- `exposicion_diaria.csv`: fracción del capital en caídas al cierre de cada día (`CAI_SOLO`,
+  `CAI_N1`, `CAI_15X`) y la rentabilidad diaria de la reserva del nivel 1 (`RESERVA_N1`),
+  para combinar el motor con otra reserva solo con datos (sección 9.3).
 - Para usar una estrategia como **reserva** del motor de caídas (sección 9), hace falta su
   valor a la **apertura y al cierre** de cada sesión; con solo cierres se puede aproximar
   (toda la rentabilidad del día va al tramo apertura → cierre).
@@ -872,6 +931,17 @@ estrategias del otro chat (`datos/diario.csv`, columna `CAI_SOLO`).
    simular el nivel 1 (sin deuda) con ella.
 4. Comparar con la reserva actual en la ventana fuera de muestra común, con la diferencia
    diaria, su t de Newey-West y un bootstrap pareado (como en la ronda 8).
+
+**Sin el motor, solo con datos.** Con `datos/exposicion_diaria.csv` (x = fracción del
+capital en caídas al cierre de cada día) se aproxima el motor con cualquier reserva X:
+
+r(t) ≈ r_CAI_SOLO(t) + (1 - x(t-1)) × r_X(t) - 0,001 × |x(t) - x(t-1)|
+
+El último término son los 10 pb por mover dinero entre la reserva y las compras. Con
+nuestra reserva del nivel 1 (`RESERVA_N1`, en el mismo archivo), la aproximación da un
+25,0 % (fuera de muestra 20,0 %; peor caída -44 %) frente al 25,8 % (20,4 %; -45 %) del
+nivel 1 real. Queda algo por debajo, así que sirve para comparar reservas candidatas; la
+cifra final, con el motor.
 
 ### 9.4 Qué medir para decidir
 

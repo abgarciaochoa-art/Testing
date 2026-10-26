@@ -13,6 +13,8 @@ y escribe en ``dossier/datos/``:
 - ``correlaciones_mensuales.csv`` y ``correlaciones_diarias.csv``;
 - ``exposicion.csv``: dónde está el dinero y cómo son las operaciones (familia Caídas
   Técnicas);
+- ``exposicion_diaria.csv``: capital en caídas al cierre de cada día y rentabilidad diaria
+  de la reserva del nivel 1 (para combinar el motor con otra reserva solo con datos);
 - ``estres.csv``: niveles 1-3 con costes más altos, reserva más cara, un día de retraso,
   deuda al 7 % y sin el modelo de desempate;
 - ``estrategias.json``: ficha de cada estrategia en formato máquina (reglas, parámetros,
@@ -309,8 +311,10 @@ def estres(comp: dict) -> tuple[pd.DataFrame, dict]:
     return pd.DataFrame(filas), rotacion
 
 
-def exposicion(comp: dict) -> pd.DataFrame:
-    """Dónde está el dinero y cómo son las operaciones (familia Caídas Técnicas)."""
+def exposicion(comp: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Dónde está el dinero y cómo son las operaciones (familia Caídas Técnicas), y la
+    serie diaria de capital en caídas con la rentabilidad de la reserva del nivel 1 (para
+    combinar el motor con otra reserva solo con datos, sección 9.3 del dossier)."""
     cfg = fi.configuraciones()
     x, salida, conv = comp["D1"]
     y, w = preparar(x, conv, D1_CFG["kmin"], D1_CFG["uso"], D1_CFG["tam"], D1_CFG["frac"])
@@ -342,7 +346,12 @@ def exposicion(comp: dict) -> pd.DataFrame:
             "ret_mediano_neto": float(neto.median()), "sesiones_medias": float((c.t_sal - c.t_ent).mean()),
             "peso_medio_entrada": float(c.peso.mean()),
         })
-    return pd.DataFrame(filas)
+    diaria = pd.DataFrame({f"{k}_en_caidas": runs[k]["serie_expo"] for k in ("CAI_SOLO", "CAI_N1", "CAI_15X")})
+    rn, rd, cambio = v3.reserva("liq100_tend_minvol")[:3]
+    reserva = pd.Series(rn * (1 - cambio) * rd - 1, pd.DatetimeIndex(m.cargar().fechas))
+    diaria["RESERVA_N1"] = reserva.reindex(diaria.index)
+    diaria.index.name = "fecha"
+    return pd.DataFrame(filas), diaria
 
 
 # ----------------------------------------------------------------- fichas en formato máquina
@@ -571,8 +580,17 @@ def main() -> None:
     diario.iloc[1:].corr().to_csv(OUT / "correlaciones_diarias.csv", float_format="%.3f")
 
     comp = componentes_tec()
-    expo = exposicion(comp)
+    expo, diaria = exposicion(comp)
     expo.to_csv(OUT / "exposicion.csv", index=False, float_format="%.5f")
+    diaria.to_csv(OUT / "exposicion_diaria.csv", float_format="%.7f")
+    # motor + reserva solo con datos: con la reserva del nivel 1 debe acercarse al nivel 1 real
+    x = diaria["CAI_SOLO_en_caidas"]
+    aprox = diario["CAI_SOLO"] + (1 - x.shift(1).fillna(0.0)) * diaria["RESERVA_N1"] - 1e-3 * x.diff().abs().fillna(0.0)
+    aprox.iloc[0] = 0.0
+    for nombre, serie in (("aproximación", (1 + aprox).cumprod()), ("nivel 1 real", df["CAI_N1"])):
+        val = serie[serie.index < CORTE]
+        print(f"{nombre}: CAGR {m.metricas(serie)['cagr']:.4f} · fuera de muestra "
+              f"{m.metricas(val / val.iloc[0])['cagr']:.4f} · peor caída {m.metricas(serie)['maxdd']:.4f}")
     est, rotacion = estres(comp)
     est.to_csv(OUT / "estres.csv", index=False, float_format="%.5f")
     print("rotación anual de la exposición de la reserva contracíclica (suma de |Δe|):", rotacion)
