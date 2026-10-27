@@ -6,6 +6,10 @@ rompe, se apuesta a que sigue en esa dirección (momentum intradía). La idea vi
 Zarattini, Aziz y Barbon (2024), "Beat the Market: An Effective Intraday Momentum Strategy
 for S&P500 ETF (SPY)", que la llaman *Noise Area*.
 
+> **Dossier para comparar y replicar:** `dossier/DOSSIER.md` (reglas paso a paso, datos en el
+> formato común, implementación de referencia `dossier/referencia.py`). Para pasarlo a otro
+> chat junto con el de caídas: `research/traspaso/`.
+
 > **Estado (ronda 2, mismos datos y costes): con un filtro y una puntuación de cada ruptura
 > mejora de verdad, también fuera de muestra.**
 > - **Exigir una ruptura más clara.** Entrar solo si el precio supera la banda en al menos
@@ -13,9 +17,9 @@ for S&P500 ETF (SPY)", que la llaman *Noise Area*.
 >   pasa de 0,77 a **1,03** y la peor caída de -12 % a -8,5 %. Es el único indicador que pasa
 >   el estudio de rasgos y mejora en la búsqueda y en la validación.
 > - **Puntuar cada ruptura con todos los indicadores** (un modelo lineal; cada mitad de la
->   historia se opera con lo aprendido en la otra): Sharpe **1,17**, peor caída **-6,5 %** y
+>   historia se opera con lo aprendido en la otra): Sharpe **1,18**, peor caída **-6,5 %** y
 >   5,7 pb netos por operación (el artículo, 2,5). Año a año, como se usaría en real (desde
->   2008), Sharpe 1,22. Con palanca (volatilidad del 2 %, máx. 4×), **15,2 % al año** con una
+>   2008), Sharpe 1,22. Con palanca (volatilidad del 2 %, máx. 4×), **15,3 % al año** con una
 >   peor caída del -14 % (el artículo: 9,1 % y -34 %).
 > - **Qué pesa en la puntuación:** la fuerza de la ruptura, ir a favor del hueco de la noche,
 >   el mercado lejos de su máximo anual, ir contra lo que hizo ayer y una volatilidad de 5
@@ -24,11 +28,11 @@ for S&P500 ETF (SPY)", que la llaman *Noise Area*.
 > - **No funcionaron:** doble tamaño en las caídas, tamaño por volatilidad, salir solo por la
 >   banda o solo por la VWAP, más palanca, el momentum de la última media hora y evitar el
 >   volumen extremo.
-> - **Encima del nivel 1 de caídas** (futuros, peso 1, sin palanca): **25,9 % al año** con
+> - **Encima del nivel 1 de caídas** (futuros, peso 1, sin palanca): **26,0 % al año** con
 >   una peor caída del -29 % (nivel 1 solo: 16,6 % y -45 %) y **ningún año en pérdidas salvo
->   2018 (-0,2 %)**. Con la palanca de Noise Band, 34,8 % y -35 %.
+>   2018 (-0,2 %)**. Con la palanca de Noise Band, 34,9 % y -34 %.
 > - **Solo largo no protege:** rinde la mitad y, encima del nivel 1, en la crisis de 2008 la
->   mezcla cae un -37 % (con largos y cortos, un -11 %).
+>   mezcla cae un -36 % (con largos y cortos, un -11 %).
 > - **Evidencia C, en la zona gris del DSR:** Sharpe deflactado de 0,93 contando las 128
 >   pruebas y de 0,95-0,96 con las 21 efectivas. La base sigue usando los parámetros del
 >   artículo y faltan los datos de 2020 a 2026 para la prueba de verdad.
@@ -323,13 +327,13 @@ niveles. Sharpe sin palanca:
 |---|---|---|---|
 | Sin filtro (artículo) | 1,05 | 0,37 | — |
 | Un rasgo: fuerza | 1,25 | 0,72 | 0,72 / 1,21 |
-| **Lineal, todos los rasgos** | **1,37** | **0,91** | 0,92 / 1,94 |
+| **Lineal, todos los rasgos** | **1,39** | **0,91** | 0,93 / 1,94 |
 | Árboles, todos los rasgos | 1,38 | 0,87 | 1,96 / 2,52 |
-| Lineal, sin la fuerza | 1,47 | 0,87 | 0,93 / 1,78 |
+| Lineal, sin la fuerza | 1,48 | 0,87 | 0,93 / 1,78 |
 | Árboles, sin la fuerza | 1,38 | 0,55 | 1,96 / 2,74 |
 
-- **Meter más indicadores ayuda, en las dos direcciones:** el lineal saca +0,12 y +0,20 de
-  Sharpe a la fuerza sola (y +0,33 y +0,54 al artículo).
+- **Meter más indicadores ayuda, en las dos direcciones:** el lineal saca +0,14 y +0,20 de
+  Sharpe a la fuerza sola (y +0,34 y +0,54 al artículo).
 - **Los árboles sobreajustan:** dentro de muestra llegan a Sharpe 2-2,7 y fuera rinden como el
   lineal o peor.
 - **Sin la fuerza también funciona:** el resto de indicadores tiene información propia, sobre
@@ -365,13 +369,13 @@ el percentil más bajo y el más alto de cada rasgo, con el resto igual):
 |---|---|---|---|---|---|---|---|---|
 | Artículo | 1× | 5,8 % | -11,8 % | 0,77 | 1,05 / 0,37 | 239 | 2,5 | — |
 | Fuerza ≥ 0,3 | 1× | 7,1 % | -8,5 % | 1,03 | 1,26 / 0,71 | 158 | 4,5 | 2,5 |
-| **Puntuación, dos mitades** | 1× | **7,8 %** | **-6,5 %** | **1,17** | 1,37 / 0,91 | 137 | 5,7 | 2,9 |
+| **Puntuación, dos mitades** | 1× | **7,9 %** | **-6,5 %** | **1,18** | 1,39 / 0,91 | 137 | 5,7 | 3,0 |
 | Puntuación, año a año (desde 2008) | 1× | 8,2 % | -7,1 % | 1,22 | — | 137 | 6,0 | 2,1 |
 | Artículo | vol 2 % (máx. 4×) | 9,1 % | -33,9 % | 0,66 | 0,80 / 0,51 | 239 | 2,5 | — |
 | Fuerza ≥ 0,3 | vol 2 % (máx. 4×) | 13,5 % | -22,3 % | 1,00 | 1,09 / 0,91 | 158 | 4,5 | 3,4 |
-| **Puntuación, dos mitades** | vol 2 % (máx. 4×) | **15,2 %** | **-14,2 %** | **1,19** | 1,32 / 1,06 | 137 | 5,7 | 3,7 |
+| **Puntuación, dos mitades** | vol 2 % (máx. 4×) | **15,3 %** | **-14,2 %** | **1,20** | 1,33 / 1,06 | 137 | 5,7 | 3,7 |
 | Puntuación, año a año (desde 2008) | vol 2 % (máx. 4×) | 14,9 % | -16,7 % | 1,23 | — | 137 | 6,0 | 2,7 |
-| Solo largo: artículo / fuerza / puntuación | 1× | 2,8 / 3,4 / 3,3 % | -7,0 / -3,7 / -3,6 % | 0,63 / 0,87 / 0,82 | — | 117 / 74 / 68 | 2,5 / 4,6 / 5,0 | — |
+| Solo largo: artículo / fuerza / puntuación | 1× | 2,8 / 3,4 / 3,4 % | -7,0 / -3,7 / -3,6 % | 0,63 / 0,87 / 0,83 | — | 117 / 74 / 68 | 2,5 / 4,6 / 5,0 | — |
 
 ![Noise Band fuera de muestra](resultados/ronda2_curvas.png)
 
@@ -380,11 +384,11 @@ el percentil más bajo y el más alto de cada rasgo, con el resto igual):
 | 2005 | -3,3 % | -3,5 % | -0,6 % | -2,1 % |
 | 2006 | +1,7 % | +3,8 % | +6,1 % | +20,3 % |
 | 2007 | +1,8 % | +5,5 % | +11,1 % | +31,8 % |
-| 2008 | +59,9 % | +47,8 % | +49,2 % | +49,0 % |
+| 2008 | +59,9 % | +47,8 % | +50,2 % | +49,6 % |
 | 2009 | +12,0 % | +13,3 % | +11,5 % | +14,9 % |
 | 2010 | -2,3 % | +2,8 % | +1,7 % | +6,5 % |
 | 2011 | +11,2 % | +11,7 % | +8,6 % | +18,5 % |
-| 2012 | +4,6 % | +5,0 % | +4,7 % | +10,4 % |
+| 2012 | +4,6 % | +5,0 % | +4,9 % | +11,5 % |
 | 2013 | +0,8 % | +3,7 % | +1,6 % | +3,3 % |
 | 2014 | +0,9 % | +2,3 % | +9,4 % | +29,5 % |
 | 2015 | +4,2 % | +2,1 % | +1,7 % | +10,2 % |
@@ -405,15 +409,15 @@ operación, pero hay menos. Es una meseta, no un pico.
 
 | Prueba | Artículo | Fuerza ≥ 0,3 | Puntuación |
 |---|---|---|---|
-| Base | 0,77 | 1,03 | 1,17 |
-| Sigma de 10 / 20 sesiones | 0,72 / 0,89 | 0,93 / 1,11 | 1,08 / 1,25 |
-| Costes del artículo (0,29 pb por lado) | 0,93 | 1,14 | 1,29 |
-| Costes de 1 pb por lado (casi ×2) | 0,49 | 0,82 | 1,02 |
-| Corte del modelo en el 40 % / 60 % | — | — | 1,08 / 1,35 |
+| Base | 0,77 | 1,03 | 1,18 |
+| Sigma de 10 / 20 sesiones | 0,72 / 0,89 | 0,93 / 1,11 | 1,08 / 1,26 |
+| Costes del artículo (0,29 pb por lado) | 0,93 | 1,14 | 1,30 |
+| Costes de 1 pb por lado (casi ×2) | 0,49 | 0,82 | 1,03 |
+| Corte del modelo en el 40 % / 60 % | — | — | 1,09 / 1,36 |
 | Penalización del ridge ×10 / ÷10 | — | — | 1,21 / 1,24 |
 
 Como opera menos y gana más por operación, la puntuación aguanta mucho mejor los costes: con
-1 pb por lado conserva un Sharpe de 1,02 (el artículo cae a 0,49).
+1 pb por lado conserva un Sharpe de 1,03 (el artículo cae a 0,49).
 
 **Otros índices** (`indices.py`): las mismas reglas en el Nasdaq-100 y el Russell 2000 (OANDA,
 mismo periodo), con la puntuación aprendida **solo con operaciones del S&P 500** y en dos
@@ -421,9 +425,9 @@ mitades: fuera de muestra por índice y por fechas. Sharpe sin palanca, 0,55 pb 
 
 | Índice | Artículo | Fuerza ≥ 0,3 | Puntuación del S&P 500 |
 |---|---|---|---|
-| S&P 500 | 0,77 | 1,03 | 1,18 |
+| S&P 500 | 0,77 | 1,03 | 1,19 |
 | Nasdaq-100 | 0,44 | 0,59 | 0,74 |
-| Russell 2000 | 0,56 | 0,48 | 0,91 |
+| Russell 2000 | 0,56 | 0,48 | 0,92 |
 | Los tres a partes iguales | 0,67 | 0,78 | 1,11 |
 
 La puntuación del S&P 500 también mejora dos índices que nunca vio: lo que aprende no es ruido
@@ -438,9 +442,9 @@ S&P 500 solo. Con el coste por acción de QQQ (caro en 2005-2009), el Nasdaq-100
 |---|---|---|---|
 | Artículo 1× | 0,77 | 0,40 | 0,48 |
 | Fuerza ≥ 0,3 1× | 1,03 | 0,79 | 0,84 |
-| Puntuación, dos mitades 1× | 1,17 | 0,93 | 0,95 |
+| Puntuación, dos mitades 1× | 1,18 | 0,93 | 0,95 |
 | Puntuación, año a año 1× (desde 2008) | 1,22 | 0,94 | 0,96 |
-| Puntuación, dos mitades, vol 2 % | 1,19 | 0,94 | 0,96 |
+| Puntuación, dos mitades, vol 2 % | 1,20 | 0,94 | 0,96 |
 
 El Sharpe que cabría esperar del mejor de tantos intentos por puro azar es de 0,79-0,83. La
 puntuación lo supera con un 93-96 % de confianza: **zona gris** (con N efectivo aprueba, con N
@@ -456,17 +460,17 @@ solo dentro del día; calendario del nivel 1 (24-ene-2005 → 13-may-2020).
 | Nivel 1 solo | 16,6 % | -45,1 % | 0,74 | 0,37 | — |
 | + artículo 1× | 23,7 % | -28,6 % | 0,96 | 0,83 | -0,47 |
 | + fuerza ≥ 0,3 1× | 25,1 % | -28,9 % | 1,01 | 0,87 | -0,43 |
-| + puntuación 1×, peso 0,5 | 21,3 % | -36,6 % | 0,90 | 0,58 | -0,39 |
-| **+ puntuación 1×** | **25,9 %** | **-28,7 %** | **1,04** | **0,90** | -0,39 |
+| + puntuación 1×, peso 0,5 | 21,3 % | -36,4 % | 0,90 | 0,59 | -0,39 |
+| **+ puntuación 1×** | **26,0 %** | **-28,7 %** | **1,04** | **0,91** | -0,39 |
 | + artículo vol 2 % (máx. 4×) | 27,8 % | -28,8 % | 1,02 | 0,97 | -0,37 |
 | + fuerza ≥ 0,3 vol 2 % | 32,8 % | -31,6 % | 1,17 | 1,04 | -0,32 |
-| **+ puntuación vol 2 %** | **34,8 %** | -34,5 % | **1,24** | 1,01 | -0,32 |
-| + puntuación solo largo 1× | 20,3 % | -40,8 % | 0,83 | 0,50 | -0,08 |
+| **+ puntuación vol 2 %** | **34,9 %** | -34,2 % | **1,25** | 1,02 | -0,32 |
+| + puntuación solo largo 1× | 20,3 % | -40,4 % | 0,84 | 0,50 | -0,09 |
 | Desde 2008: nivel 1 solo / + puntuación año a año 1× / + vol 2 % | 17,0 / 26,7 / 34,8 % | -45 / -32 / -35 % | 0,74 / 1,03 / 1,23 | — | — |
 
 | Tramo de crisis | Nivel 1 solo | + artículo 1× | + puntuación 1× | + puntuación solo largo 1× | + puntuación vol 2 % |
 |---|---|---|---|---|---|
-| Crisis financiera (oct-07 → mar-09) | -41,7 % | -4,0 % | -11,4 % | -36,5 % | -12,5 % |
+| Crisis financiera (oct-07 → mar-09) | -41,7 % | -4,0 % | -10,8 % | -36,0 % | -12,1 % |
 | Flash crash (2010) | -10,6 % | -10,4 % | -11,0 % | -11,2 % | -6,9 % |
 | Deuda de EE. UU. y del euro (2011) | -15,5 % | -8,6 % | -13,4 % | -17,9 % | -10,1 % |
 | China y petróleo (2015-16) | +4,7 % | +7,9 % | +10,6 % | +7,0 % | +21,2 % |
@@ -478,7 +482,7 @@ solo dentro del día; calendario del nivel 1 (24-ene-2005 → 13-may-2020).
 - La puntuación protege algo menos que el artículo en 2008 (opera menos), pero rinde más el
   resto del tiempo.
 - **Los cortos son los que protegen:** la versión solo largo no se mueve en contra del nivel 1
-  (correlación -0,08) y en 2008 apenas ayuda.
+  (correlación -0,09) y en 2008 apenas ayuda.
 
 ![Nivel 1 con Noise Band encima](resultados/ronda2_combinar.png)
 
@@ -509,7 +513,7 @@ con orden a mercado) son del orden de los de la base.
 ### 7. Conclusiones de la ronda 2
 
 1. **Sí hay una versión más rentable y más estable**, y lo es fuera de muestra: la puntuación
-   sube el Sharpe de 0,77 a 1,17-1,22, reduce la peor caída a la mitad y gana el doble por
+   sube el Sharpe de 0,77 a 1,18-1,22, reduce la peor caída a la mitad y gana el doble por
    operación.
 2. **El indicador que más vale es el más simple:** la fuerza de la ruptura (entrar con el cono
    1,3 veces más ancho). El resto (hueco, lo que hizo ayer, caída del mercado, volatilidad
@@ -519,7 +523,7 @@ con orden a mercado) son del orden de los de la base.
    rinde menos por riesgo que usarla como filtro.
 4. **Casi todo lo demás falla al validarlo** (salidas, palanca, tamaño por régimen, última
    media hora): la mayoría de ideas que mejoran en la búsqueda no aguantan.
-5. **Su sitio sigue siendo encima del nivel 1**, con largos y cortos: 25,9 % al año con una
+5. **Su sitio sigue siendo encima del nivel 1**, con largos y cortos: 26,0 % al año con una
    peor caída del -29 % sin palanca en Noise Band.
 6. **Pendiente:** la prueba con datos de 2020 a 2026, sin la que no pasa de evidencia C.
 
@@ -532,8 +536,8 @@ con orden a mercado) son del orden de los de la base.
 2. **Probar en papel** la puntuación con MES encima del nivel 1, con los costes reales de
    futuros (tick de 0,25 puntos y comisión) y la ejecución al precio del control.
 3. **Decidir si se aceptan cortos** (con futuros): son los que dan la protección.
-4. **Decidir la palanca:** 1× (25,9 % y -29 % encima del nivel 1) o volatilidad del 2 % (34,8 % y
-   -35 %, exposición dentro del día de hasta 5×).
+4. **Decidir la palanca:** 1× (26,0 % y -29 % encima del nivel 1) o volatilidad del 2 % (34,9 % y
+   -34 %, exposición dentro del día de hasta 5×).
 5. Añadirla al marco del dossier como capa intradía (`NB_PUNT` y `NB_F03`) para el otro chat.
 
 ## Reproducir
@@ -551,6 +555,10 @@ python research/noise_band/ronda2.py     # variantes fijadas de antemano
 python research/noise_band/modelos.py    # todos los indicadores a la vez, fuera de muestra
 python research/noise_band/elegida.py    # versiones elegidas: cono, robustez, DSR, encima del nivel 1 y puntuación para operar
 python research/noise_band/indices.py    # las mismas reglas en el Nasdaq-100 y el Russell 2000
+# dossier para otros chats
+python research/noise_band/dossier.py    # datos del dossier en el formato común (dossier/datos/)
+python research/noise_band/verificar_referencia.py   # la implementación de referencia frente al motor
+python research/traspaso/empaquetar.py   # zip con los dossiers de caídas y Noise Band
 ```
 
 El motor (`motor.py`, numba) tarda ~6 ms por backtest de 15 años en velas de 1 minuto.

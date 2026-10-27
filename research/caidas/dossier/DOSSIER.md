@@ -47,8 +47,12 @@ métricas y ventanas, qué falló por el camino y qué queda por hacer.
 | `graficas/` | ranking por CAGR y una gráfica por familia (valor de 100.000 $ y caída desde máximos) |
 | `PROMPT_OTRO_CHAT.md` | el texto para pegar en el otro chat |
 
-**Para el otro chat.** Pásale el zip (o, si no lo acepta, `DOSSIER.md` y los archivos de
-`datos/` sueltos) y pega el texto de `PROMPT_OTRO_CHAT.md`, que es este:
+**Si pasas también Noise Band** (momentum intradía del S&P 500, la capa que mejor combina con
+el nivel 1), usa el paquete `research/traspaso/`: un zip con este dossier y el de Noise Band
+(`research/noise_band/dossier/DOSSIER.md`) y un `PROMPT_OTRO_CHAT.md` que cubre las dos.
+
+**Para el otro chat, solo caídas.** Pásale el zip (o, si no lo acepta, `DOSSIER.md` y los
+archivos de `datos/` sueltos) y pega el texto de `PROMPT_OTRO_CHAT.md`, que es este:
 
 ```text
 Hola. Vengo de otro chat en el que investigué estrategias de compra de caídas en acciones
@@ -961,6 +965,25 @@ Cada combinación probada es una prueba más. Fijar de antemano pocas reglas de 
 reserva), elegirlas con una ventana y validarlas con la ventana fuera de muestra común, y
 contar todas las probadas.
 
+### 9.6 Probado: Noise Band encima del nivel 1
+
+La primera combinación probada con otra estrategia (dossier propio en
+`research/noise_band/dossier/DOSSIER.md`). Noise Band sigue las rupturas del "cono" de
+movimiento normal del S&P 500 dentro del día, largo y corto, con futuros, y cierra cada día:
+no compite por el capital del nivel 1, va encima. Mezcla: r = r_CAI_N1 + peso × r_NB, con los
+datos intradía disponibles (21-ene-2005 → 13-may-2020, dentro de la ventana fuera de muestra
+de este dossier).
+
+| Mezcla | CAGR | Peor caída | Sharpe | Crisis financiera | Años negativos |
+|---|---|---|---|---|---|
+| `CAI_N1` solo | 16,6 % | -45,1 % | 0,74 | -41,7 % | 2008, 2011, 2018 |
+| + Noise Band del artículo (1×) | 23,6 % | -28,6 % | 0,96 | -4,0 % | ninguno |
+| **+ Noise Band con puntuación (1×), `CAI_N1_NB_PUNT`** | **26,0 %** | **-28,7 %** | **1,04** | -10,8 % | 2018 (-0,2 %) |
+| + Noise Band con puntuación y palanca, `CAI_N1_NB_PUNT_VOL` | 34,9 % | -34,2 % | 1,25 | -12,1 % | ninguno |
+
+Funciona porque Noise Band gana cuando la compra de caídas pierde (correlación mensual -0,39;
+en 2008, +51 % frente a -42 %). Evidencia C: faltan datos de 2020 a 2026 y necesita cortos.
+
 ---
 
 ## 10. Próximos pasos
@@ -979,6 +1002,7 @@ contar todas las probadas.
 | 9 | **Señales de alarma** en vivo (no automáticas): 12 meses por debajo de -19 % (percentil 5 fuera de muestra), caída desde máximos peor que -50 %, o acierto < 55 % en 50 operaciones | saber cuándo revisar | por definir con el paper trading |
 | 10 | Reserva con menos acciones (20-30) para cuentas pequeñas | 100 + 50 valores son muchos para operar a mano | por probar |
 | 11 | Revalidar cada año con los datos nuevos, sin cambiar reglas | seguimiento honesto | anual |
+| 12 | **Noise Band como capa intradía del nivel 1** (sección 9.6) | +9,4 puntos al año y 16 puntos menos de peor caída en 2005-2020 | probada (evidencia C); faltan datos intradía de 2020-2026 y decidir cortos y palanca |
 
 ---
 

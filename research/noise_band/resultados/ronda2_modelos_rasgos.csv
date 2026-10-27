@@ -1,29 +1,29 @@
 pliegue,modelo,rasgo,medida,valor
-búsqueda → validación,"lineal, todos los rasgos",hora,coeficiente (pb),-0.04349
-búsqueda → validación,"lineal, todos los rasgos",fuerza,coeficiente (pb),1.97427
-búsqueda → validación,"lineal, todos los rasgos",mov,coeficiente (pb),1.12706
-búsqueda → validación,"lineal, todos los rasgos",hueco,coeficiente (pb),1.32215
-búsqueda → validación,"lineal, todos los rasgos",hueco_abs,coeficiente (pb),1.95116
-búsqueda → validación,"lineal, todos los rasgos",sigma_rel,coeficiente (pb),0.46148
-búsqueda → validación,"lineal, todos los rasgos",vol5,coeficiente (pb),0.13628
-búsqueda → validación,"lineal, todos los rasgos",vol14,coeficiente (pb),-0.10836
-búsqueda → validación,"lineal, todos los rasgos",vol60,coeficiente (pb),-0.45180
-búsqueda → validación,"lineal, todos los rasgos",vol5_60,coeficiente (pb),0.19107
-búsqueda → validación,"lineal, todos los rasgos",dd252,coeficiente (pb),-0.93238
-búsqueda → validación,"lineal, todos los rasgos",tend50,coeficiente (pb),-0.09747
-búsqueda → validación,"lineal, todos los rasgos",tend200,coeficiente (pb),-0.63570
-búsqueda → validación,"lineal, todos los rasgos",ret1,coeficiente (pb),-0.29482
-búsqueda → validación,"lineal, todos los rasgos",ret1_dia,coeficiente (pb),-1.34496
-búsqueda → validación,"lineal, todos los rasgos",vrel,coeficiente (pb),-0.20066
-búsqueda → validación,"lineal, todos los rasgos",vrel30,coeficiente (pb),-0.39078
-búsqueda → validación,"lineal, todos los rasgos",vwap,coeficiente (pb),0.00048
-búsqueda → validación,"lineal, todos los rasgos",rango,coeficiente (pb),0.35597
-búsqueda → validación,"lineal, todos los rasgos",volmin30,coeficiente (pb),-1.29941
-búsqueda → validación,"lineal, todos los rasgos",dia_semana,coeficiente (pb),-0.25332
-búsqueda → validación,"lineal, todos los rasgos",vencimiento,coeficiente (pb),-0.16913
-búsqueda → validación,"lineal, todos los rasgos",fin_mes,coeficiente (pb),-0.19586
-búsqueda → validación,"lineal, todos los rasgos",inicio_mes,coeficiente (pb),-0.46094
-búsqueda → validación,"lineal, todos los rasgos",lado,coeficiente (pb),0.17787
+búsqueda → validación,"lineal, todos los rasgos",hora,coeficiente (pb),-0.04347
+búsqueda → validación,"lineal, todos los rasgos",fuerza,coeficiente (pb),1.97420
+búsqueda → validación,"lineal, todos los rasgos",mov,coeficiente (pb),1.12715
+búsqueda → validación,"lineal, todos los rasgos",hueco,coeficiente (pb),1.32209
+búsqueda → validación,"lineal, todos los rasgos",hueco_abs,coeficiente (pb),1.95123
+búsqueda → validación,"lineal, todos los rasgos",sigma_rel,coeficiente (pb),0.46145
+búsqueda → validación,"lineal, todos los rasgos",vol5,coeficiente (pb),0.13618
+búsqueda → validación,"lineal, todos los rasgos",vol14,coeficiente (pb),-0.10850
+búsqueda → validación,"lineal, todos los rasgos",vol60,coeficiente (pb),-0.45183
+búsqueda → validación,"lineal, todos los rasgos",vol5_60,coeficiente (pb),0.19120
+búsqueda → validación,"lineal, todos los rasgos",dd252,coeficiente (pb),-0.93222
+búsqueda → validación,"lineal, todos los rasgos",tend50,coeficiente (pb),-0.09767
+búsqueda → validación,"lineal, todos los rasgos",tend200,coeficiente (pb),-0.63615
+búsqueda → validación,"lineal, todos los rasgos",ret1,coeficiente (pb),-0.29480
+búsqueda → validación,"lineal, todos los rasgos",ret1_dia,coeficiente (pb),-1.34534
+búsqueda → validación,"lineal, todos los rasgos",vrel,coeficiente (pb),-0.20025
+búsqueda → validación,"lineal, todos los rasgos",vrel30,coeficiente (pb),-0.39089
+búsqueda → validación,"lineal, todos los rasgos",vwap,coeficiente (pb),0.00059
+búsqueda → validación,"lineal, todos los rasgos",rango,coeficiente (pb),0.35532
+búsqueda → validación,"lineal, todos los rasgos",volmin30,coeficiente (pb),-1.29989
+búsqueda → validación,"lineal, todos los rasgos",dia_semana,coeficiente (pb),-0.25236
+búsqueda → validación,"lineal, todos los rasgos",vencimiento,coeficiente (pb),-0.16937
+búsqueda → validación,"lineal, todos los rasgos",fin_mes,coeficiente (pb),-0.28553
+búsqueda → validación,"lineal, todos los rasgos",inicio_mes,coeficiente (pb),-0.46122
+búsqueda → validación,"lineal, todos los rasgos",lado,coeficiente (pb),0.17771
 búsqueda → validación,"árboles, todos los rasgos",hora,importancia en la prueba,20.48671
 búsqueda → validación,"árboles, todos los rasgos",fuerza,importancia en la prueba,20.61504
 búsqueda → validación,"árboles, todos los rasgos",mov,importancia en la prueba,-1.08620
@@ -49,30 +49,30 @@ búsqueda → validación,"árboles, todos los rasgos",vencimiento,importancia e
 búsqueda → validación,"árboles, todos los rasgos",fin_mes,importancia en la prueba,0.00000
 búsqueda → validación,"árboles, todos los rasgos",inicio_mes,importancia en la prueba,0.00000
 búsqueda → validación,"árboles, todos los rasgos",lado,importancia en la prueba,0.00000
-búsqueda → validación,"lineal, sin la fuerza",hora,coeficiente (pb),-0.20528
-búsqueda → validación,"lineal, sin la fuerza",mov,coeficiente (pb),1.51420
-búsqueda → validación,"lineal, sin la fuerza",hueco,coeficiente (pb),1.42575
-búsqueda → validación,"lineal, sin la fuerza",hueco_abs,coeficiente (pb),1.93927
-búsqueda → validación,"lineal, sin la fuerza",sigma_rel,coeficiente (pb),0.43999
-búsqueda → validación,"lineal, sin la fuerza",vol5,coeficiente (pb),0.12011
-búsqueda → validación,"lineal, sin la fuerza",vol14,coeficiente (pb),-0.13768
-búsqueda → validación,"lineal, sin la fuerza",vol60,coeficiente (pb),-0.44547
-búsqueda → validación,"lineal, sin la fuerza",vol5_60,coeficiente (pb),0.17774
-búsqueda → validación,"lineal, sin la fuerza",dd252,coeficiente (pb),-0.93327
-búsqueda → validación,"lineal, sin la fuerza",tend50,coeficiente (pb),-0.11152
-búsqueda → validación,"lineal, sin la fuerza",tend200,coeficiente (pb),-0.65035
-búsqueda → validación,"lineal, sin la fuerza",ret1,coeficiente (pb),-0.29386
-búsqueda → validación,"lineal, sin la fuerza",ret1_dia,coeficiente (pb),-1.34204
-búsqueda → validación,"lineal, sin la fuerza",vrel,coeficiente (pb),-0.14317
-búsqueda → validación,"lineal, sin la fuerza",vrel30,coeficiente (pb),-0.32097
-búsqueda → validación,"lineal, sin la fuerza",vwap,coeficiente (pb),0.12086
-búsqueda → validación,"lineal, sin la fuerza",rango,coeficiente (pb),0.55752
-búsqueda → validación,"lineal, sin la fuerza",volmin30,coeficiente (pb),-1.22511
-búsqueda → validación,"lineal, sin la fuerza",dia_semana,coeficiente (pb),-0.27768
-búsqueda → validación,"lineal, sin la fuerza",vencimiento,coeficiente (pb),-0.17003
-búsqueda → validación,"lineal, sin la fuerza",fin_mes,coeficiente (pb),-0.19824
-búsqueda → validación,"lineal, sin la fuerza",inicio_mes,coeficiente (pb),-0.45281
-búsqueda → validación,"lineal, sin la fuerza",lado,coeficiente (pb),0.16176
+búsqueda → validación,"lineal, sin la fuerza",hora,coeficiente (pb),-0.20526
+búsqueda → validación,"lineal, sin la fuerza",mov,coeficiente (pb),1.51429
+búsqueda → validación,"lineal, sin la fuerza",hueco,coeficiente (pb),1.42569
+búsqueda → validación,"lineal, sin la fuerza",hueco_abs,coeficiente (pb),1.93933
+búsqueda → validación,"lineal, sin la fuerza",sigma_rel,coeficiente (pb),0.43997
+búsqueda → validación,"lineal, sin la fuerza",vol5,coeficiente (pb),0.12001
+búsqueda → validación,"lineal, sin la fuerza",vol14,coeficiente (pb),-0.13782
+búsqueda → validación,"lineal, sin la fuerza",vol60,coeficiente (pb),-0.44551
+búsqueda → validación,"lineal, sin la fuerza",vol5_60,coeficiente (pb),0.17787
+búsqueda → validación,"lineal, sin la fuerza",dd252,coeficiente (pb),-0.93310
+búsqueda → validación,"lineal, sin la fuerza",tend50,coeficiente (pb),-0.11171
+búsqueda → validación,"lineal, sin la fuerza",tend200,coeficiente (pb),-0.65079
+búsqueda → validación,"lineal, sin la fuerza",ret1,coeficiente (pb),-0.29384
+búsqueda → validación,"lineal, sin la fuerza",ret1_dia,coeficiente (pb),-1.34242
+búsqueda → validación,"lineal, sin la fuerza",vrel,coeficiente (pb),-0.14277
+búsqueda → validación,"lineal, sin la fuerza",vrel30,coeficiente (pb),-0.32109
+búsqueda → validación,"lineal, sin la fuerza",vwap,coeficiente (pb),0.12097
+búsqueda → validación,"lineal, sin la fuerza",rango,coeficiente (pb),0.55686
+búsqueda → validación,"lineal, sin la fuerza",volmin30,coeficiente (pb),-1.22559
+búsqueda → validación,"lineal, sin la fuerza",dia_semana,coeficiente (pb),-0.27671
+búsqueda → validación,"lineal, sin la fuerza",vencimiento,coeficiente (pb),-0.17027
+búsqueda → validación,"lineal, sin la fuerza",fin_mes,coeficiente (pb),-0.28778
+búsqueda → validación,"lineal, sin la fuerza",inicio_mes,coeficiente (pb),-0.45309
+búsqueda → validación,"lineal, sin la fuerza",lado,coeficiente (pb),0.16161
 búsqueda → validación,"árboles, sin la fuerza",hora,importancia en la prueba,15.82149
 búsqueda → validación,"árboles, sin la fuerza",mov,importancia en la prueba,1.66592
 búsqueda → validación,"árboles, sin la fuerza",hueco,importancia en la prueba,15.95016

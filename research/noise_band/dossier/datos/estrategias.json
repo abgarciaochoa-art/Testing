@@ -1,0 +1,1015 @@
+{
+ "convenciones": {
+  "datos": "OANDA SPX500_USD (CFD sobre el S&P 500, precio medio), velas de 1 minuto, 3-ene-2005 → 13-may-2020; sesión regular 9:30-16:00 de Nueva York (390 velas); repositorio público FutureSharks/financial-data",
+  "instrumento_para_operar": "futuros MES/ES (o SPY); la posición se abre y se cierra en el mismo día",
+  "senal": "en los controles de las 10:00, 10:30, ..., 15:30, con el cierre de la vela que acaba a esa hora",
+  "ejecucion": "a la apertura del minuto siguiente; la salida del final del día, al cierre de las 16:00",
+  "costes": "0,0085 $ por acción de SPY y por lado (comisión 0,0035 + media horquilla 0,005), SPY = índice / 10: 0,25-1,3 pb por lado, 0,55 de media (los futuros cuestan ~0,4-0,6 pb)",
+  "dinero": "el capital no rinde nada mientras no hay posición (en la combinación con el nivel 1, el capital está siempre en las acciones del nivel 1 y Noise Band va encima con futuros)",
+  "ventanas": "búsqueda 2013-01-01 → 2020-05-13 (mitades con corte 2017-01-01) y validación 2005-01-24 → 2012-12-31; la puntuación siempre se mide fuera de muestra (dos mitades o año a año)",
+  "dias_sin_datos": "23 sesiones sin datos intradía cuentan como días sin operar"
+ },
+ "estrategias": [
+  {
+   "id": "NB_ART",
+   "nombre": "Noise Band del artículo, largo y corto, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.057821656514718045,
+     "peor_caida": -0.11830762864036226,
+     "sharpe_rf0": 0.7685809215779037,
+     "volatilidad": 0.0770633334472113,
+     "calmar": 0.48873988245075345
+    },
+    "validacion": {
+     "cagr": 0.09362537972346274,
+     "peor_caida": -0.07723864807740588,
+     "sharpe_rf0": 1.045612694343991,
+     "volatilidad": 0.08951389149570023,
+     "calmar": 1.2121571525906907
+    },
+    "busqueda": {
+     "cagr": 0.020522086743233192,
+     "peor_caida": -0.11830762864036215,
+     "sharpe_rf0": 0.3647775024802327,
+     "volatilidad": 0.06078801617305852,
+     "calmar": 0.1734637654315372
+    },
+    "busqueda_mitad_1": {
+     "cagr": -0.003166407376570257,
+     "peor_caida": -0.09601571092920691,
+     "sharpe_rf0": -0.03281550837834352,
+     "volatilidad": 0.053348580474769425,
+     "calmar": -0.03297801313896298
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.0493718768288709,
+     "peor_caida": -0.09187777517414542,
+     "sharpe_rf0": 0.7388131061021299,
+     "volatilidad": 0.0685967792423162,
+     "calmar": 0.5373647406599832
+    },
+    "desde_2008": {
+     "cagr": 0.07196230572345574,
+     "peor_caida": -0.11830762864036226,
+     "sharpe_rf0": 0.9000002704536403,
+     "volatilidad": 0.08091580586934698,
+     "calmar": 0.6082642898896278
+    }
+   },
+   "dsr_n_bruto": 0.39841,
+   "dsr_n_efectivo": 0.47595,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_ART_VOL",
+   "nombre": "Noise Band del artículo, largo y corto, volatilidad 2 % (máx. 4×)",
+   "metricas": {
+    "total": {
+     "cagr": 0.09141996665286456,
+     "peor_caida": -0.33862058936391526,
+     "sharpe_rf0": 0.6619705671538985,
+     "volatilidad": 0.14886151100133377,
+     "calmar": 0.2699775782228517
+    },
+    "validacion": {
+     "cagr": 0.11567097166525953,
+     "peor_caida": -0.2100608148609846,
+     "sharpe_rf0": 0.8025027054566025,
+     "volatilidad": 0.1505447203223189,
+     "calmar": 0.550654684177099
+    },
+    "busqueda": {
+     "cagr": 0.06585718812004115,
+     "peor_caida": -0.33862058936391526,
+     "sharpe_rf0": 0.50682917373396,
+     "volatilidad": 0.1470506596788887,
+     "calmar": 0.19448666203006484
+    },
+    "busqueda_mitad_1": {
+     "cagr": -0.0007775830284968421,
+     "peor_caida": -0.2599772943309345,
+     "sharpe_rf0": 0.06788884483554665,
+     "volatilidad": 0.14757611136535886,
+     "calmar": -0.002990965155237859
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.15074350195421693,
+     "peor_caida": -0.14871139469120698,
+     "sharpe_rf0": 1.0343773142072727,
+     "volatilidad": 0.1463619564928759,
+     "calmar": 1.0136647717360834
+    },
+    "desde_2008": {
+     "cagr": 0.10866921720602418,
+     "peor_caida": -0.33862058936391537,
+     "sharpe_rf0": 0.7826788262846448,
+     "volatilidad": 0.14531791589800808,
+     "calmar": 0.3209173352694081
+    }
+   },
+   "dsr_n_bruto": 0.24593,
+   "dsr_n_efectivo": 0.3111,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_ART_L",
+   "nombre": "Noise Band del artículo, solo largo, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.028344811696131345,
+     "peor_caida": -0.06977725146664693,
+     "sharpe_rf0": 0.6239631541220402,
+     "volatilidad": 0.04657123653893673,
+     "calmar": 0.406218518218362
+    },
+    "validacion": {
+     "cagr": 0.04267023755954824,
+     "peor_caida": -0.06977725146664693,
+     "sharpe_rf0": 0.7914151918971077,
+     "volatilidad": 0.05474066938112545,
+     "calmar": 0.6115207558719096
+    },
+    "busqueda": {
+     "cagr": 0.013116221464296807,
+     "peor_caida": -0.03444102570236962,
+     "sharpe_rf0": 0.38297501497280517,
+     "volatilidad": 0.0357185379488249,
+     "calmar": 0.3808313253398368
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.009134395700307829,
+     "peor_caida": -0.032888573364165286,
+     "sharpe_rf0": 0.30404977385357557,
+     "volatilidad": 0.03151493436730622,
+     "calmar": 0.2777376689212211
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.017863014251907616,
+     "peor_caida": -0.03444102570236973,
+     "sharpe_rf0": 0.4620163445543133,
+     "volatilidad": 0.04017406910464634,
+     "calmar": 0.5186551180639938
+    },
+    "desde_2008": {
+     "cagr": 0.03415819161867195,
+     "peor_caida": -0.06977725146664693,
+     "sharpe_rf0": 0.7172707256567783,
+     "volatilidad": 0.04850554439229384,
+     "calmar": 0.4895319162148332
+    }
+   },
+   "dsr_n_bruto": 0.18851,
+   "dsr_n_efectivo": 0.24851,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_F03",
+   "nombre": "Noise Band con fuerza ≥ 0,3 sigmas, largo y corto, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.07074954608903039,
+     "peor_caida": -0.0847899995177469,
+     "sharpe_rf0": 1.0217266414217037,
+     "volatilidad": 0.06932816221001996,
+     "calmar": 0.8344090870553927
+    },
+    "validacion": {
+     "cagr": 0.10007159768152452,
+     "peor_caida": -0.0847899995177469,
+     "sharpe_rf0": 1.2585271067186952,
+     "volatilidad": 0.07830954239485241,
+     "calmar": 1.1802287799350573
+    },
+    "busqueda": {
+     "cagr": 0.040002829826217834,
+     "peor_caida": -0.07228561998314464,
+     "sharpe_rf0": 0.7050891077552722,
+     "volatilidad": 0.0580723734898276,
+     "calmar": 0.5533995535425383
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.013032712479372988,
+     "peor_caida": -0.07062366787590946,
+     "sharpe_rf0": 0.2905153541500982,
+     "volatilidad": 0.04859238076516527,
+     "calmar": 0.1845374627422685
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.07294965925401753,
+     "peor_caida": -0.07228561998314476,
+     "sharpe_rf0": 1.0781002723207533,
+     "volatilidad": 0.06763109445375806,
+     "calmar": 1.009186326008238
+    },
+    "desde_2008": {
+     "cagr": 0.08346419543984207,
+     "peor_caida": -0.07228561998314464,
+     "sharpe_rf0": 1.1414828398344197,
+     "volatilidad": 0.07260992657091392,
+     "calmar": 1.1546445262460778
+    }
+   },
+   "dsr_n_bruto": 0.78578,
+   "dsr_n_efectivo": 0.83911,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_F03_VOL",
+   "nombre": "Noise Band con fuerza ≥ 0,3 sigmas, largo y corto, volatilidad 2 % (máx. 4×)",
+   "metricas": {
+    "total": {
+     "cagr": 0.1348909689277662,
+     "peor_caida": -0.2228110379717816,
+     "sharpe_rf0": 0.9967853568101437,
+     "volatilidad": 0.1363211519867245,
+     "calmar": 0.6054052355559233
+    },
+    "validacion": {
+     "cagr": 0.14883682127383713,
+     "peor_caida": -0.2228110379717816,
+     "sharpe_rf0": 1.08654570288238,
+     "volatilidad": 0.13633399293429183,
+     "calmar": 0.6679957269113701
+    },
+    "busqueda": {
+     "cagr": 0.12004089151692265,
+     "peor_caida": -0.20434060533534593,
+     "sharpe_rf0": 0.8997754981739168,
+     "volatilidad": 0.13633919140905398,
+     "calmar": 0.5874549080439595
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.04905230033370156,
+     "peor_caida": -0.20434060533534593,
+     "sharpe_rf0": 0.42163712530241704,
+     "volatilidad": 0.13487369769666094,
+     "calmar": 0.24005165421332297
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.21056483899291512,
+     "peor_caida": -0.11601295692437308,
+     "sharpe_rf0": 1.457309562106995,
+     "volatilidad": 0.13798227717801453,
+     "calmar": 1.8150113967888848
+    },
+    "desde_2008": {
+     "cagr": 0.15367984315453365,
+     "peor_caida": -0.20434060533534582,
+     "sharpe_rf0": 1.1442243885063537,
+     "volatilidad": 0.1327154261842831,
+     "calmar": 0.7520768713703663
+    }
+   },
+   "dsr_n_bruto": 0.7559,
+   "dsr_n_efectivo": 0.81422,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_F03_L",
+   "nombre": "Noise Band con fuerza ≥ 0,3 sigmas, solo largo, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.03387522657183539,
+     "peor_caida": -0.03676738734613161,
+     "sharpe_rf0": 0.865897952294434,
+     "volatilidad": 0.03941114170937749,
+     "calmar": 0.9213389641458843
+    },
+    "validacion": {
+     "cagr": 0.04177700864533507,
+     "peor_caida": -0.03676738734613161,
+     "sharpe_rf0": 0.9316496362056637,
+     "volatilidad": 0.04507188204588945,
+     "calmar": 1.136251761705079
+    },
+    "busqueda": {
+     "cagr": 0.025420796351996122,
+     "peor_caida": -0.02843797230225109,
+     "sharpe_rf0": 0.7960569078042038,
+     "volatilidad": 0.032215940022986354,
+     "calmar": 0.8939032671462256
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.018499230486509033,
+     "peor_caida": -0.02835846189393032,
+     "sharpe_rf0": 0.6577589991275691,
+     "volatilidad": 0.028463699108385948,
+     "calmar": 0.6523354671244882
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.03369771841909519,
+     "peor_caida": -0.02843797230225098,
+     "sharpe_rf0": 0.936505961827427,
+     "volatilidad": 0.0361929989593912,
+     "calmar": 1.1849550333948347
+    },
+    "desde_2008": {
+     "cagr": 0.037152598641145396,
+     "peor_caida": -0.03676738734613161,
+     "sharpe_rf0": 0.9155811149371746,
+     "volatilidad": 0.040791537886373685,
+     "calmar": 1.010476983077078
+    }
+   },
+   "dsr_n_bruto": 0.55979,
+   "dsr_n_efectivo": 0.63967,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_PUNT",
+   "nombre": "Noise Band con puntuación (dos mitades), largo y corto, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.0786879947625918,
+     "peor_caida": -0.06461589604064122,
+     "sharpe_rf0": 1.1783538469280226,
+     "volatilidad": 0.06621023485811142,
+     "calmar": 1.217780756504556
+    },
+    "validacion": {
+     "cagr": 0.1091078944711823,
+     "peor_caida": -0.06330988629570933,
+     "sharpe_rf0": 1.3858957968750938,
+     "volatilidad": 0.07694885123882457,
+     "calmar": 1.7233942572816912
+    },
+    "busqueda": {
+     "cagr": 0.046816394637427594,
+     "peor_caida": -0.06461589604064133,
+     "sharpe_rf0": 0.903976544980921,
+     "volatilidad": 0.052165532335728834,
+     "calmar": 0.7245337061948592
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.03723662711946529,
+     "peor_caida": -0.038439067815560946,
+     "sharpe_rf0": 0.9029044048647461,
+     "volatilidad": 0.0414121130752007,
+     "calmar": 0.9687182659614634
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.05830240779695983,
+     "peor_caida": -0.06461589604064122,
+     "sharpe_rf0": 0.9386942698591487,
+     "volatilidad": 0.06263124982977135,
+     "calmar": 0.9022920267218701
+    },
+    "desde_2008": {
+     "cagr": 0.08429173079161711,
+     "peor_caida": -0.06461589604064133,
+     "sharpe_rf0": 1.2040339408124565,
+     "volatilidad": 0.06927495524421401,
+     "calmar": 1.3045045562565645
+    }
+   },
+   "dsr_n_bruto": 0.93059,
+   "dsr_n_efectivo": 0.95394,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_PUNT_VOL",
+   "nombre": "Noise Band con puntuación (dos mitades), largo y corto, volatilidad 2 % (máx. 4×)",
+   "metricas": {
+    "total": {
+     "cagr": 0.15339209303787293,
+     "peor_caida": -0.14164869373455946,
+     "sharpe_rf0": 1.1987774012851682,
+     "volatilidad": 0.12571058972796276,
+     "calmar": 1.0829051013016742
+    },
+    "validacion": {
+     "cagr": 0.18123834783109039,
+     "peor_caida": -0.13534881255862008,
+     "sharpe_rf0": 1.3289715825090012,
+     "volatilidad": 0.13199935768797114,
+     "calmar": 1.339046456374306
+    },
+    "busqueda": {
+     "cagr": 0.12409685588112818,
+     "peor_caida": -0.14164869373455957,
+     "sharpe_rf0": 1.0461449180517548,
+     "volatilidad": 0.1185695736169893,
+     "calmar": 0.8760889536593793
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.10587252548697257,
+     "peor_caida": -0.14164869373455957,
+     "sharpe_rf0": 0.9333657563837359,
+     "volatilidad": 0.11474194460826506,
+     "calmar": 0.7474302988305052
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.14611920598162764,
+     "peor_caida": -0.11398717527432622,
+     "sharpe_rf0": 1.1723093063170462,
+     "volatilidad": 0.12303105619429339,
+     "calmar": 1.2818916306152086
+    },
+    "desde_2008": {
+     "cagr": 0.1515158816527511,
+     "peor_caida": -0.14164869373455946,
+     "sharpe_rf0": 1.2290579673988937,
+     "volatilidad": 0.12080324571957425,
+     "calmar": 1.0696595758001277
+    }
+   },
+   "dsr_n_bruto": 0.94303,
+   "dsr_n_efectivo": 0.963,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_PUNT_L",
+   "nombre": "Noise Band con puntuación (dos mitades), solo largo, 1×",
+   "metricas": {
+    "total": {
+     "cagr": 0.03397052301546721,
+     "peor_caida": -0.03641711626085753,
+     "sharpe_rf0": 0.831500429046259,
+     "volatilidad": 0.04123764966639913,
+     "calmar": 0.9328174908780461
+    },
+    "validacion": {
+     "cagr": 0.049439748258488514,
+     "peor_caida": -0.03641711626085753,
+     "sharpe_rf0": 1.0039870943525906,
+     "volatilidad": 0.049328911934757774,
+     "calmar": 1.35759646382622
+    },
+    "busqueda": {
+     "cagr": 0.01754336738219453,
+     "peor_caida": -0.030451893619771964,
+     "sharpe_rf0": 0.5923293904062533,
+     "volatilidad": 0.030153868764445344,
+     "calmar": 0.5761010333624665
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.014617441143450538,
+     "peor_caida": -0.030451893619771964,
+     "sharpe_rf0": 0.5917697120297725,
+     "volatilidad": 0.025033986136707025,
+     "calmar": 0.48001747694138963
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.021027371903738823,
+     "peor_caida": -0.024969515833393352,
+     "sharpe_rf0": 0.6086001646251652,
+     "volatilidad": 0.0353123386877788,
+     "calmar": 0.8421217313159736
+    },
+    "desde_2008": {
+     "cagr": 0.033054803523537846,
+     "peor_caida": -0.03641711626085742,
+     "sharpe_rf0": 0.7760679755313273,
+     "volatilidad": 0.04313955159386193,
+     "calmar": 0.9076721859788354
+    }
+   },
+   "dsr_n_bruto": 0.50068,
+   "dsr_n_efectivo": 0.58528,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_PUNT_AA",
+   "nombre": "Noise Band con puntuación reentrenada año a año (desde 2008), largo y corto, 1×",
+   "metricas": {
+    "busqueda": {
+     "cagr": 0.04152889972799456,
+     "peor_caida": -0.07088974424224359,
+     "sharpe_rf0": 0.8049834795875656,
+     "volatilidad": 0.052291994130535015,
+     "calmar": 0.5858238052895564
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.03261768051560843,
+     "peor_caida": -0.04949497795905544,
+     "sharpe_rf0": 0.7802202202546189,
+     "volatilidad": 0.042251745395525155,
+     "calmar": 0.6590099008144078
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.05220631395519204,
+     "peor_caida": -0.07088974424224348,
+     "sharpe_rf0": 0.8517062434336842,
+     "volatilidad": 0.06219366427165134,
+     "calmar": 0.7364438186826197
+    },
+    "desde_2008": {
+     "cagr": 0.08184837282920565,
+     "peor_caida": -0.07088974424224348,
+     "sharpe_rf0": 1.2191542734290874,
+     "volatilidad": 0.06640336560884108,
+     "calmar": 1.1545869392547743
+    }
+   },
+   "dsr_n_bruto": 0.9353,
+   "dsr_n_efectivo": 0.95574,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "NB_PUNT_AA_VOL",
+   "nombre": "Noise Band con puntuación reentrenada año a año (desde 2008), volatilidad 2 % (máx. 4×)",
+   "metricas": {
+    "busqueda": {
+     "cagr": 0.11620647201229173,
+     "peor_caida": -0.16709810714852413,
+     "sharpe_rf0": 0.9764937087686695,
+     "volatilidad": 0.1199803025516975,
+     "calmar": 0.6954385899117476
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.09283773009280871,
+     "peor_caida": -0.16709810714852413,
+     "sharpe_rf0": 0.8155747653169836,
+     "volatilidad": 0.1171193532747787,
+     "calmar": 0.5555881612129242
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.14459444386074582,
+     "peor_caida": -0.09033620751627913,
+     "sharpe_rf0": 1.1588285455468175,
+     "volatilidad": 0.1233524521248716,
+     "calmar": 1.6006255723618796
+    },
+    "desde_2008": {
+     "cagr": 0.14843574843595997,
+     "peor_caida": -0.16709810714852402,
+     "sharpe_rf0": 1.221058645077621,
+     "volatilidad": 0.11924550273591654,
+     "calmar": 0.8883149604084016
+    }
+   },
+   "dsr_n_bruto": 0.93437,
+   "dsr_n_efectivo": 0.95488,
+   "n_pruebas": 128,
+   "n_pruebas_efectivas": 21
+  },
+  {
+   "id": "CAI_N1_NB_ART",
+   "nombre": "Nivel 1 de caídas + NB_ART encima (peso 1)",
+   "metricas": {
+    "total": {
+     "cagr": 0.23642999032158207,
+     "peor_caida": -0.28601746650202287,
+     "sharpe_rf0": 0.9634389629056602,
+     "volatilidad": 0.2539383033770702,
+     "calmar": 0.8266278042844978
+    },
+    "validacion": {
+     "cagr": 0.22296033966058149,
+     "peor_caida": -0.23727086932422414,
+     "sharpe_rf0": 0.8615568423501392,
+     "volatilidad": 0.2786862861198893,
+     "calmar": 0.9396869505961657
+    },
+    "busqueda": {
+     "cagr": 0.25112249592502645,
+     "peor_caida": -0.28601746650202287,
+     "sharpe_rf0": 1.112661405532128,
+     "volatilidad": 0.2242909513582036,
+     "calmar": 0.8779970642920522
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.2767579394971438,
+     "peor_caida": -0.16448442562359,
+     "sharpe_rf0": 1.567115621165312,
+     "volatilidad": 0.16445118071047077,
+     "calmar": 1.682578386664298
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.2213606879543939,
+     "peor_caida": -0.28601746650202287,
+     "sharpe_rf0": 0.8583004956056018,
+     "volatilidad": 0.27944097484292335,
+     "calmar": 0.7739411535303153
+    },
+    "desde_2008": {
+     "cagr": 0.2577051125819734,
+     "peor_caida": -0.28601746650202287,
+     "sharpe_rf0": 1.0105182811172997,
+     "volatilidad": 0.26072605001781934,
+     "calmar": 0.9010118009004556
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_F03",
+   "nombre": "Nivel 1 de caídas + NB_F03 encima (peso 1)",
+   "metricas": {
+    "total": {
+     "cagr": 0.2511905312327736,
+     "peor_caida": -0.2887948622756912,
+     "sharpe_rf0": 1.0143555346629052,
+     "volatilidad": 0.25263240489228195,
+     "calmar": 0.8697887810517227
+    },
+    "validacion": {
+     "cagr": 0.2298831121685343,
+     "peor_caida": -0.252326562653418,
+     "sharpe_rf0": 0.8880222016279051,
+     "volatilidad": 0.2759637053861039,
+     "calmar": 0.9110539522717201
+    },
+    "busqueda": {
+     "cagr": 0.2745831766829476,
+     "peor_caida": -0.28879486227569107,
+     "sharpe_rf0": 1.1933699039664352,
+     "volatilidad": 0.224852312416569,
+     "calmar": 0.9507896869052449
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.29740487245098035,
+     "peor_caida": -0.16224701591541058,
+     "sharpe_rf0": 1.6750381987874994,
+     "volatilidad": 0.16332851866006656,
+     "calmar": 1.8330375493995892
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.24801449297697054,
+     "peor_caida": -0.2887948622756912,
+     "sharpe_rf0": 0.931962505450342,
+     "volatilidad": 0.2812100567081071,
+     "calmar": 0.8587912230246304
+    },
+    "desde_2008": {
+     "cagr": 0.2707932325420326,
+     "peor_caida": -0.2887948622756912,
+     "sharpe_rf0": 1.0548510917046763,
+     "volatilidad": 0.25930406677631423,
+     "calmar": 0.9376663781626635
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT",
+   "nombre": "Nivel 1 de caídas + NB_PUNT encima (peso 1)",
+   "metricas": {
+    "total": {
+     "cagr": 0.2597556983267082,
+     "peor_caida": -0.2869686292483774,
+     "sharpe_rf0": 1.0367711237332367,
+     "volatilidad": 0.2541001834709204,
+     "calmar": 0.9051710600111769
+    },
+    "validacion": {
+     "cagr": 0.23837219210141392,
+     "peor_caida": -0.2659525341966502,
+     "sharpe_rf0": 0.9029952540752333,
+     "volatilidad": 0.2803451111968604,
+     "calmar": 0.8962959981616762
+    },
+    "busqueda": {
+     "cagr": 0.28323050218907486,
+     "peor_caida": -0.2869686292483774,
+     "sharpe_rf0": 1.234265528585321,
+     "volatilidad": 0.2224336626079444,
+     "calmar": 0.9869737431959257
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.32844840098247396,
+     "peor_caida": -0.1536691913166799,
+     "sharpe_rf0": 1.8443844833462812,
+     "volatilidad": 0.16095117747454113,
+     "calmar": 2.137373133601067
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.23155070507054099,
+     "peor_caida": -0.2869686292483773,
+     "sharpe_rf0": 0.8899910590853364,
+     "volatilidad": 0.2786047347978159,
+     "calmar": 0.8068850789614674
+    },
+    "desde_2008": {
+     "cagr": 0.27091823966586537,
+     "peor_caida": -0.2869686292483774,
+     "sharpe_rf0": 1.0497682947415787,
+     "volatilidad": 0.26106102791938846,
+     "calmar": 0.9440691840618576
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT_05",
+   "nombre": "Nivel 1 de caídas + NB_PUNT encima (peso 0,5)",
+   "metricas": {
+    "total": {
+     "cagr": 0.21274960434377643,
+     "peor_caida": -0.3638831698471098,
+     "sharpe_rf0": 0.8973720672907333,
+     "volatilidad": 0.25010160051006197,
+     "calmar": 0.5846645901022736
+    },
+    "validacion": {
+     "cagr": 0.175811964515723,
+     "peor_caida": -0.3638831698471098,
+     "sharpe_rf0": 0.7270028553231747,
+     "volatilidad": 0.2748665410289221,
+     "calmar": 0.483154976883357
+    },
+    "busqueda": {
+     "cagr": 0.25388612193975635,
+     "peor_caida": -0.2951662175077209,
+     "sharpe_rf0": 1.1388523173613498,
+     "volatilidad": 0.22036570456427482,
+     "calmar": 0.8601462731185193
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.3042586253797783,
+     "peor_caida": -0.14554690180180585,
+     "sharpe_rf0": 1.750367082644206,
+     "volatilidad": 0.15891538832812918,
+     "calmar": 2.0904507180379106
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.19661339899689256,
+     "peor_caida": -0.2951662175077209,
+     "sharpe_rf0": 0.7907940200988453,
+     "volatilidad": 0.27638034654955734,
+     "calmar": 0.6661107787233463
+    },
+    "desde_2008": {
+     "cagr": 0.22015896763445064,
+     "peor_caida": -0.3638831698471098,
+     "sharpe_rf0": 0.9031115249246267,
+     "volatilidad": 0.2572759675951017,
+     "calmar": 0.6050265191626018
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT_VOL",
+   "nombre": "Nivel 1 de caídas + NB_PUNT_VOL encima (peso 1)",
+   "metricas": {
+    "total": {
+     "cagr": 0.3489452624818301,
+     "peor_caida": -0.3421481444611675,
+     "sharpe_rf0": 1.2445229462571756,
+     "volatilidad": 0.2700823338660709,
+     "calmar": 1.0198660087178526
+    },
+    "validacion": {
+     "cagr": 0.32043179925382725,
+     "peor_caida": -0.3421481444611675,
+     "sharpe_rf0": 1.0871337908066205,
+     "volatilidad": 0.2961278670637177,
+     "calmar": 0.9365294082142686
+    },
+    "busqueda": {
+     "cagr": 0.38038573093766614,
+     "peor_caida": -0.2844953995198013,
+     "sharpe_rf0": 1.4709224616439676,
+     "volatilidad": 0.23891588476269957,
+     "calmar": 1.337054066883745
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.41774078678492943,
+     "peor_caida": -0.17338570525447639,
+     "sharpe_rf0": 1.9525786985096238,
+     "volatilidad": 0.1877316787272263,
+     "calmar": 2.409315036506704
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.337320991444072,
+     "peor_caida": -0.2844953995198012,
+     "sharpe_rf0": 1.1560447099986317,
+     "volatilidad": 0.2883924617435898,
+     "calmar": 1.1856817087848694
+    },
+    "desde_2008": {
+     "cagr": 0.351916576432854,
+     "peor_caida": -0.3421481444611675,
+     "sharpe_rf0": 1.242180160604743,
+     "volatilidad": 0.27300257654599347,
+     "calmar": 1.0285502994238662
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT_L",
+   "nombre": "Nivel 1 de caídas + NB_PUNT_L encima (peso 1)",
+   "metricas": {
+    "total": {
+     "cagr": 0.20317789229645222,
+     "peor_caida": -0.4042073349336147,
+     "sharpe_rf0": 0.8360366066365642,
+     "volatilidad": 0.262804008165741,
+     "calmar": 0.5026576084519132
+    },
+    "validacion": {
+     "cagr": 0.1661417735720001,
+     "peor_caida": -0.4042073349336147,
+     "sharpe_rf0": 0.6741414036946973,
+     "volatilidad": 0.2907888542289194,
+     "calmar": 0.4110310704759638
+    },
+    "busqueda": {
+     "cagr": 0.2444384249314413,
+     "peor_caida": -0.32132881514786704,
+     "sharpe_rf0": 1.0714297497109313,
+     "volatilidad": 0.22889676830032057,
+     "calmar": 0.7607111886898695
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.2977753481807206,
+     "peor_caida": -0.151378955473362,
+     "sharpe_rf0": 1.654945981343389,
+     "volatilidad": 0.16573291990136918,
+     "calmar": 1.9670854991010942
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.183965835931869,
+     "peor_caida": -0.32132881514786704,
+     "sharpe_rf0": 0.734958649746323,
+     "volatilidad": 0.2866218703201407,
+     "calmar": 0.5725158381678679
+    },
+    "desde_2008": {
+     "cagr": 0.20611090614515293,
+     "peor_caida": -0.4042073349336147,
+     "sharpe_rf0": 0.8293178611068596,
+     "volatilidad": 0.2702503198372831,
+     "calmar": 0.5099138197949914
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT_AA",
+   "nombre": "Nivel 1 de caídas + NB_PUNT_AA encima (peso 1, desde 2008)",
+   "metricas": {
+    "busqueda": {
+     "cagr": 0.2766765145507204,
+     "peor_caida": -0.2874005152058918,
+     "sharpe_rf0": 1.2098375176687153,
+     "volatilidad": 0.22274063411015876,
+     "calmar": 0.962686216315622
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.32261052238612864,
+     "peor_caida": -0.14716641332324143,
+     "sharpe_rf0": 1.81835795075479,
+     "volatilidad": 0.16082110839466604,
+     "calmar": 2.192147753696597
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.22421933211918166,
+     "peor_caida": -0.2874005152058918,
+     "sharpe_rf0": 0.8671494927963437,
+     "volatilidad": 0.279230815255317,
+     "calmar": 0.7801632921866978
+    },
+    "desde_2008": {
+     "cagr": 0.26705580173082333,
+     "peor_caida": -0.3169772114846138,
+     "sharpe_rf0": 1.0316078154808337,
+     "volatilidad": 0.26327848201268383,
+     "calmar": 0.8425078903307418
+    }
+   }
+  },
+  {
+   "id": "CAI_N1_NB_PUNT_AA_VOL",
+   "nombre": "Nivel 1 de caídas + NB_PUNT_AA_VOL encima (peso 1, desde 2008)",
+   "metricas": {
+    "busqueda": {
+     "cagr": 0.3705381837383144,
+     "peor_caida": -0.28553922066186743,
+     "sharpe_rf0": 1.4347386584912003,
+     "volatilidad": 0.2401453345142632,
+     "calmar": 1.2976787667887553
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.4011642837256344,
+     "peor_caida": -0.16424559685976647,
+     "sharpe_rf0": 1.8810002365437346,
+     "volatilidad": 0.18872100979286732,
+     "calmar": 2.4424659862763325
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.3350529418859076,
+     "peor_caida": -0.2855392206618673,
+     "sharpe_rf0": 1.145752171769556,
+     "volatilidad": 0.2898606509574834,
+     "calmar": 1.1734042738831802
+    },
+    "desde_2008": {
+     "cagr": 0.34763306527407156,
+     "peor_caida": -0.35406045417879783,
+     "sharpe_rf0": 1.226801327440323,
+     "volatilidad": 0.27408671414141156,
+     "calmar": 0.981846634299688
+    }
+   }
+  },
+  {
+   "id": "CAI_N1",
+   "nombre": "Nivel 1 de caídas (referencia)",
+   "metricas": {
+    "total": {
+     "cagr": 0.1662055207076203,
+     "peor_caida": -0.45124547713648,
+     "sharpe_rf0": 0.7403575935500226,
+     "volatilidad": 0.25045282093723154,
+     "calmar": 0.36832617528341705
+    },
+    "validacion": {
+     "cagr": 0.11473776019241533,
+     "peor_caida": -0.45124547713648,
+     "sharpe_rf0": 0.5332988570290361,
+     "volatilidad": 0.2747187875554122,
+     "calmar": 0.2542690531116674
+    },
+    "busqueda": {
+     "cagr": 0.22437670465550386,
+     "peor_caida": -0.30919445964858283,
+     "sharpe_rf0": 1.027161646873455,
+     "volatilidad": 0.22137293108455852,
+     "calmar": 0.7256815174195579
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.27995557601098775,
+     "peor_caida": -0.14383294723876117,
+     "sharpe_rf0": 1.6260938841880668,
+     "volatilidad": 0.15956315777520702,
+     "calmar": 1.946393933973031
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.16152897031608893,
+     "peor_caida": -0.30919445964858283,
+     "sharpe_rf0": 0.6812008455671251,
+     "volatilidad": 0.2776921503996201,
+     "calmar": 0.5224187086006516
+    },
+    "desde_2008": {
+     "cagr": 0.17000739335506498,
+     "peor_caida": -0.45124547713648,
+     "sharpe_rf0": 0.7385732502432681,
+     "volatilidad": 0.25812496279458874,
+     "calmar": 0.3767514622725979
+    }
+   }
+  },
+  {
+   "id": "SPY",
+   "nombre": "SPY con dividendos (referencia)",
+   "metricas": {
+    "total": {
+     "cagr": 0.08061671885707788,
+     "peor_caida": -0.5518940813762032,
+     "sharpe_rf0": 0.49299574510809124,
+     "volatilidad": 0.19678453222088782,
+     "calmar": 0.14607280921739912
+    },
+    "validacion": {
+     "cagr": 0.046542482035500266,
+     "peor_caida": -0.5518940813762032,
+     "sharpe_rf0": 0.31635742907426107,
+     "volatilidad": 0.22119527772577233,
+     "calmar": 0.08433227245242768
+    },
+    "busqueda": {
+     "cagr": 0.11860810723314286,
+     "peor_caida": -0.33717256026450304,
+     "sharpe_rf0": 0.7575511410305417,
+     "volatilidad": 0.16654408567623935,
+     "calmar": 0.35177271584644343
+    },
+    "busqueda_mitad_1": {
+     "cagr": 0.14231163488836884,
+     "peor_caida": -0.13022939090495378,
+     "sharpe_rf0": 1.1016713383064245,
+     "volatilidad": 0.12818548517118833,
+     "calmar": 1.0927766297565895
+    },
+    "busqueda_mitad_2": {
+     "cagr": 0.09110980309112082,
+     "peor_caida": -0.33717256026450304,
+     "sharpe_rf0": 0.5329537999660736,
+     "volatilidad": 0.2030769534797257,
+     "calmar": 0.27021713457242064
+    },
+    "desde_2008": {
+     "cagr": 0.07618120618467472,
+     "peor_caida": -0.5229503608075684,
+     "sharpe_rf0": 0.45460325972075893,
+     "volatilidad": 0.2104615157414424,
+     "calmar": 0.1456757885529165
+    }
+   }
+  }
+ ],
+ "pruebas_totales": {
+  "n_bruto_dsr": 128,
+  "n_efectivo_dsr": 21,
+  "nota": "todas las pruebas de las rondas 1 y 2 con costes de SPY a mercado; efectivas = grupos con correlación diaria > 0,9"
+ }
+}

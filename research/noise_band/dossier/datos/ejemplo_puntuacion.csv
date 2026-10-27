@@ -1,0 +1,81 @@
+ejemplo,concepto,valor,percentil_centrado,coeficiente_pb,contribucion_pb
+ejemplo 1: entra,fecha,2020-05-12,,,
+ejemplo 1: entra,control,15:30,,,
+ejemplo 1: entra,ruptura,a la baja (corto),,,
+ejemplo 1: entra,apertura,2941.3,,,
+ejemplo 1: entra,cierre_anterior,2928.8,,,
+ejemplo 1: entra,precio_en_el_control,2900.0,,,
+ejemplo 1: entra,sigma_en_el_control,0.006621316515917115,,,
+ejemplo 1: entra,banda_superior,2960.775278268267,,,
+ejemplo 1: entra,banda_inferior,2909.407488188182,,,
+ejemplo 1: entra,vwap_en_el_control,2922.2546684166396,,,
+ejemplo 1: entra,hora,11.0,0.473532,0.786890,0.372617
+ejemplo 1: entra,fuerza,0.4851093184560633,0.153295,4.966090,0.761275
+ejemplo 1: entra,mov,2.1206372217692175,0.282327,1.322210,0.373296
+ejemplo 1: entra,hueco,-0.6035858133972684,-0.415771,5.088240,-2.115541
+ejemplo 1: entra,hueco_abs,0.6035858133972684,0.066170,1.958320,0.129583
+ejemplo 1: entra,sigma_rel,0.4819806434071739,-0.473522,0.903580,-0.427865
+ejemplo 1: entra,vol5,0.147684672085799,0.138682,0.265970,0.036885
+ejemplo 1: entra,vol14,0.22515268431197802,0.349049,1.263550,0.441041
+ejemplo 1: entra,vol60,0.5664207874607936,0.483604,0.260080,0.125776
+ejemplo 1: entra,vol5_60,0.26073314284218674,-0.482763,-2.137880,1.032090
+ejemplo 1: entra,dd252,-0.13533301842229561,-0.381059,-3.708480,1.413150
+ejemplo 1: entra,tend50,-0.06805456384733022,-0.465570,0.510960,-0.237888
+ejemplo 1: entra,tend200,0.024898092561768115,0.091564,-1.745330,-0.159809
+ejemplo 1: entra,ret1,-0.0002049040366096655,0.013234,-1.500100,-0.019852
+ejemplo 1: entra,ret1_dia,-0.007533798892290777,-0.359801,-3.474720,1.250209
+ejemplo 1: entra,vrel,0.7587102127911801,-0.312931,0.523380,-0.163782
+ejemplo 1: entra,vrel30,0.9250549271706403,-0.194100,0.125290,-0.024319
+ejemplo 1: entra,vwap,1.1589875779985652,0.204852,-0.890310,-0.182382
+ejemplo 1: entra,rango,2.4030465370169334,-0.026744,-1.078800,0.028851
+ejemplo 1: entra,volmin30,0.9952413404762529,-0.091260,-1.060590,0.096789
+ejemplo 1: entra,dia_semana,1.0,-0.220706,-1.852820,0.408928
+ejemplo 1: entra,vencimiento,0.0,-0.017645,-0.402050,0.007094
+ejemplo 1: entra,fin_mes,0.0,-0.022057,-0.994810,0.021942
+ejemplo 1: entra,inicio_mes,0.0,-0.028536,1.162190,-0.033164
+ejemplo 1: entra,lado,-1.0,-0.245520,-0.038660,0.009492
+ejemplo 1: entra,(constante),,,,2.009380
+ejemplo 1: entra,puntuación = constante + suma de contribuciones,,,,5.153798
+ejemplo 1: entra,corte,1.89585,,,
+ejemplo 1: entra,decisión,entrar,,,
+ejemplo 1: entra,retorno neto real de la operación del artículo (pb),105.64843243759479,,,
+ejemplo 2: no entra,fecha,2020-05-13,,,
+ejemplo 2: no entra,control,11:00,,,
+ejemplo 2: no entra,ruptura,a la baja (corto),,,
+ejemplo 2: no entra,apertura,2864.1,,,
+ejemplo 2: no entra,cierre_anterior,2868.6,,,
+ejemplo 2: no entra,precio_en_el_control,2850.4,,,
+ejemplo 2: no entra,sigma_en_el_control,0.004059930983078767,,,
+ejemplo 2: no entra,banda_superior,2880.2463180180594,,,
+ejemplo 2: no entra,banda_inferior,2852.471951671364,,,
+ejemplo 2: no entra,vwap_en_el_control,2856.9407193320485,,,
+ejemplo 2: no entra,hora,2.0,-0.075407,0.786890,-0.059337
+ejemplo 2: no entra,fuerza,0.17818567766538762,-0.171216,4.966090,-0.850273
+ejemplo 2: no entra,mov,1.1781856776653876,-0.270747,1.322210,-0.357985
+ejemplo 2: no entra,hueco,0.18206737351569824,-0.066033,5.088240,-0.335989
+ejemplo 2: no entra,hueco_abs,0.18206737351569824,-0.278329,1.958320,-0.545058
+ejemplo 2: no entra,sigma_rel,0.5723444791004203,-0.434435,0.903580,-0.392547
+ejemplo 2: no entra,vol5,0.2351585773309633,0.343121,0.265970,0.091260
+ejemplo 2: no entra,vol14,0.23367387420019953,0.360491,1.263550,0.455498
+ejemplo 2: no entra,vol60,0.5674769689982659,0.484305,0.260080,0.125958
+ejemplo 2: no entra,vol5_60,0.41439316514655217,-0.401345,-2.137880,0.858028
+ejemplo 2: no entra,dd252,-0.15310581010864432,-0.398851,-3.708480,1.479132
+ejemplo 2: no entra,tend50,-0.04691673059503376,-0.416365,0.510960,-0.212746
+ejemplo 2: no entra,tend200,0.044725501776362364,0.184597,-1.745330,-0.322183
+ejemplo 2: no entra,ret1,0.020554493307839428,0.465261,-1.500100,-0.697937
+ejemplo 2: no entra,ret1_dia,0.024716961887600863,0.481803,-3.474720,-1.674131
+ejemplo 2: no entra,vrel,1.1863244514106583,0.148056,0.523380,0.077490
+ejemplo 2: no entra,vrel30,1.1475998205473306,0.023987,0.125290,0.003005
+ejemplo 2: no entra,vwap,0.5651985687262672,-0.250069,-0.890310,0.222639
+ejemplo 2: no entra,rango,3.0271632010089555,0.207058,-1.078800,-0.223374
+ejemplo 2: no entra,volmin30,1.186483848593879,0.102840,-1.060590,-0.109071
+ejemplo 2: no entra,dia_semana,2.0,-0.010339,-1.852820,0.019157
+ejemplo 2: no entra,vencimiento,0.0,-0.017645,-0.402050,0.007094
+ejemplo 2: no entra,fin_mes,0.0,-0.022057,-0.994810,0.021942
+ejemplo 2: no entra,inicio_mes,0.0,-0.028536,1.162190,-0.033164
+ejemplo 2: no entra,lado,-1.0,-0.245520,-0.038660,0.009492
+ejemplo 2: no entra,(constante),,,,2.009380
+ejemplo 2: no entra,puntuación = constante + suma de contribuciones,,,,-0.433721
+ejemplo 2: no entra,corte,1.89585,,,
+ejemplo 2: no entra,decisión,no entrar,,,
+ejemplo 2: no entra,retorno neto real de la operación del artículo (pb),110.9550121719225,,,

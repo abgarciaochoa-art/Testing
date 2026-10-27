@@ -1,3 +1,6 @@
+(Versión solo con la compra de caídas. Para pasar también Noise Band, usa
+research/traspaso/PROMPT_OTRO_CHAT.md y el zip de research/traspaso/.)
+
 Hola. Vengo de otro chat en el que investigué estrategias de compra de caídas en acciones
 del S&P 500. Te adjunto su dossier: DOSSIER.md, que es la referencia y conviene leer
 entero, y la carpeta datos/ con CSV y JSON. Si no puedes abrir el zip o ejecutar código,

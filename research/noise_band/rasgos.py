@@ -93,7 +93,8 @@ def construir(d: dict | None = None) -> dict[str, np.ndarray]:
     tercer_viernes = (f.dayofweek == 4) & (f.day >= 15) & (f.day <= 21)
     R["vencimiento"] = np.repeat(np.asarray(tercer_viernes, dtype=float)[:, None], len(KS), 1)
     mes = f.to_period("M")
-    ultimo = np.r_[mes[1:] != mes[:-1], True]
+    # el último día de los datos es fin de mes solo si el siguiente día hábil cambia de mes
+    ultimo = np.r_[mes[1:] != mes[:-1], (f[-1] + pd.offsets.BDay(1)).month != f[-1].month]
     primero = np.r_[True, mes[1:] != mes[:-1]]
     R["fin_mes"] = np.repeat(ultimo.astype(float)[:, None], len(KS), 1)
     R["inicio_mes"] = np.repeat(primero.astype(float)[:, None], len(KS), 1)
