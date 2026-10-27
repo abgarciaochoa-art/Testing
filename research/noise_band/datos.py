@@ -6,6 +6,8 @@ carpetas necesarias en ``data/cache/noise_band/financial-data``):
 - **OANDA SPX500_USD**: CFD sobre el S&P 500, velas de 1 minuto en UTC (precio medio entre
   compra y venta), enero 2005 → mayo 2020. Es la serie principal.
 - **HistData SPXUSD**: 1 minuto en hora de Nueva York, 2010-2018. Solo para contrastar.
+- **OANDA NAS100_USD y US2000_USD** (Nasdaq-100 y Russell 2000), mismo formato y periodo, para
+  probar la estrategia en otros índices de EE. UU. (``rth_NAS100_USD.npz``, ``rth_US2000_USD.npz``).
 
 Se pasa a hora de Nueva York y se queda la sesión regular: 390 velas por día, de 9:30 a
 15:59 (la vela de las 15:59 cierra a las 16:00). Las velas sin cotización se rellenan con
@@ -34,7 +36,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / "data" / "cache" / "noise_band"
 FUENTE = CACHE / "financial-data"
-OANDA = FUENTE / "pyfinancialdata" / "data" / "currencies" / "oanda" / "SPX500_USD"
+OANDA_DIR = FUENTE / "pyfinancialdata" / "data" / "currencies" / "oanda"
+OANDA = OANDA_DIR / "SPX500_USD"
+OTROS = {"NAS100_USD": "QQQ", "US2000_USD": None}  # otros índices de EE. UU. (y su ETF para contrastar)
 HISTDATA = FUENTE / "pyfinancialdata" / "data" / "stocks" / "histdata" / "SPXUSD"
 SALIDA = CACHE / "rth.npz"
 SALIDA_HISTDATA = CACHE / "rth_histdata.npz"  # HistData 2010-2018, para contrastar
@@ -50,6 +54,7 @@ def descargar() -> None:
                         "https://github.com/FutureSharks/financial-data", str(FUENTE)], check=True)
     subprocess.run(["git", "-C", str(FUENTE), "sparse-checkout", "set",
                     "pyfinancialdata/data/currencies/oanda/SPX500_USD",
+                    *[f"pyfinancialdata/data/currencies/oanda/{k}" for k in OTROS],
                     "pyfinancialdata/data/stocks/histdata/SPXUSD"], check=True)
 
 
@@ -82,8 +87,12 @@ def a_sesion(t: pd.Series, o, h, l, c, v=None) -> dict:  # noqa: E741
                 C=out["C"][validos], V=V[validos], real=real[validos], ultimo=ultimo[validos])
 
 
-def cargar_oanda() -> dict:
-    partes = [pd.read_csv(f) for f in sorted(OANDA.glob("*/*.csv"))]
+def ruta_panel(instrumento: str) -> Path:
+    return SALIDA if instrumento == "SPX500_USD" else CACHE / f"rth_{instrumento}.npz"
+
+
+def cargar_oanda(instrumento: str = "SPX500_USD") -> dict:
+    partes = [pd.read_csv(f) for f in sorted((OANDA_DIR / instrumento).glob("*/*.csv"))]
     d = pd.concat(partes, ignore_index=True).drop_duplicates("time").sort_values("time")
     t = pd.to_datetime(d.time).dt.tz_localize("UTC").dt.tz_convert("America/New_York")
     return a_sesion(t, d.open, d.high, d.low, d.close, d.volume)
@@ -99,14 +108,14 @@ def cargar_histdata() -> dict:
     return a_sesion(t, d.o, d.h, d.l, d.c)
 
 
-def contrastar(x: dict) -> pd.DataFrame:
-    """Rentabilidad apertura → cierre y de la noche frente a SPY diario."""
+def contrastar(x: dict, etf: str = "SPY") -> pd.DataFrame:
+    """Rentabilidad apertura → cierre y de la noche frente al ETF diario."""
     import sys
     sys.path.insert(0, str(ROOT / "research" / "caidas"))
     import motor as mc
 
     p = mc.cargar()
-    j = p.col["SPY"]
+    j = p.col[etf]
     spy = pd.DataFrame({"o": p.open[:, j], "c": p.close[:, j]}, index=pd.DatetimeIndex(p.fechas))
     D = len(x["fechas"])
     cierre = x["C"][np.arange(D), x["ultimo"]]
@@ -144,6 +153,19 @@ def main() -> None:
     comun = ch.index.intersection(co.index)
     print(f"frente a HistData ({len(comun)} días comunes): correlación apertura→cierre "
           f"{ch[comun].corr(co[comun]):.4f}")
+    for inst, etf in OTROS.items():
+        y = cargar_oanda(inst)
+        Dy = len(y["fechas"])
+        cy = y["C"][np.arange(Dy), y["ultimo"]]
+        np.savez(ruta_panel(inst), fechas=y["fechas"], O=y["O"], H=y["H"], L=y["L"], C=y["C"], V=y["V"],
+                 real=y["real"], ultimo=y["ultimo"], previo=np.r_[np.nan, cy[:-1]])
+        texto = f"{inst}: {Dy} sesiones, {y['real'].mean():.1%} de velas con cotización"
+        if etf is not None:
+            zz = contrastar(y, etf)
+            texto += f"; frente a {etf}: correlación apertura→cierre {zz.dia.corr(zz.dia_spy):.4f}"
+        dia_y = pd.Series(cy / y["O"][:, 0] - 1, pd.DatetimeIndex(y["fechas"]))
+        com = dia_y.index.intersection(co.index)
+        print(texto + f"; con el S&P 500 dentro del día: {dia_y[com].corr(co[com]):.3f}")
     # forma del "cono": movimiento medio absoluto desde la apertura, por minuto del día
     mov = np.abs(x["C"] / x["O"][:, [0]] - 1).mean(0)
     print("movimiento medio desde la apertura (%):",

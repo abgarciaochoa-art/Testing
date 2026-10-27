@@ -1,0 +1,29 @@
+rasgo,con_signo_del_lado,coeficiente_pb
+hora,False,0.78650
+fuerza,False,4.96612
+mov,True,1.32197
+hueco,True,5.08849
+hueco_abs,False,1.95813
+sigma_rel,False,0.90298
+vol5,False,0.26623
+vol14,False,1.26389
+vol60,False,0.26044
+vol5_60,False,-2.13875
+dd252,False,-3.70883
+tend50,True,0.51076
+tend200,True,-1.74411
+ret1,True,-1.49962
+ret1_dia,True,-3.47399
+vrel,False,0.52317
+vrel30,False,0.12522
+vwap,True,-0.89068
+rango,False,-1.07798
+volmin30,False,-1.06007
+dia_semana,False,-1.85377
+vencimiento,False,-0.40169
+fin_mes,False,-0.91402
+inicio_mes,False,1.16259
+lado,False,-0.03902
+(constante),,2.00938
+(corte: entrar si la puntuación ≥),,1.90163
+(penalización del ridge),,316.22777

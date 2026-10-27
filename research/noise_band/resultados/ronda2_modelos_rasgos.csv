@@ -1,0 +1,197 @@
+pliegue,modelo,rasgo,medida,valor
+búsqueda → validación,"lineal, todos los rasgos",hora,coeficiente (pb),-0.04349
+búsqueda → validación,"lineal, todos los rasgos",fuerza,coeficiente (pb),1.97427
+búsqueda → validación,"lineal, todos los rasgos",mov,coeficiente (pb),1.12706
+búsqueda → validación,"lineal, todos los rasgos",hueco,coeficiente (pb),1.32215
+búsqueda → validación,"lineal, todos los rasgos",hueco_abs,coeficiente (pb),1.95116
+búsqueda → validación,"lineal, todos los rasgos",sigma_rel,coeficiente (pb),0.46148
+búsqueda → validación,"lineal, todos los rasgos",vol5,coeficiente (pb),0.13628
+búsqueda → validación,"lineal, todos los rasgos",vol14,coeficiente (pb),-0.10836
+búsqueda → validación,"lineal, todos los rasgos",vol60,coeficiente (pb),-0.45180
+búsqueda → validación,"lineal, todos los rasgos",vol5_60,coeficiente (pb),0.19107
+búsqueda → validación,"lineal, todos los rasgos",dd252,coeficiente (pb),-0.93238
+búsqueda → validación,"lineal, todos los rasgos",tend50,coeficiente (pb),-0.09747
+búsqueda → validación,"lineal, todos los rasgos",tend200,coeficiente (pb),-0.63570
+búsqueda → validación,"lineal, todos los rasgos",ret1,coeficiente (pb),-0.29482
+búsqueda → validación,"lineal, todos los rasgos",ret1_dia,coeficiente (pb),-1.34496
+búsqueda → validación,"lineal, todos los rasgos",vrel,coeficiente (pb),-0.20066
+búsqueda → validación,"lineal, todos los rasgos",vrel30,coeficiente (pb),-0.39078
+búsqueda → validación,"lineal, todos los rasgos",vwap,coeficiente (pb),0.00048
+búsqueda → validación,"lineal, todos los rasgos",rango,coeficiente (pb),0.35597
+búsqueda → validación,"lineal, todos los rasgos",volmin30,coeficiente (pb),-1.29941
+búsqueda → validación,"lineal, todos los rasgos",dia_semana,coeficiente (pb),-0.25332
+búsqueda → validación,"lineal, todos los rasgos",vencimiento,coeficiente (pb),-0.16913
+búsqueda → validación,"lineal, todos los rasgos",fin_mes,coeficiente (pb),-0.19586
+búsqueda → validación,"lineal, todos los rasgos",inicio_mes,coeficiente (pb),-0.46094
+búsqueda → validación,"lineal, todos los rasgos",lado,coeficiente (pb),0.17787
+búsqueda → validación,"árboles, todos los rasgos",hora,importancia en la prueba,20.48671
+búsqueda → validación,"árboles, todos los rasgos",fuerza,importancia en la prueba,20.61504
+búsqueda → validación,"árboles, todos los rasgos",mov,importancia en la prueba,-1.08620
+búsqueda → validación,"árboles, todos los rasgos",hueco,importancia en la prueba,5.51633
+búsqueda → validación,"árboles, todos los rasgos",hueco_abs,importancia en la prueba,7.71052
+búsqueda → validación,"árboles, todos los rasgos",sigma_rel,importancia en la prueba,-0.02713
+búsqueda → validación,"árboles, todos los rasgos",vol5,importancia en la prueba,2.49702
+búsqueda → validación,"árboles, todos los rasgos",vol14,importancia en la prueba,-14.55046
+búsqueda → validación,"árboles, todos los rasgos",vol60,importancia en la prueba,-0.61617
+búsqueda → validación,"árboles, todos los rasgos",vol5_60,importancia en la prueba,-3.08184
+búsqueda → validación,"árboles, todos los rasgos",dd252,importancia en la prueba,13.10895
+búsqueda → validación,"árboles, todos los rasgos",tend50,importancia en la prueba,2.17864
+búsqueda → validación,"árboles, todos los rasgos",tend200,importancia en la prueba,9.16570
+búsqueda → validación,"árboles, todos los rasgos",ret1,importancia en la prueba,1.15044
+búsqueda → validación,"árboles, todos los rasgos",ret1_dia,importancia en la prueba,29.55445
+búsqueda → validación,"árboles, todos los rasgos",vrel,importancia en la prueba,0.61555
+búsqueda → validación,"árboles, todos los rasgos",vrel30,importancia en la prueba,2.27824
+búsqueda → validación,"árboles, todos los rasgos",vwap,importancia en la prueba,2.13807
+búsqueda → validación,"árboles, todos los rasgos",rango,importancia en la prueba,-2.09493
+búsqueda → validación,"árboles, todos los rasgos",volmin30,importancia en la prueba,8.23344
+búsqueda → validación,"árboles, todos los rasgos",dia_semana,importancia en la prueba,-0.01471
+búsqueda → validación,"árboles, todos los rasgos",vencimiento,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, todos los rasgos",fin_mes,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, todos los rasgos",inicio_mes,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, todos los rasgos",lado,importancia en la prueba,0.00000
+búsqueda → validación,"lineal, sin la fuerza",hora,coeficiente (pb),-0.20528
+búsqueda → validación,"lineal, sin la fuerza",mov,coeficiente (pb),1.51420
+búsqueda → validación,"lineal, sin la fuerza",hueco,coeficiente (pb),1.42575
+búsqueda → validación,"lineal, sin la fuerza",hueco_abs,coeficiente (pb),1.93927
+búsqueda → validación,"lineal, sin la fuerza",sigma_rel,coeficiente (pb),0.43999
+búsqueda → validación,"lineal, sin la fuerza",vol5,coeficiente (pb),0.12011
+búsqueda → validación,"lineal, sin la fuerza",vol14,coeficiente (pb),-0.13768
+búsqueda → validación,"lineal, sin la fuerza",vol60,coeficiente (pb),-0.44547
+búsqueda → validación,"lineal, sin la fuerza",vol5_60,coeficiente (pb),0.17774
+búsqueda → validación,"lineal, sin la fuerza",dd252,coeficiente (pb),-0.93327
+búsqueda → validación,"lineal, sin la fuerza",tend50,coeficiente (pb),-0.11152
+búsqueda → validación,"lineal, sin la fuerza",tend200,coeficiente (pb),-0.65035
+búsqueda → validación,"lineal, sin la fuerza",ret1,coeficiente (pb),-0.29386
+búsqueda → validación,"lineal, sin la fuerza",ret1_dia,coeficiente (pb),-1.34204
+búsqueda → validación,"lineal, sin la fuerza",vrel,coeficiente (pb),-0.14317
+búsqueda → validación,"lineal, sin la fuerza",vrel30,coeficiente (pb),-0.32097
+búsqueda → validación,"lineal, sin la fuerza",vwap,coeficiente (pb),0.12086
+búsqueda → validación,"lineal, sin la fuerza",rango,coeficiente (pb),0.55752
+búsqueda → validación,"lineal, sin la fuerza",volmin30,coeficiente (pb),-1.22511
+búsqueda → validación,"lineal, sin la fuerza",dia_semana,coeficiente (pb),-0.27768
+búsqueda → validación,"lineal, sin la fuerza",vencimiento,coeficiente (pb),-0.17003
+búsqueda → validación,"lineal, sin la fuerza",fin_mes,coeficiente (pb),-0.19824
+búsqueda → validación,"lineal, sin la fuerza",inicio_mes,coeficiente (pb),-0.45281
+búsqueda → validación,"lineal, sin la fuerza",lado,coeficiente (pb),0.16176
+búsqueda → validación,"árboles, sin la fuerza",hora,importancia en la prueba,15.82149
+búsqueda → validación,"árboles, sin la fuerza",mov,importancia en la prueba,1.66592
+búsqueda → validación,"árboles, sin la fuerza",hueco,importancia en la prueba,15.95016
+búsqueda → validación,"árboles, sin la fuerza",hueco_abs,importancia en la prueba,5.27726
+búsqueda → validación,"árboles, sin la fuerza",sigma_rel,importancia en la prueba,5.11195
+búsqueda → validación,"árboles, sin la fuerza",vol5,importancia en la prueba,1.46230
+búsqueda → validación,"árboles, sin la fuerza",vol14,importancia en la prueba,-10.83611
+búsqueda → validación,"árboles, sin la fuerza",vol60,importancia en la prueba,0.57483
+búsqueda → validación,"árboles, sin la fuerza",vol5_60,importancia en la prueba,-1.75400
+búsqueda → validación,"árboles, sin la fuerza",dd252,importancia en la prueba,23.96349
+búsqueda → validación,"árboles, sin la fuerza",tend50,importancia en la prueba,4.12295
+búsqueda → validación,"árboles, sin la fuerza",tend200,importancia en la prueba,8.99698
+búsqueda → validación,"árboles, sin la fuerza",ret1,importancia en la prueba,0.53208
+búsqueda → validación,"árboles, sin la fuerza",ret1_dia,importancia en la prueba,38.30550
+búsqueda → validación,"árboles, sin la fuerza",vrel,importancia en la prueba,0.60711
+búsqueda → validación,"árboles, sin la fuerza",vrel30,importancia en la prueba,0.25977
+búsqueda → validación,"árboles, sin la fuerza",vwap,importancia en la prueba,1.53032
+búsqueda → validación,"árboles, sin la fuerza",rango,importancia en la prueba,-1.84121
+búsqueda → validación,"árboles, sin la fuerza",volmin30,importancia en la prueba,12.82264
+búsqueda → validación,"árboles, sin la fuerza",dia_semana,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, sin la fuerza",vencimiento,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, sin la fuerza",fin_mes,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, sin la fuerza",inicio_mes,importancia en la prueba,0.00000
+búsqueda → validación,"árboles, sin la fuerza",lado,importancia en la prueba,0.00000
+validación → búsqueda,"lineal, todos los rasgos",hora,coeficiente (pb),1.18385
+validación → búsqueda,"lineal, todos los rasgos",fuerza,coeficiente (pb),6.64122
+validación → búsqueda,"lineal, todos los rasgos",mov,coeficiente (pb),1.22267
+validación → búsqueda,"lineal, todos los rasgos",hueco,coeficiente (pb),8.45784
+validación → búsqueda,"lineal, todos los rasgos",hueco_abs,coeficiente (pb),1.28786
+validación → búsqueda,"lineal, todos los rasgos",sigma_rel,coeficiente (pb),1.39949
+validación → búsqueda,"lineal, todos los rasgos",vol5,coeficiente (pb),0.41668
+validación → búsqueda,"lineal, todos los rasgos",vol14,coeficiente (pb),2.51808
+validación → búsqueda,"lineal, todos los rasgos",vol60,coeficiente (pb),1.50922
+validación → búsqueda,"lineal, todos los rasgos",vol5_60,coeficiente (pb),-4.37625
+validación → búsqueda,"lineal, todos los rasgos",dd252,coeficiente (pb),-5.35352
+validación → búsqueda,"lineal, todos los rasgos",tend50,coeficiente (pb),0.84571
+validación → búsqueda,"lineal, todos los rasgos",tend200,coeficiente (pb),-1.93183
+validación → búsqueda,"lineal, todos los rasgos",ret1,coeficiente (pb),-2.55905
+validación → búsqueda,"lineal, todos los rasgos",ret1_dia,coeficiente (pb),-4.41022
+validación → búsqueda,"lineal, todos los rasgos",vrel,coeficiente (pb),2.06643
+validación → búsqueda,"lineal, todos los rasgos",vrel30,coeficiente (pb),0.38098
+validación → búsqueda,"lineal, todos los rasgos",vwap,coeficiente (pb),-1.67884
+validación → búsqueda,"lineal, todos los rasgos",rango,coeficiente (pb),-2.40358
+validación → búsqueda,"lineal, todos los rasgos",volmin30,coeficiente (pb),0.77769
+validación → búsqueda,"lineal, todos los rasgos",dia_semana,coeficiente (pb),-3.38168
+validación → búsqueda,"lineal, todos los rasgos",vencimiento,coeficiente (pb),-0.49698
+validación → búsqueda,"lineal, todos los rasgos",fin_mes,coeficiente (pb),-1.36396
+validación → búsqueda,"lineal, todos los rasgos",inicio_mes,coeficiente (pb),2.81828
+validación → búsqueda,"lineal, todos los rasgos",lado,coeficiente (pb),-0.26782
+validación → búsqueda,"árboles, todos los rasgos",hora,importancia en la prueba,6.79182
+validación → búsqueda,"árboles, todos los rasgos",fuerza,importancia en la prueba,12.43732
+validación → búsqueda,"árboles, todos los rasgos",mov,importancia en la prueba,-0.11659
+validación → búsqueda,"árboles, todos los rasgos",hueco,importancia en la prueba,12.21879
+validación → búsqueda,"árboles, todos los rasgos",hueco_abs,importancia en la prueba,-0.24277
+validación → búsqueda,"árboles, todos los rasgos",sigma_rel,importancia en la prueba,1.22057
+validación → búsqueda,"árboles, todos los rasgos",vol5,importancia en la prueba,6.59079
+validación → búsqueda,"árboles, todos los rasgos",vol14,importancia en la prueba,-19.37549
+validación → búsqueda,"árboles, todos los rasgos",vol60,importancia en la prueba,-10.85971
+validación → búsqueda,"árboles, todos los rasgos",vol5_60,importancia en la prueba,-0.05528
+validación → búsqueda,"árboles, todos los rasgos",dd252,importancia en la prueba,-0.28338
+validación → búsqueda,"árboles, todos los rasgos",tend50,importancia en la prueba,7.82515
+validación → búsqueda,"árboles, todos los rasgos",tend200,importancia en la prueba,11.46631
+validación → búsqueda,"árboles, todos los rasgos",ret1,importancia en la prueba,21.79482
+validación → búsqueda,"árboles, todos los rasgos",ret1_dia,importancia en la prueba,2.40641
+validación → búsqueda,"árboles, todos los rasgos",vrel,importancia en la prueba,2.04500
+validación → búsqueda,"árboles, todos los rasgos",vrel30,importancia en la prueba,-0.06761
+validación → búsqueda,"árboles, todos los rasgos",vwap,importancia en la prueba,2.95599
+validación → búsqueda,"árboles, todos los rasgos",rango,importancia en la prueba,4.26959
+validación → búsqueda,"árboles, todos los rasgos",volmin30,importancia en la prueba,0.24545
+validación → búsqueda,"árboles, todos los rasgos",dia_semana,importancia en la prueba,-4.35999
+validación → búsqueda,"árboles, todos los rasgos",vencimiento,importancia en la prueba,0.00000
+validación → búsqueda,"árboles, todos los rasgos",fin_mes,importancia en la prueba,0.00000
+validación → búsqueda,"árboles, todos los rasgos",inicio_mes,importancia en la prueba,-2.88472
+validación → búsqueda,"árboles, todos los rasgos",lado,importancia en la prueba,0.46090
+validación → búsqueda,"lineal, sin la fuerza",hora,coeficiente (pb),0.47014
+validación → búsqueda,"lineal, sin la fuerza",mov,coeficiente (pb),3.22725
+validación → búsqueda,"lineal, sin la fuerza",hueco,coeficiente (pb),9.26803
+validación → búsqueda,"lineal, sin la fuerza",hueco_abs,coeficiente (pb),1.03040
+validación → búsqueda,"lineal, sin la fuerza",sigma_rel,coeficiente (pb),1.38444
+validación → búsqueda,"lineal, sin la fuerza",vol5,coeficiente (pb),0.34514
+validación → búsqueda,"lineal, sin la fuerza",vol14,coeficiente (pb),2.48358
+validación → búsqueda,"lineal, sin la fuerza",vol60,coeficiente (pb),1.40981
+validación → búsqueda,"lineal, sin la fuerza",vol5_60,coeficiente (pb),-4.40193
+validación → búsqueda,"lineal, sin la fuerza",dd252,coeficiente (pb),-5.27640
+validación → búsqueda,"lineal, sin la fuerza",tend50,coeficiente (pb),0.83263
+validación → búsqueda,"lineal, sin la fuerza",tend200,coeficiente (pb),-1.97584
+validación → búsqueda,"lineal, sin la fuerza",ret1,coeficiente (pb),-2.53463
+validación → búsqueda,"lineal, sin la fuerza",ret1_dia,coeficiente (pb),-4.37830
+validación → búsqueda,"lineal, sin la fuerza",vrel,coeficiente (pb),2.15413
+validación → búsqueda,"lineal, sin la fuerza",vrel30,coeficiente (pb),0.47735
+validación → búsqueda,"lineal, sin la fuerza",vwap,coeficiente (pb),-1.12738
+validación → búsqueda,"lineal, sin la fuerza",rango,coeficiente (pb),-1.62023
+validación → búsqueda,"lineal, sin la fuerza",volmin30,coeficiente (pb),0.96092
+validación → búsqueda,"lineal, sin la fuerza",dia_semana,coeficiente (pb),-3.39531
+validación → búsqueda,"lineal, sin la fuerza",vencimiento,coeficiente (pb),-0.49150
+validación → búsqueda,"lineal, sin la fuerza",fin_mes,coeficiente (pb),-1.37102
+validación → búsqueda,"lineal, sin la fuerza",inicio_mes,coeficiente (pb),2.88603
+validación → búsqueda,"lineal, sin la fuerza",lado,coeficiente (pb),-0.32976
+validación → búsqueda,"árboles, sin la fuerza",hora,importancia en la prueba,4.98813
+validación → búsqueda,"árboles, sin la fuerza",mov,importancia en la prueba,14.45544
+validación → búsqueda,"árboles, sin la fuerza",hueco,importancia en la prueba,19.96579
+validación → búsqueda,"árboles, sin la fuerza",hueco_abs,importancia en la prueba,-0.13151
+validación → búsqueda,"árboles, sin la fuerza",sigma_rel,importancia en la prueba,0.61798
+validación → búsqueda,"árboles, sin la fuerza",vol5,importancia en la prueba,3.14479
+validación → búsqueda,"árboles, sin la fuerza",vol14,importancia en la prueba,-17.90128
+validación → búsqueda,"árboles, sin la fuerza",vol60,importancia en la prueba,-5.10419
+validación → búsqueda,"árboles, sin la fuerza",vol5_60,importancia en la prueba,-0.04880
+validación → búsqueda,"árboles, sin la fuerza",dd252,importancia en la prueba,0.41074
+validación → búsqueda,"árboles, sin la fuerza",tend50,importancia en la prueba,7.22959
+validación → búsqueda,"árboles, sin la fuerza",tend200,importancia en la prueba,7.81652
+validación → búsqueda,"árboles, sin la fuerza",ret1,importancia en la prueba,17.02975
+validación → búsqueda,"árboles, sin la fuerza",ret1_dia,importancia en la prueba,0.06424
+validación → búsqueda,"árboles, sin la fuerza",vrel,importancia en la prueba,2.36486
+validación → búsqueda,"árboles, sin la fuerza",vrel30,importancia en la prueba,0.47649
+validación → búsqueda,"árboles, sin la fuerza",vwap,importancia en la prueba,1.89495
+validación → búsqueda,"árboles, sin la fuerza",rango,importancia en la prueba,1.10791
+validación → búsqueda,"árboles, sin la fuerza",volmin30,importancia en la prueba,-1.72777
+validación → búsqueda,"árboles, sin la fuerza",dia_semana,importancia en la prueba,-3.70673
+validación → búsqueda,"árboles, sin la fuerza",vencimiento,importancia en la prueba,0.00000
+validación → búsqueda,"árboles, sin la fuerza",fin_mes,importancia en la prueba,0.00000
+validación → búsqueda,"árboles, sin la fuerza",inicio_mes,importancia en la prueba,-3.46474
+validación → búsqueda,"árboles, sin la fuerza",lado,importancia en la prueba,0.00000
