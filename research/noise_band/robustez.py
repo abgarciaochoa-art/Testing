@@ -5,7 +5,8 @@ Para el artículo (largo y corto) y dos versiones solo largo, sin palanca:
 - sigma con 10, 14 (base) y 20 sesiones;
 - controles cada 15, 30 (base) y 60 minutos;
 - la misma estrategia con HistData en vez de OANDA (nov-2010 → 2018, días comunes);
-- costes de 0; 0,5; 1 (base) y 2 pb por lado.
+- costes de 0; 0,5; 1 y 2 pb por lado y los del artículo; la base es SPY con órdenes a
+  mercado (0,0085 $ por acción: 0,55 pb por lado de media).
 
 Salida: resultados/robustez.csv
 
@@ -23,6 +24,7 @@ import motor as nb
 
 OUT = Path(__file__).parent / "resultados"
 HISTDATA = nb.DATOS.with_name("rth_histdata.npz")
+BASE = dict(coste_por_accion=0.0085)  # SPY con órdenes a mercado
 VARIANTES = {
     "articulo": dict(lados=2, trail_vwap=True, salida_banda=1),
     "largo_articulo": dict(lados=1, trail_vwap=True, salida_banda=1),
@@ -52,23 +54,24 @@ def main() -> None:
     for nombre, kw in VARIANTES.items():
         for n in (10, 14, 20):
             d = base if n == 14 else nb.cargar(n_sigma=n)
-            r = nb.simular(d, coste_bps=1.0, **kw)
+            r = nb.simular(d, **BASE, **kw)
             filas.append(fila(nombre, f"sigma de {n} sesiones", r["equity"], r["operaciones"], "2005-01-24", "2020-12-31"))
         for cada in (15, 60):
-            r = nb.simular(base, coste_bps=1.0, controles=controles(cada), **kw)
+            r = nb.simular(base, **BASE, controles=controles(cada), **kw)
             filas.append(fila(nombre, f"controles cada {cada} min", r["equity"], r["operaciones"], "2005-01-24",
                               "2020-12-31"))
-        for c in (0.0, 0.5, 2.0):
-            r = nb.simular(base, coste_bps=c, **kw)
-            filas.append(fila(nombre, f"costes {c} pb por lado", r["equity"], r["operaciones"], "2005-01-24",
-                              "2020-12-31"))
+        for etiqueta, kc in (("costes 0 pb", dict(coste_bps=0.0)), ("costes 0,5 pb", dict(coste_bps=0.5)),
+                             ("costes 1 pb", dict(coste_bps=1.0)), ("costes 2 pb", dict(coste_bps=2.0)),
+                             ("costes del artículo (0,0045 $ por acción)", dict(coste_por_accion=0.0045))):
+            r = nb.simular(base, **kc, **kw)
+            filas.append(fila(nombre, etiqueta, r["equity"], r["operaciones"], "2005-01-24", "2020-12-31"))
     # otra fuente de datos, en los días comunes
     h = nb.cargar(ruta=HISTDATA)
     comunes = h["fechas"].intersection(base["fechas"])
     a, b = comunes[20], comunes[-1]
     for nombre, kw in VARIANTES.items():
         for fuente, d in (("OANDA", base), ("HistData", h)):
-            r = nb.simular(d, coste_bps=1.0, **kw)
+            r = nb.simular(d, **BASE, **kw)
             filas.append(fila(nombre, f"fuente {fuente} (días comunes)", r["equity"], r["operaciones"], a, b))
     df = pd.DataFrame(filas)
     df.to_csv(OUT / "robustez.csv", index=False, float_format="%.5f")

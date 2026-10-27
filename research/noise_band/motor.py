@@ -21,7 +21,8 @@ Dentro del cono el precio se mueve "por ruido"; si lo rompe, se apuesta a que si
   no, al nivel. Si en la misma vela se tocan el stop y el objetivo, cuenta el stop.
 - Con ``intradia`` se cierra todo en la última vela del día; si no, la posición duerme y
   la noche cuenta (la deuda paga ``tasa`` anual si la palanca pasa de 1).
-- Costes: ``coste`` por lado sobre lo negociado. El efectivo no rinde.
+- Costes: ``coste_bps`` por lado sobre lo negociado (o por acción de SPY, como el artículo).
+  El efectivo no rinde.
 - La palanca de cada día (``lev``) se decide con datos hasta el día anterior.
 """
 
@@ -75,7 +76,7 @@ def palanca(d: dict, objetivo: float | None = None, maximo: float = 4.0) -> np.n
 
 @numba.njit(cache=True)
 def _simular(O, H, L, C, ult, UB, LB, VW, RA, RB, chk, lev, lados, entrada, trail_vwap, salida_banda, stop_tipo,
-             stop_pct, tp_pct, intradia, coste, tasa_dia):
+             stop_pct, tp_pct, intradia, costes, tasa_dia):
     D = C.shape[0]
     cash = 1.0
     units = 0.0
@@ -90,6 +91,7 @@ def _simular(O, H, L, C, ult, UB, LB, VW, RA, RB, chk, lev, lados, entrada, trai
     reg = np.full((50000, 7), np.nan)  # día y minuto de entrada, día y minuto de salida, lado, precio entrada, salida
     nreg = 0
     for d in range(D):
+        coste = costes[d]  # por lado, sobre lo negociado ese día
         valido = not np.isnan(UB[d, 0])
         pend = 0  # 0 nada, 1 cerrar, 2 entrar largo, 3 entrar corto, 4 girar a largo, 5 girar a corto
         minutos = 0
@@ -213,22 +215,37 @@ def _simular(O, H, L, C, ult, UB, LB, VW, RA, RB, chk, lev, lados, entrada, trai
     return eq, en_mercado, reg[:nreg]
 
 
+def costes_dia(d: dict, coste_bps: float = 0.0, coste_por_accion: float | None = None) -> np.ndarray:
+    """Coste por lado de cada día, en tanto por uno: fijo en pb, o en dólares por acción de SPY
+    (que cotiza a ~1/10 del índice; se usa el cierre de la víspera)."""
+    D = len(d["fechas"])
+    if coste_por_accion is None:
+        return np.full(D, coste_bps / 1e4)
+    spy = np.r_[d["O"][0, 0], d["cierre"][:-1]] / 10
+    return coste_por_accion / spy
+
+
 def simular(d: dict, lados: int = 1, entrada: int = 0, trail_vwap: bool = True, salida_banda: int = 1,
             stop_tipo: int = 0, stop_pct: float = 0.0, tp_pct: float = INF, intradia: bool = True,
             coste_bps: float = 2.0, lev: np.ndarray | None = None, tasa: float = 0.05,
-            controles: np.ndarray | None = None) -> dict:
+            controles: np.ndarray | None = None, coste_por_accion: float | None = None) -> dict:
     """``salida_banda``: 0 ninguna, 1 volver dentro del cono (cruzar la banda propia), 2 romper
     el cono por el otro lado. ``stop_tipo``: 0 ninguno, 1 banda contraria (dinámica), 2
     vértice del cono (max/min de apertura y cierre anterior), 3 ``stop_pct`` desde la entrada.
-    ``controles``: velas en las que se decide (por defecto, las que cierran a las HH:00 y HH:30)."""
-    lev = np.ones(len(d["fechas"])) if lev is None else lev
+    ``controles``: velas en las que se decide (por defecto, las que cierran a las HH:00 y HH:30).
+    ``coste_por_accion``: en lugar de ``coste_bps``, dólares por acción de SPY y por lado (el
+    artículo usa 0,0035 de comisión + 0,001 de deslizamiento); SPY cotiza a ~1/10 del índice."""
+    D = len(d["fechas"])
+    lev = np.ones(D) if lev is None else lev
+    costes = costes_dia(d, coste_bps, coste_por_accion)
     tp = 1e18 if not np.isfinite(tp_pct) else tp_pct
     eq, mercado, reg = _simular(d["O"], d["H"], d["L"], d["C"], d["ult"], d["arriba"], d["abajo"], d["vw"],
-                                d["ref_arriba"], d["ref_abajo"], CONTROLES if controles is None else controles, lev.astype(np.float64), lados, entrada, trail_vwap, salida_banda,
-                                stop_tipo, stop_pct, tp, intradia, coste_bps / 1e4, (1 + tasa) ** (1 / 252) - 1)
+                                d["ref_arriba"], d["ref_abajo"], CONTROLES if controles is None else controles,
+                                lev.astype(np.float64), lados, entrada, trail_vwap, salida_banda, stop_tipo, stop_pct,
+                                tp, intradia, costes.astype(np.float64), (1 + tasa) ** (1 / 252) - 1)
     ops = pd.DataFrame(reg, columns=["d_ent", "k_ent", "d_sal", "k_sal", "lado", "px_ent", "px_sal"])
-    c = coste_bps / 1e4
-    ops["ret"] = ops.lado * (ops.px_sal / ops.px_ent - 1) - 2 * c
+    ops["ret"] = (ops.lado * (ops.px_sal / ops.px_ent - 1) - costes[ops.d_ent.astype(int)]
+                  - costes[ops.d_sal.astype(int)])
     ops["entrada"] = d["fechas"][ops.d_ent.astype(int)]
     ops["dias"] = ops.d_sal - ops.d_ent
     return {"equity": pd.Series(eq, d["fechas"]), "en_mercado": pd.Series(mercado, d["fechas"]), "operaciones": ops}

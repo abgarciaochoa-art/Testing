@@ -31,6 +31,10 @@ import motor as nb
 
 OUT = Path(__file__).parent / "resultados"
 DIARIO = Path(__file__).resolve().parents[1] / "caidas" / "dossier" / "datos" / "diario.csv"
+COSTES = {"artículo (0,0045 $ por acción)": dict(coste_por_accion=0.0045),
+          "SPY a mercado (0,0085 $ por acción)": dict(coste_por_accion=0.0085),
+          "1 pb": dict(coste_bps=1.0), "2 pb": dict(coste_bps=2.0)}
+BASE = "SPY a mercado (0,0085 $ por acción)"
 CRISIS = [("Crisis financiera", "2007-10-09", "2009-03-09"), ("Flash crash", "2010-04-23", "2010-07-02"),
           ("Deuda de EE. UU. y del euro", "2011-04-29", "2011-10-03"), ("China y petróleo", "2015-05-21", "2016-02-11"),
           ("Cuarto trimestre de 2018", "2018-09-20", "2018-12-24"), ("Covid", "2020-02-19", "2020-03-23")]
@@ -59,16 +63,16 @@ def main() -> None:
     series = {}
     filas = []
     for nombre, kw in complementos.items():
-        for c in (0.5, 1.0, 2.0):
-            r = nb.simular(d, coste_bps=c, **kw)["equity"].pct_change().reindex(comun).fillna(0.0)
+        for c, kc in COSTES.items():
+            r = nb.simular(d, **kc, **kw)["equity"].pct_change().reindex(comun).fillna(0.0)
             for peso in (0.0, 0.5, 1.0):
                 mezcla = base[comun] + peso * r[comun]
-                filas.append({"complemento": nombre, "coste_pb": c, "peso": peso, **metricas(mezcla),
+                filas.append({"complemento": nombre, "costes": c, "peso": peso, **metricas(mezcla),
                               "corr_mensual_con_N1": ((1 + r[comun]).resample("ME").prod().corr(
                                   (1 + base[comun]).resample("ME").prod()))})
-                if c == 1.0:
+                if c == BASE:
                     series[(nombre, peso)] = mezcla
-            if c == 1.0:
+            if c == BASE:
                 series[(nombre, "solo")] = r[comun]
     df = pd.DataFrame(filas)
     df = df[~((df.peso == 0) & (df.duplicated(["peso"])))]
@@ -99,7 +103,7 @@ def main() -> None:
     for k, e in eqs.items():
         if k != "Noise Band solo (1×)":
             a2.plot(e.index, (e / e.cummax() - 1) * 100, color=colores[k][0], lw=1.2)
-    a1.set_title("Nivel 1 de caídas con Noise Band intradía encima: 100.000 $ en 2005, 1 pb por lado")
+    a1.set_title("Nivel 1 de caídas con Noise Band intradía encima: 100.000 $ en 2005, costes de SPY a mercado")
     a2.set_ylabel("caída desde máximos (%)")
     a2.grid(axis="y")
     fig.tight_layout()

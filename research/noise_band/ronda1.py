@@ -21,8 +21,11 @@ Referencias: siempre largo de apertura a cierre, comprar y mantener el índice (
 dividendos) y SPY con dividendos (panel diario).
 
 Tamaño: 1× (todo el capital cuando hay posición) y el del artículo (volatilidad objetivo del
-2 % diario con la de 14 días, máximo 4×). Costes: 0; 0,5; 1 (base) y 2 pb por lado.
-Ventanas: búsqueda 2013 → may-2020 (en dos mitades) y validación 2005-2012.
+2 % diario con la de 14 días, máximo 4×). Costes por lado: 0; 0,5; 1 y 2 pb; los del artículo
+(0,0045 $ por acción de SPY: 0,13-0,67 pb) y, como base, SPY con órdenes a mercado (0,0035 $
+de comisión + medio céntimo de horquilla = 0,0085 $ por acción: 0,25-1,3 pb, 0,55 de media).
+Ventanas: búsqueda 2013 → may-2020 (en dos mitades), validación 2005-2012 y desde 2007 (el
+inicio del artículo).
 
 Salida: resultados/{ronda1.csv, ronda1_anual.csv, ronda1_operaciones.csv, curvas.png}
 
@@ -46,11 +49,13 @@ import motor as nb
 
 OUT = Path(__file__).parent / "resultados"
 ROOT = Path(__file__).resolve().parents[2]
-VENTANAS = {"total": ("2005-01-24", None), "validacion": ("2005-01-24", "2013-01-01"),
-            "busqueda": ("2013-01-01", None), "busqueda_1": ("2013-01-01", "2017-01-01"),
-            "busqueda_2": ("2017-01-01", None)}
-COSTES = (0.0, 0.5, 1.0, 2.0)
-BASE = 1.0
+VENTANAS = {"total": ("2005-01-24", None), "desde_2007": ("2007-01-03", None),
+            "validacion": ("2005-01-24", "2013-01-01"), "busqueda": ("2013-01-01", None),
+            "busqueda_1": ("2013-01-01", "2017-01-01"), "busqueda_2": ("2017-01-01", None)}
+COSTES = {"0 pb": dict(coste_bps=0.0), "0,5 pb": dict(coste_bps=0.5), "1 pb": dict(coste_bps=1.0),
+          "2 pb": dict(coste_bps=2.0), "artículo": dict(coste_por_accion=0.0045),
+          "SPY a mercado": dict(coste_por_accion=0.0085)}
+BASE = "SPY a mercado"
 
 VARIANTES = {
     "articulo": dict(lados=2, trail_vwap=True, salida_banda=1),
@@ -74,7 +79,7 @@ def tramo(s: pd.Series, a, b) -> pd.Series:
 def referencias(d: dict) -> dict[str, pd.Series]:
     D = len(d["fechas"])
     intradia = d["cierre"] / d["O"][:, 0] - 1
-    siempre = pd.Series(np.cumprod(1 + intradia - 2 * BASE / 1e4), d["fechas"])
+    siempre = pd.Series(np.cumprod(1 + intradia - 2 * nb.costes_dia(d, **COSTES[BASE])), d["fechas"])
     indice = pd.Series(d["cierre"] / d["cierre"][0], d["fechas"])
     # el motor del estudio de caídas se llama igual que este: se carga por su ruta
     spec = importlib.util.spec_from_file_location("motor_caidas", ROOT / "research" / "caidas" / "motor.py")
@@ -94,9 +99,9 @@ def main() -> None:
     filas, curvas, anual, ops_base = [], {}, {}, []
     for nombre, kw in VARIANTES.items():
         for tam, lev in tamaños.items():
-            for c in COSTES:
-                r = nb.simular(d, coste_bps=c, lev=lev, **kw)
-                fila = {"variante": nombre, "tamaño": tam, "coste_pb": c}
+            for c, kc in COSTES.items():
+                r = nb.simular(d, lev=lev, **kw, **kc)
+                fila = {"variante": nombre, "tamaño": tam, "costes": c}
                 for vn, (a, b) in VENTANAS.items():
                     eq = tramo(r["equity"], a, b)
                     m = nb.metricas(eq, r["operaciones"], r["en_mercado"])
@@ -107,7 +112,7 @@ def main() -> None:
                     if tam == "1x":
                         ops_base.append(r["operaciones"].assign(variante=nombre))
     for nombre, eq in referencias(d).items():
-        fila = {"variante": nombre, "tamaño": "1x", "coste_pb": BASE}
+        fila = {"variante": nombre, "tamaño": "1x", "costes": BASE}
         for vn, (a, b) in VENTANAS.items():
             fila |= {f"{vn}_{k}": v for k, v in nb.metricas(tramo(eq, a, b)).items()}
         filas.append(fila)
@@ -123,17 +128,19 @@ def main() -> None:
     pd.concat(ops_base).to_csv(OUT / "ronda1_operaciones.csv", index=False, float_format="%.6f")
 
     pd.set_option("display.width", 250)
-    cols = ["variante", "tamaño", "coste_pb", "total_cagr", "total_peor_caida", "total_sharpe", "validacion_cagr",
+    cols = ["variante", "tamaño", "total_cagr", "desde_2007_cagr", "total_peor_caida", "total_sharpe", "validacion_cagr",
             "busqueda_cagr", "busqueda_1_cagr", "busqueda_2_cagr", "total_operaciones_año", "total_acierto",
             "total_ret_medio", "total_dias_con_posicion", "total_tiempo_en_mercado"]
     for tam in tamaños:
-        x = df[(df.tamaño == tam) & (df.coste_pb == BASE)][cols]
-        print(f"\n— {tam}, {BASE} pb por lado —")
+        x = df[(df.tamaño == tam) & (df.costes == BASE)][cols]
+        print(f"\n— {tam}, costes: {BASE} —")
         print(x.round(4).to_string(index=False))
     print("\n— sensibilidad a costes (CAGR total, 1×) —")
-    print(df[df.tamaño == "1x"].pivot_table(index="variante", columns="coste_pb", values="total_cagr").round(4).to_string())
+    print(df[df.tamaño == "1x"].pivot_table(index="variante", columns="costes", values="total_cagr",
+                                            sort=False).round(4).to_string())
     print("\n— sensibilidad a costes (CAGR total, vol 2 %) —")
-    print(df[df.tamaño != "1x"].pivot_table(index="variante", columns="coste_pb", values="total_cagr").round(4).to_string())
+    print(df[df.tamaño != "1x"].pivot_table(index="variante", columns="costes", values="total_cagr",
+                                            sort=False).round(4).to_string())
 
     gr.estilo()
     fig, ax = plt.subplots(figsize=(11.5, 6.2))
@@ -149,7 +156,7 @@ def main() -> None:
             color=gr.TINTA2)
     ax.text(pd.Timestamp("2013-03-01"), ax.get_ylim()[1] * 0.92, "→ búsqueda", ha="left", fontsize=8.4,
             color=gr.TINTA2)
-    ax.set_title(f"Noise Band: 100.000 $ en 2005, sin palanca y con {BASE:.0f} pb por lado")
+    ax.set_title("Noise Band: 100.000 $ en 2005, sin palanca, con costes de SPY a mercado")
     fig.tight_layout()
     fig.subplots_adjust(right=0.70)
     fig.savefig(OUT / "curvas.png", dpi=130)
