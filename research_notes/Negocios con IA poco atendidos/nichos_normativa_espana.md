@@ -296,7 +296,7 @@ Con la evidencia reunida, ningún nicho combina hoy fecha firme, obligación sob
 - **No evaluado:** (h) subvenciones a éxito.
 
 #### Fichas compactas por nicho
-Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (todas, resumen de búsqueda). Las horas, el coste de arranque, el tiempo hasta el primer ingreso y los precios de servicio propio son **estimaciones sin fuente**.
+Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (todas son resumen de búsqueda, incluidas las de notas hermanas). Las horas, el coste de arranque, el tiempo hasta el primer ingreso y los precios de servicio propio son **estimaciones sin fuente**.
 
 **(a) Verifactu**
 - Qué y a quién: puesta en marcha de un programa de facturación adaptado (alta, plantilla, carga de datos, primera factura, formación) para autónomos y micropymes locales; charlas a asociaciones de comerciantes; contenido comparativo.
@@ -371,7 +371,7 @@ Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (
 **(h) Subvenciones: búsqueda y redacción a éxito**
 - Sin datos verificados sobre honorarios, proveedores ni ingresos (ninguna búsqueda ejecutada; las notas hermanas tampoco los tienen).
 - Señales de demanda disponibles: dinero público y privado anunciado para IA y digitalización —Bono de IA de 600 M€ antes de fin de 2027, 200 M€ adicionales "ultimados" para Kit Digital y Kit Consulting, ayudas de la Cámara de España de hasta el 85 % y fondos de Sage de 3,5 M€ ([Capital](https://capital.es/empresas/sanchez-anuncia-un-bono-de-600-millones-para-que-pymes-y-autonomos-incorporen-la-ia/218982/); [MuyPymes](https://www.muypymes.com/2026/11/17/sage-fondos-transformacion-ia-millones-pymes))—, sin ventanilla estatal abierta hoy.
-- Riesgos conocidos: cobro tardío y dependiente de resoluciones; el Kit Digital dejó un 20 % de bonos caducados o renunciados y agentes con cobros retrasados.
+- Riesgos conocidos: cobro tardío y dependiente de resoluciones; en el Kit Digital, según la asociación de agentes, uno de cada cinco bonos caducó o fue renunciado y los agentes cobran con retraso.
 - **Veredicto: no evaluado.** Hipótesis sin verificar: puede funcionar en 2027 si se abren las convocatorias anunciadas.
 
 **(i) Oposiciones: generadores de test y tutores con IA** (datos de mercado de una nota hermana, no verificados por mí)
