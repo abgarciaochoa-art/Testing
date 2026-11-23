@@ -48,11 +48,11 @@ El resultado típico de una actividad extra es calderilla: la mediana en EE. UU.
 ### Inferences
 
 - La media de Bankrate es 4,4 veces la mediana (885 / 200): unos pocos ganan mucho y la mayoría gana poco. Para planificar hay que usar la mediana, no la media ni los casos de éxito.
-- Escala para el perfil (10–15 h/semana equivalen a unas 43–65 h al mes): la mediana de Bankrate (200 $, unos 170–180 € con mi supuesto de cambio) no cubriría la cuota mínima ordinaria de autónomos (205,88 €/mes) y apenas dobla la tarifa plana (88,64 €/mes); las cuotas están en la pregunta 4. Es un cálculo ilustrativo: mezcla una mediana de EE. UU. con costes españoles.
-- El rendimiento neto medio del autónomo español (16.427 €/año, unos 1.369 €/mes) corresponde en general a una dedicación completa. A 10–15 h/semana lo esperable es una fracción de eso, así que "ingresos pasivos" no describe el caso típico ni siquiera entre quienes trabajan a jornada completa.
+- Escala para el perfil (10–15 h/semana equivalen a unas 43–65 h al mes): la mediana de Bankrate (200 $, unos 170–180 € con mi supuesto de cambio) no cubriría la cuota mínima ordinaria de autónomos (205,88 €/mes) y ronda el doble de la tarifa plana (88,64 €/mes); las cuotas están en la pregunta 4. Es un cálculo ilustrativo: mezcla una mediana de EE. UU. con costes españoles.
+- El rendimiento neto medio del autónomo español (16.427 €/año, unos 1.369 €/mes) corresponde en general a una dedicación completa. Si quien se dedica por completo no llega de media al salario mínimo, esperar un sueldo con una cuarta parte de las horas no es el caso típico, y menos aún unos ingresos "pasivos".
 - El INE y UPTA apuntan en la misma dirección: en torno a la mitad de las actividades nuevas no llega al tercer o quinto año. El pico de bajas al acabar la tarifa plana sugiere que muchas solo eran viables con la cuota reducida.
 - El dato de antigüedad de ATA (60,5% con más de cinco años) no contradice lo anterior: tiene sesgo de supervivencia porque solo cuenta a quienes siguen dados de alta.
-- La economía de creadores es el modelo de muchos "ingresos pasivos con IA" (canales, newsletters, productos digitales). Tres encuestas de parte coinciden en que alrededor de la mitad gana menos de 10.000–15.000 $ al año, y esas muestras sobrerrepresentan a quienes siguen activos.
+- La economía de creadores es el modelo de muchos "ingresos pasivos con IA" (canales, newsletters, productos digitales). Dos encuestas de parte coinciden en que alrededor de la mitad gana menos de 10.000–15.000 $ al año, y esas muestras sobrerrepresentan a quienes siguen activos.
 
 ### Gaps
 
@@ -165,7 +165,7 @@ Hay casos documentados en todas las grandes plataformas: Google desindexa sitios
 
 - Las cuatro plataformas de contenido (Google, YouTube, KDP y Etsy) castigan lo mismo: volumen sin aportación humana identificable. Los modelos que más se venden como "pasivos" (blogs de IA en masa, canales sin rostro con plantilla, libros y patrones generados) son exactamente el objetivo declarado de esas políticas.
 - La pérdida no es solo de ingresos futuros. En KDP se retienen las regalías ya devengadas y no se puede abrir otra cuenta; en YouTube desaparecen los suscriptores acumulados. El trabajo invertido no se recupera.
-- No hay preaviso útil. Etsy aplicó el cambio el mismo día del anuncio; KDP y YouTube actúan sin aviso; Meta dio tres meses.
+- No hay preaviso útil. La prensa describe el cambio de Etsy como vigente desde el día del anuncio; los cierres de KDP y YouTube recogidos llegaron sin aviso previo; Meta dio tres meses.
 - Salir de Google arrastra también la visibilidad en los asistentes de IA (caso National Today). Optimizar "para la IA" en lugar de para el buscador no protege.
 - El regulador llega tarde para un negocio unipersonal. En el caso de WhatsApp pasaron unos cinco meses entre la aplicación del veto (15 de enero de 2026) y las medidas cautelares (9 de junio de 2026), y eso con denunciantes representados por un despacho especializado.
 - Matiz para el perfil: el veto de WhatsApp se dirigía a asistentes generalistas, no a los bots de atención al cliente que una empresa usa con sus propios clientes. Aun así, muestra que Meta puede cambiar las condiciones de la API de forma unilateral y dejar fuera un producto entero.
@@ -253,7 +253,7 @@ En España no hay un "modo prueba" sin obligaciones: el Tribunal Supremo ha fija
 
 - Coste fijo mínimo: con tarifa plana, 88,64 € × 12 = 1.063,68 € el primer año, más del doble del presupuesto de 500 €. Sin tarifa plana, la cuota mínima es de 205,88 € al mes, es decir, 2.470,56 € al año.
 - No hay umbral seguro "por debajo del SMI". Tras la doctrina del Supremo, una actividad repetida y organizada (anunciarse, facturar todos los meses) puede exigir alta aunque ingrese poco, y DAC7 hace visibles para Hacienda los ingresos obtenidos a través de plataformas.
-- La cuota fija castiga los ingresos bajos: con 300 € netos al mes, la tarifa plana se lleva el 30% y la cuota mínima ordinaria, el 69%.
+- La cuota fija castiga los ingresos bajos: con 300 € de margen al mes antes de pagar la cuota, la tarifa plana se lleva el 30% y la cuota mínima ordinaria, el 69%.
 - El modelo de "agencia de captación con IA" (emails masivos y bots de voz que llaman) acumula tres barreras en España: el artículo 21 de la LSSI, el consentimiento previo para llamadas (obligatorio siempre en las automáticas) y el artículo 50 del Reglamento de IA, que obliga al bot a identificarse. Además, el cliente final puede ver anulados los contratos cerrados en llamadas sin consentimiento.
 - Montar un chatbot o un bot de voz para una pyme convierte al operador en encargado del tratamiento: necesita un contrato del artículo 28 con el cliente y contratos con sus propios proveedores de IA.
 - IVA: vender productos digitales (plantillas, cursos, guías) a consumidores de otros países de la UE obliga a llevar la cuenta del umbral de 10.000 € al año. Con el volumen esperable del perfil es improbable superarlo el primer año, pero al superarlo cambia el tipo aplicable y hay que presentar el modelo 369.
@@ -352,7 +352,7 @@ Lo que paga hoy con poco riesgo es trabajo por horas, no un negocio: hay ofertas
 - En Upwork lo genérico se abarata y lo complejo se encarece: más contratos de IA generativa con menos ingresos por contrato, frente a +45% para el trabajo complejo. El valor está en un oficio con IA, no en "saber IA".
 - Para alguien que no programa, las categorías de Upwork con demanda al alza y sin código son el vídeo con IA (+329%) y la anotación (+154%). La integración de IA (+178%) y los chatbots (+71%) son abordables con herramientas sin código y un asistente, pero ahí se compite con desarrolladores.
 - Las tarifas de Malt son de perfiles técnicos con proyectos largos (seis meses de media). Encajan mal con 10–15 horas semanales y sin historial; la referencia realista de entrada es la tarifa de menos de dos años de experiencia (unos 177 € al día).
-- Un solo taller de 890 € equivale a 49–99 horas de tareas en TELUS a 18–9 € por hora. La formación es lo que más rinde por hora, pero hay que vender, y la bonificación de FUNDAE no paga la mayor parte de la factura.
+- Un solo taller de 890 € equivale a unas 49 horas de tareas en TELUS a 18 € por hora, o a unas 99 horas a 9 €. La formación es lo que más rinde por hora, pero hay que vender, y la bonificación de FUNDAE no paga la mayor parte de la factura.
 - La vía del empleo (añadir IA al puesto actual o cambiar a uno que la pida) es la única de la lista sin cuota de autónomos ni riesgo de plataforma. La prima del 62% mide ofertas de empleo, muchas de perfil técnico, y no garantiza una subida a quien añade IA a su currículum.
 
 ### Gaps
@@ -398,7 +398,7 @@ Clasificación propia a partir de la evidencia de las preguntas 2, 3 y 5. No es 
 | Integración de IA en procesos de empresas | Duradera, con competencia técnica | Upwork: +178%; Gartner: IA generativa camino de la meseta |
 | Formación de equipos en IA | Duradera mientras dure la adopción | Precios de mercado de 890 a 5.900 € por taller; dato de parte interesada |
 | Empleo con habilidades de IA | Duradera | PwC: prima del 62% y al alza |
-| "Agencias de agentes de IA" para pymes | Incierta, expuesta al ciclo de moda | Gartner: pico de expectativas, 17% desplegado, más del 40% de proyectos cancelados antes de 2028 |
+| "Agencias de agentes de IA" para pymes | Incierta, expuesta al ciclo de moda | Gartner: pico de expectativas, 17% desplegado y previsión de más del 40% de proyectos cancelados antes de 2028 |
 | Chatbots y bots de voz para pymes | Incierta | Upwork: +71%, por debajo de la media de IA; obligaciones del artículo 50; dependencia de APIs ajenas (caso WhatsApp) |
 | Vídeo con IA por encargo | Demanda alta hoy, duración incierta | Upwork: +329%; riesgo de plataforma si se publica en masa |
 | Producción generativa básica (textos e imágenes genéricos) | Se abarata | Upwork: +90% de contratos y −13% de ingresos por contrato |
@@ -419,3 +419,129 @@ Clasificación propia a partir de la evidencia de las preguntas 2, 3 y 5. No es 
   - Un informe del MIT de agosto de 2025 concluyó que el 95% de los proyectos piloto de IA generativa en empresas no generaba retorno medible.
   - S&P Global publicó en 2025 que el 42% de las empresas había abandonado la mayoría de sus iniciativas de IA, frente al 17% de un año antes.
   - Gartner advirtió en 2025 del "agent washing": de los miles de proveedores que dicen vender agentes, solo unos 130 lo hacían de verdad.
+
+## 7. Las diez advertencias más importantes para quien elige un negocio con IA en España
+
+Cada advertencia lleva su evidencia y el nivel de esa evidencia. Todas las cifras proceden de resúmenes de búsqueda; el detalle y las reservas están en las preguntas 1 a 6.
+
+1. **El ingreso típico de una actividad extra es calderilla, no un sueldo.** Evidencia: mediana de 200 $ al mes frente a una media de 885 $ (Bankrate/YouGov, junio de 2025; 699 personas con actividad extra). Nivel: encuesta con muestra declarada, de EE. UU. — (resumen de búsqueda) [Maker Stations](https://www.makerstations.io/side-hustle-statistics/); [InvoiceQuickly](https://invoicequickly.com/stats/side-hustle-statistics)
+2. **En España, ni el autónomo medio llega al salario mínimo.** Evidencia: rendimiento neto medio de 16.427 € al año frente a un SMI de 17.094 € (UPTA con datos de Hacienda); ATA afirma que el 68% no ingresa el equivalente al SMI. Nivel: organizaciones de autónomos con interés en el dato; falta la estadística oficial directa. — (resumen de búsqueda) [Capital](https://capital.es/economia/upta-reclama-una-rebaja-del-irpf-para-los-autonomos-con-menores-rendimientos/235785); [Qué!](https://www.que.es/2026/09/28/autonomos-ingresos-menos-smi-ata/)
+3. **Alrededor de la mitad de los negocios nuevos no llega al quinto año, y muchos caen al acabar la cuota reducida.** Evidencia: el 55,3% de las empresas creadas en 2018 seguía viva a los tres años y el 41,9% a los cinco (INE); UPTA sitúa el pico de bajas al terminar la tarifa plana. Nivel: estadística oficial vía prensa, más parte interesada. — (resumen de búsqueda) [El Español](https://www.elespanol.com/invertia/agora-del-emprendimiento/20261109/emprender-espana-nacimiento-consolidacion-empresarial-dificultades-supervivencia/1003744435120_0.html); [Murcia Diario](https://www.murciadiario.com/articulo/murcia-economia-regional/upta-alerta-baja-supervivencia-autonomos-finalizar-periodo-cuotas-reducidas/20260514134114144308.html)
+4. **Ganar poco no exime del alta de autónomo, y la cuota fija se come los ingresos bajos.** Evidencia: el Supremo fijó en 2026 que ingresar menos que el SMI no excluye por sí solo la obligación (STS 162/2026); la cuota es de 88,64 € al mes con tarifa plana y de 205,88 € como mínimo después; las plataformas comunican a Hacienda a quien supera 30 operaciones o 2.000 € al año (DAC7). Nivel: doctrina judicial vía fuentes jurídicas; cuotas según asesorías. — (resumen de búsqueda) [BOE, Anuarios de Derecho](https://www.boe.es/biblioteca_juridica/anuarios_derecho/articulo.php?id=ANU-L-2026-00000003346); [Verifacturamos](https://verifacturamos.com/cuota-autonomos-2026-tramos); [Consejo General de Gestores](https://www.consejogestores.org/noticias/modelo-238-ventas-wallapop/)
+5. **Quien gana seguro es quien vende el programa.** Evidencia: en los casos de la FTC los compradores pagaron hasta 35.000 $ (Ecommerce Empire Builders) y hasta 250.000 $ (Air AI), con daños alegados de al menos 25 millones (Ascend Ecom), 14 millones (Click Profit) y unos 19 millones de dólares (Air AI). Nivel: regulador y tribunales de EE. UU.; sin equivalente español localizado. — (resumen de búsqueda) [FTC: Click Profit](https://www.ftc.gov/news-events/news/press-releases/2025/03/ftc-acts-stop-click-profit-online-business-opportunity-has-cost-consumers-least-14-million); [FTC: Air AI](https://www.ftc.gov/news-events/news/press-releases/2025/08/ftc-sues-stop-air-ai-using-deceptive-claims-about-business-growth-earnings-potential-refund); [VitalLaw](https://www.vitallaw.com/news/consumer-protection-news-ftc-secures-25-million-settlement-against-ascend-ecom-for-allegedly-defrauding-consumers-with-false-ai-business-claims/ald017f5a1916f95d48d0a3cdccb44bff1bb5)
+6. **Publicar contenido IA en masa en plataformas ajenas es el modelo más castigado.** Evidencia: Google desindexa sitios enteros (caída estimada del 99,52% en un caso); YouTube eliminó o vació en enero de 2026 16 canales con 35 millones de suscriptores; KDP cierra cuentas reteniendo regalías; Etsy prohíbe desde el 22 de octubre de 2026 patrones y guías generados con IA y los listados hechos por bots. Nivel: prensa para Etsy y YouTube; blogs de proveedores para Google y KDP. — (resumen de búsqueda) [CNBC](https://www.cnbc.com/2026/10/22/etsy-bans-ai-generated-recipes-patterns-from-its-online-marketplace.html); [TechTimes](https://www.techtimes.com/articles/320629/20260715/youtube-wiped-35m-subscribers-over-ai-slop-now-its-judging-your-taste.htm); [Something Inc](https://somethinginc.com/blog/scaled-ai-content-manual-action-case-study/); [ScribeCount](https://scribecount.com/author-resource/publishing-on-amazon/what-to-do-if-kdp-shuts-you-down)
+7. **Depender de la API o de la tienda de un tercero es un riesgo que no controlas.** Evidencia: Meta vetó a los asistentes de IA generalistas en la API de WhatsApp Business con tres meses de preaviso (del 15 de octubre de 2025 al 15 de enero de 2026) y la Comisión Europea tardó hasta el 9 de junio de 2026 en imponer medidas cautelares; Amazon suspendió alrededor del 95% de las tiendas de Click Profit. Nivel: prensa y regulador. — (resumen de búsqueda) [TechCrunch](https://techcrunch.com/2025/12/04/eu-investigating-meta-over-policy-change-that-bans-rival-ai-chatbots-from-whatsapp/); [Yahoo Finance](https://finance.yahoo.com/economy/policy/articles/eu-orders-meta-reopen-whatsapp-142603730.html); [Entrepreneur](https://www.entrepreneur.com/business-news/ftc-sues-click-profit-alleges-passive-income-amazon-ai-scam/488697)
+8. **La captación en frío que enseñan los cursos de "agencia de IA" choca con la ley española.** Evidencia: el artículo 21 de la LSSI prohíbe el correo comercial no solicitado, también entre empresas, con multas de hasta 30.000 € (leves) y 150.000 € (graves); las llamadas comerciales exigen consentimiento previo, las automáticas siempre, y los contratos cerrados sin él son nulos; desde el 17 de octubre de 2026 rige además el prefijo 400. Nivel: prensa para las llamadas; blogs de proveedores, que discrepan entre sí, para el email. — (resumen de búsqueda) [Euronews](https://es.euronews.com/2026/10/16/adios-spam-telefonico-las-llamadas-comerciales-tendran-que-identificarse-con-prefijo-400); [elDiario.es](https://www.eldiario.es/economia/medida-antispam-arranca-sabado-llamadas-comerciales-empezar-prefijo-400_1_13587279.html); [En Busca del Fuego](https://enbuscadelfuego.com/cold-email-legal-espana/)
+9. **Montar un chatbot o un bot de voz para un cliente trae obligaciones de transparencia y de protección de datos.** Evidencia: el artículo 50 del Reglamento europeo de IA se aplica desde el 2 de agosto de 2026 y no fue aplazado (el marcado de sistemas anteriores tiene de plazo hasta el 2 de diciembre de 2026); el proyecto de ley español prevé multas de hasta 500.000 € para infracciones leves y de hasta 35 millones para las más graves; tratar datos de los clientes de un cliente exige un contrato de encargado (artículo 28 del RGPD). Nivel: prensa jurídica; la ley española seguía en tramitación en julio de 2026. — (resumen de búsqueda) [Praxikon](https://www.praxikon.com/en/posts/article-50-transparency-deadline-2-august-2026); [Ecosistema Startup](https://ecosistemastartup.com/ley-ia-espana-2026-multas-de-35me-y-etiquetado-obligatorio/); [Legiscope](https://www.legiscope.com/blog/modelo-contrato-encargado-tratamiento.html)
+10. **Lo que es fácil de hacer con IA se abarata deprisa.** Evidencia: en Upwork la prima por trabajar con IA bajó del 44% (2024) al 34% (2026) y en IA generativa los contratos subieron un 90% mientras los ingresos por contrato bajaron un 13%; xAI y Scale AI prescindieron de unos 500 anotadores generalistas cada una; Gartner prevé que se cancele más del 40% de los proyectos de agentes antes de que acabe 2027. Nivel: datos de plataforma, prensa y analista vía blogs. — (resumen de búsqueda) [Upwork Research Institute](https://www.upwork.com/research/research-future-workforce-index-2026); [BRI Index](https://bestreviewinsight.com/insights/ai-freelance-jobs-upwork-2026); [AI Training Jobs: rastreador legal](https://aitraining.jobs/research/ai-training-work-legal-tracker); [Enterprise DNA](https://enterprisedna.co/resources/news/gartner-hype-cycle-agentic-ai-2026-enterprise-readiness/)
+
+**Advertencias que no pude sustentar.** No incluyo advertencias sobre derechos de autor de lo generado con IA, uso de la imagen o la voz de personas, seguros ni gurús españoles concretos porque las búsquedas no llegaron a ejecutarse. Son riesgos plausibles (ver las pistas sin verificar de las preguntas 2 y 4), pero sin evidencia de esta sesión.
+
+## 8. Fichas de las alternativas de bajo riesgo
+
+Los veredictos posibles son "funciona ya", "puede funcionar" y "saturado / en declive". Los importes en euros convertidos desde dólares usan 1 USD ≈ 0,85–0,90 € (supuesto mío). Los techos mensuales suponen 43–65 horas al mes (10–15 a la semana) con trabajo disponible todas las semanas, algo que ninguna plataforma garantiza. Todas las cifras son resúmenes de búsqueda; las fuentes están en la pregunta 5.
+
+| Alternativa | Veredicto |
+|---|---|
+| TELUS Digital (AI Community) | funciona ya |
+| Mindrift | puede funcionar |
+| Outlier (Scale AI) | saturado / en declive para generalistas |
+| DataAnnotation | puede funcionar, con el acceso desde España sin confirmar |
+| Prolific | puede funcionar, como calderilla |
+| Appen, OneForma y similares | saturado / en declive (provisional, sin evidencia de esta sesión) |
+| Freelance en Malt | puede funcionar |
+| Freelance en Upwork | puede funcionar |
+| Fiverr | saturado / en declive (provisional, sin evidencia de esta sesión) |
+| Empleo con habilidades de IA | funciona ya |
+| Talleres y formación de IA para empresas | puede funcionar |
+
+### Ficha 1. TELUS Digital, AI Community (evaluación de IA en español de España)
+
+- **Qué paga:** 18 € por hora en la oferta de evaluador de calidad para español de España; unos 9 € por hora estimados en la de analista de datos online, que paga por tarea; 5–25 $ por hora (unos 4–22 €) en una comunidad multilingüe de música y audio. Techo teórico: 390–1.170 € brutos al mes.
+- **Cómo se accede desde España:** hay ofertas específicas para España en el portal de empleo de TELUS Digital y en su AI Community. La relación es un contrato de servicios como profesional independiente y hay que superar exámenes de cualificación que no se pagan.
+- **Horas:** una de las ofertas pide 5–20 horas semanales; se paga por tarea completada y no hay horas garantizadas.
+- **Fiabilidad:** baja según las reseñas: 1,2 sobre 5 en Trustpilot con 305 reseñas, con quejas de exámenes largos sin pagar, falta de trabajo tras aprobarlos e impagos alegados. Las reseñas son anecdóticas y se autoseleccionan.
+- **Veredicto: funciona ya.** Es la única opción con ofertas en euros para España localizadas en esta sesión. Sirve como ingreso complementario e irregular; la oferta de 9 € por hora queda por debajo del salario mínimo por hora una vez descontada la cuota de autónomos.
+- **Fuentes:** (resumen de búsqueda) [TELUS Digital, oferta](https://jobs.telusdigital.com/jobs/17987355-quality-assurance-rater-spanish-spain); [TELUS AI Community 128595](https://www.telusinternational.ai/cmp/public/jobs/available/128595); [TELUS AI Community 129508](https://www.telusinternational.ai/cmp/public/jobs/available/129508); [Origin Data Partners](https://origindatapartners.com/guides/is-telus-digital-legit)
+
+### Ficha 2. Mindrift (incluye las tareas que antes estaban en Toloka)
+
+- **Qué paga:** 22–32 $ por hora (unos 19–29 €) en un puesto de tutor multilingüe en español; un blog sitúa a España en un tramo de hasta 31 $ (unos 26–28 €). Bandas generales: 15–30 $ (13–27 €) en nivel inicial y 60–100 $ o más (51–90 €) para expertos de dominio; los proyectos abiertos a todos suelen pagar menos de 20 $ (menos de 17–18 €). Techo teórico en el puesto de tutor: unos 820–1.890 € brutos al mes.
+- **Cómo se accede desde España:** solicitud por proyecto en su web, con prueba de admisión. Se paga por tarea aprobada, los días 5 y 20; las tareas rechazadas o caducadas no se pagan.
+- **Horas:** Mindrift estima 10–20 horas semanales en fases activas, sin garantía; muchas personas esperan semanas a recibir tareas.
+- **Fiabilidad:** media. Trustpilot: 3,5 sobre 5 con 1.172 reseñas (Toloka, 2,3 con 211). El problema documentado es la irregularidad del trabajo, no el impago de tareas aceptadas. Las tarifas proceden de blogs de afiliación que no coinciden entre sí.
+- **Veredicto: puede funcionar.** Encaja con 10–15 horas semanales cuando hay proyecto, pero el tramo accesible sin especialidad es el peor pagado.
+- **Fuentes:** (resumen de búsqueda) [StackPick](https://trystackpick.com/ai-training-jobs/mindrift-review/); [Skillora](https://skillora.ai/blog/mindrift-review); [Origin Data Partners](https://origindatapartners.com/guides/is-mindrift-legit); [AI Training Jobs](https://aitraining.jobs/platforms/mindrift)
+
+### Ficha 3. Outlier (Scale AI)
+
+- **Qué paga:** sin tarifa confirmada para España. Referencias: hasta 15 $ por hora (unos 13 €) para generalistas en inglés, 7,50 $ (unos 6,5 €) en algunos roles de idioma, 8 $ (unos 7 €) para evaluador de español de México y hasta 50 $ (unos 43–45 €) para expertos en matemáticas.
+- **Cómo se accede desde España:** registro y evaluaciones no pagadas; las tarifas se fijan por proyecto. La disponibilidad para residentes en España no se confirmó.
+- **Horas:** sin garantía; las colas pueden vaciarse durante semanas.
+- **Fiabilidad:** baja. Demandas por clasificación como autónomos e impagos (Scale AI las niega y pide arbitraje); corte con unos 500 contratistas en julio de 2025; quejas de recortes de tarifa y de menos trabajo; los baneos de cuentas eran el tema principal de su foro en junio de 2026.
+- **Veredicto: saturado / en declive** para perfiles generalistas y de idioma.
+- **Fuentes:** (resumen de búsqueda) [HowToAI](https://howtoai.com/is-outlier-ai-legit/); [AI Training Jobs: rastreador legal](https://aitraining.jobs/research/ai-training-work-legal-tracker); [AOL / Business Insider](https://www.aol.com/articles/pay-cuts-poaching-pivoting-inside-091101909.html)
+
+### Ficha 4. DataAnnotation
+
+- **Qué paga:** banda anunciada de 25–40 $ por hora (unos 21–36 €) para especialistas en idiomas, entre ellos el español, en septiembre de 2026. Es un precio de anuncio.
+- **Cómo se accede desde España:** sin confirmar. Dos reseñas dicen que solo admite seis países anglosajones, otra no encontró esa restricción en la web y otra habla de 46 países. Hay que comprobarlo en la página de solicitud.
+- **Horas:** sin datos.
+- **Fiabilidad:** sin datos sólidos en esta sesión.
+- **Veredicto: puede funcionar**, solo si admite solicitudes desde España.
+- **Fuentes:** (resumen de búsqueda) [Second Talent](https://www.secondtalent.com/resources/data-annotation-costs-by-country-comparing-global-rates/); [Parai Labs](https://parailabs.com/reviews/dataannotation-tech); [Remowork](https://remowork.life/companies/dataannotationtech)
+
+### Ficha 5. Prolific (estudios de investigación y tareas de evaluación)
+
+- **Qué paga:** mínimo de 6 £ u 8 $ por hora (unos 7 €) y recomendado de 9 £ o 12 $ (unos 10–11 €), calculado sobre el tiempo mediano real.
+- **Cómo se accede desde España:** lista de espera; una reseña atribuye a Prolific que solo el 13% recibe invitación y que el 55% de los invitados supera la incorporación. La disponibilidad para residentes en España no se confirmó.
+- **Horas:** dependen de los estudios que haya; no hay dato de ingresos mensuales típicos.
+- **Fiabilidad:** el suelo de pago está publicado por la propia plataforma; el acceso es el cuello de botella.
+- **Veredicto: puede funcionar**, como calderilla y no como ingreso planificable.
+- **Fuentes:** (resumen de búsqueda) [Prolific, ayuda para investigadores](https://researcher-help.prolific.com/en/articles/445230-prolific-s-payment-model); [getAIwork](https://getaiwork.com/articles/prolific-review/)
+
+### Ficha 6. Appen, OneForma y plataformas similares
+
+- **Qué paga, acceso, horas y fiabilidad:** sin datos; no se llegaron a buscar.
+- **Veredicto provisional: saturado / en declive.** Se basa solo en una pista sin verificar (Appen perdió su principal contrato en 2024), no en evidencia de esta sesión.
+
+### Ficha 7. Freelance con IA en Malt (España)
+
+- **Qué paga:** 303 € al día de media para perfiles tecnológicos, desde unos 177 € con menos de dos años de experiencia; 310 € al día para expertos en IA según el informe de 2025. Techo teórico si se llenaran todas las horas: unos 960–2.500 € al mes; para alguien sin historial es poco realista.
+- **Cómo se accede desde España:** perfil en malt.es facturando como autónomo. La comisión de Malt no se verificó.
+- **Horas:** el 37% de los proyectos de IA dura más de un mes y la media es de seis meses, un formato que encaja mal con 10–15 horas semanales.
+- **Fiabilidad:** las tarifas son datos de la propia plataforma y corresponden a perfiles técnicos; el titular de +220% de demanda es de una nota de prensa de Malt.
+- **Veredicto: puede funcionar**, para quien ya tiene un oficio facturable y le añade IA.
+- **Fuentes:** (resumen de búsqueda) [Malt: barómetro tech](https://www.malt.es/t/barometro-tarifas/tech); [Periódico del Talento](https://periodicodeltalento.com/la-demanda-de-talento-freelance-en-ia-se-dispara-un-220-en-espana-con-solo-un-40-de-la-oferta-disponible-para-cubrirla/)
+
+### Ficha 8. Freelance con IA en Upwork
+
+- **Qué paga:** no se recuperó ninguna tarifa por hora en euros. Datos relativos: prima del 34% por hora por trabajar con IA (44% en 2024); +45% de ingresos en trabajo complejo con IA; −13% de ingresos por contrato en IA generativa.
+- **Cómo se accede desde España:** perfil y envío de propuestas; las comisiones no se verificaron.
+- **Horas:** flexibles; hay que contar el tiempo no pagado de buscar y proponer.
+- **Fiabilidad:** la demanda de habilidades de IA crece (+109%; vídeo con IA +329%, integración +178%, anotación +154%, chatbots +71%), pero el gasto total de los clientes en la plataforma cayó alrededor de un 10% interanual en el tercer trimestre de 2026. Son datos de la propia plataforma.
+- **Veredicto: puede funcionar**, con competencia global y precios a la baja en lo genérico.
+- **Fuentes:** (resumen de búsqueda) [Upwork Research Institute](https://www.upwork.com/research/research-future-workforce-index-2026); [SelfEmployed](https://www.selfemployed.com/news/ai-freelance-skills-demand-2026/); [BRI Index](https://bestreviewinsight.com/insights/ai-freelance-jobs-upwork-2026)
+
+### Ficha 9. Fiverr
+
+- **Qué paga, acceso, horas y fiabilidad:** sin datos; la búsqueda no devolvió nada sobre Fiverr.
+- **Veredicto provisional: saturado / en declive.** Se basa solo en una pista sin verificar (recortes de plantilla y pérdida de compradores activos), no en evidencia de esta sesión.
+
+### Ficha 10. Empleo por cuenta ajena con habilidades de IA
+
+- **Qué paga:** no hay cifra en euros. PwC mide una prima salarial media del 62% en las ofertas que piden habilidades de IA frente a ofertas comparables del mismo sector (57% un año antes); para España solo consta que la prima es mayor en los sectores más expuestos.
+- **Cómo se accede desde España:** aplicando IA en el puesto actual o buscando ofertas que la pidan. No requiere alta de autónomo ni inversión.
+- **Horas:** las del empleo; la formación corre por cuenta propia.
+- **Fiabilidad:** es el dato mejor documentado de la lista, pero mide ofertas de empleo, muchas de perfil técnico, y PwC vende consultoría de IA. No garantiza una subida a quien añade IA a su currículum.
+- **Veredicto: funciona ya**, como tendencia del mercado laboral; no es un negocio.
+- **Fuentes:** (resumen de búsqueda) [PwC: informe completo (PDF)](https://www.pwc.com/gx/en/issues/artificial-intelligence/job-barometer/2026/2026-global-ai-jobs-barometer-full-report.pdf); [PwC: análisis de España (PDF)](https://www.pwc.com/gx/en/issues/artificial-intelligence/job-barometer/aijb-2026-spain.pdf)
+
+### Ficha 11. Talleres y formación de IA para empresas
+
+- **Qué paga:** precios de catálogo de proveedores: 890 € por un taller online en directo para un equipo; desde unos 3.500 € por un taller de un día; desde unos 5.000 € la formación a medida; 5.900 € por 12 horas para 10 personas en un proveedor grande. La bonificación de FUNDAE tiene un techo de 13 € por hora y participante en presencial de nivel superior (9 € en básico y 7,5 € en teleformación) y suele cubrir el 10–20% de la factura.
+- **Cómo se accede desde España:** venta directa a empresas o como formador subcontratado por un proveedor. No se encontró una tarifa por hora de formador.
+- **Horas:** un taller de 4–12 horas más su preparación y la venta; es compatible con 10–15 horas semanales.
+- **Fiabilidad:** los precios los publican los propios proveedores y no hay datos de cuántos talleres vende alguien que empieza.
+- **Veredicto: puede funcionar.** Es lo que más paga por hora de todo lo analizado, pero depende de tener credibilidad y de conseguir el primer cliente.
+- **Fuentes:** (resumen de búsqueda) [Upliora: precios](https://www.upliora.es/blog/formacion-ia-in-company-espana-precios-que-preguntar-2026); [Intelixia](https://intelixialab.es/ayudas/); [Javadex](https://www.javadex.es/blog/formacion-ia-bonificada-fundae-cuanto-recuperas)
