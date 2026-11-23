@@ -219,7 +219,7 @@ Hay demanda de pago demostrada por precios publicados en casi todos los nichos p
 - [E] Señal de demanda no cubierta: el 61% de las asesorías cree que la mayoría de sus clientes autónomos no está preparada para Verifactu ni para la factura electrónica (noviembre de 2026) (resumen de búsqueda) — [Autónomos y Emprendedor, 19-nov-2026](https://autonomosyemprendedor.es/pymes/asesorias-creen-que-mayoria-autonomos-estan-listos-verifactu-ni-factura-electronica/20261119154043056962.html)
 - [P] Precios de programas de facturación compatibles (datos de octubre de 2026 en varias comparativas, sin IVA): rango general de 5 a 17 €/mes; Cuéntica desde 7,50 €/mes con facturas ilimitadas; Contasimple ~8,30 €/mes; Declarando "Verifactu Plus" desde 9,90 €/mes (solo autónomos); Holded 15 €/mes (plan Plus para autónomos); Quipu 17 €/mes; FTFactu (escritorio) 180 €/año o 500 € de licencia permanente, IVA incluido (resumen de búsqueda; varias comparativas son de los propios proveedores) — [Declarando](https://declarando.es/verifactu/mejores-programas-verifactu); [Quipu](https://getquipu.com/blog/mejores-programas-para-verifactu/); [FTFactu](https://ftfactu.com/mejor-software-verifactu); [Numera](https://numerafacturas.com/verifactu-software-comparativa/)
 - [P] Existe una aplicación gratuita de la AEAT, descrita como viable para autónomos con muy poco volumen de facturas (resumen de búsqueda) — [Celebrand](https://celebrand.es/blog/mejores-programas-verifactu-autonomos)
-- [P] Plugins y módulos Verifactu para tiendas online (licencias anuales, pequeños proveedores): VeriVenta (Softnet; PrestaShop y WooCommerce) 199 €/año de lista o 19,90 €/mes + IVA sin permanencia, con oferta de 178,80 € + IVA el primer año hasta el 31-dic-2026; WP Verifactu (WooCommerce) 115,20 €/año con IVA por 250 facturas/año y 144 €/año por 1.000; FactuPress 82,80 €/año (hasta 240 facturas) y 118,80 €/año (hasta 600), sin IVA; módulo PrestaShop de un desarrollador freelance (David Escudero) 79 €/año para autónomos y 145 €/año para empresas, sin IVA; TiendaFactu, plugin base gratuito y envío a la AEAT desde 14,99 €/mes (resumen de búsqueda) — [Softnet](https://softnet.es/en/verifactu/); [WP Verifactu](https://wpverifactu.com/); [FactuPress](https://factupress.es/plugins/verifactu-para-woocommerce/); [David Escudero](https://davidescudero.com/servicios/verifactu-prestashop/); [Gappsy (reseña de TiendaFactu)](https://www.gappsy.com/tools/tiendafactu/)
+- [P] Plugins y módulos Verifactu para tiendas online (licencias anuales, pequeños proveedores): VeriVenta (Softnet; PrestaShop y WooCommerce) 199 €/año de lista o 19,90 €/mes + IVA sin permanencia, con oferta de 178,80 € + IVA el primer año hasta el 31-dic-2026; WP Verifactu (WooCommerce) 115,20 €/año con IVA por 250 facturas/año y 144 €/año por 1.000; FactuPress 82,80 €/año (hasta 240 facturas) y 118,80 €/año (hasta 600), sin IVA; módulo PrestaShop vendido desde una web personal (davidescudero.com; parece un profesional independiente, no verificado) 79 €/año para autónomos y 145 €/año para empresas, sin IVA; TiendaFactu, plugin base gratuito y envío a la AEAT desde 14,99 €/mes (resumen de búsqueda) — [Softnet](https://softnet.es/en/verifactu/); [WP Verifactu](https://wpverifactu.com/); [FactuPress](https://factupress.es/plugins/verifactu-para-woocommerce/); [David Escudero](https://davidescudero.com/servicios/verifactu-prestashop/); [Gappsy (reseña de TiendaFactu)](https://www.gappsy.com/tools/tiendafactu/)
 
 #### Oposiciones (tests y preparación con IA)
 - [A] Tamaño del colectivo: un artículo de El Español (10-ago-2025) estima ~2,4 millones de personas preparando una oposición cada año citando "diferentes estudios" sin identificarlos; un blog de preparación da ~550.000 opositores presentados y ~15 por plaza, con cifras internas inconsistentes. No hay cifra oficial consolidada (resumen de búsqueda) — [El Español](https://www.elespanol.com/invertia/disruptores/ecosistema-startup/startups/20250810/unico-examen-funcionario-miles-modos-prepararlo-entrena-ia-mente-opositores/1003743875081_0.html); [preparatuexamen.com](https://preparatuexamen.com/estadisticas-oposiciones-2026-datos-oficiales)
@@ -257,13 +257,13 @@ Hay demanda de pago demostrada por precios publicados en casi todos los nichos p
 
 #### Fundadores en España con ingresos verificados (cualquier categoría)
 - [V] La página de España de TrustMRR lista 229 startups con ingresos verificados por Stripe (178 en una página de clasificación de hace ~11 meses) (resumen de búsqueda) — [TrustMRR España](https://trustmrr.com/country/es); [TrustMRR championship](https://trustmrr.com/championship)
-- [V] Extremos del listado español: una startup anónima de vídeo con IA fundada en 2026 muestra 85.257 USD de ingresos en 30 días (69.055 USD de MRR, +78% intermensual; ficha de 31-oct-2026), mientras otras fichas españolas muestran 0 USD (app móvil de analítica, verificada por RevenueCat) u 852 USD de ingresos acumulados (plataforma de reseñas). Ninguna es una herramienta vertical para profesionales españoles (resumen de búsqueda) — [TrustMRR: Confidential Startup](https://trustmrr.com/startup/iker); [TrustMRR: Axiom](https://trustmrr.com/startup/axiom); [TrustMRR: top10](https://trustmrr.com/startup/top10)
+- [V] Extremos del listado español: una startup anónima de vídeo con IA fundada en 2026 muestra 85.257 USD de ingresos en 30 días (69.055 USD de MRR, +78% intermensual; ficha de 31-oct-2026), mientras otras fichas españolas muestran 0 USD (app móvil de analítica, verificada por RevenueCat) u 852 USD de ingresos acumulados (plataforma de reseñas). Ninguna de las tres es una herramienta vertical para profesionales españoles (resumen de búsqueda) — [TrustMRR: Confidential Startup](https://trustmrr.com/startup/iker); [TrustMRR: Axiom](https://trustmrr.com/startup/axiom); [TrustMRR: top10](https://trustmrr.com/startup/top10)
 
 ### Inferences
 - **Escalera de precios y clientes necesarios (cálculo propio).** Para 500–1.000 €/mes hacen falta: 63–125 suscriptores a 7,99 €/mes (oposiciones, precio del incumbente en plan anual); 51–101 a 9,90 €/mes (facturación Verifactu); 76–152 licencias activas a 79 €/año o 30–60 a 199 €/año (plugins Verifactu); 17–35 clientes a 29 €/mes; 6–11 a 89–99 €/mes (recepción por voz, IA jurídica de gama baja); 4–7 a 141 €/mes (licitaciones tipo Tendios). Los nichos B2B de tique medio son los únicos donde el número de clientes es alcanzable con venta manual a 10–15 h/semana.
 - **Huecos que se desprenden de lo anterior (hipótesis, no demanda verificada):** (i) acompañamiento a autónomos y microempresas no preparados para Verifactu —el hueco es de adopción y soporte más que de software, que ya cuesta 5–17 €/mes o es gratis—; (ii) tramo intermedio en licitaciones entre las alertas de 20–37 €/mes y las plataformas de 141–290 €/mes, o alertas especializadas por sector o territorio; (iii) complementos para administradores de fincas (documental, firma, comunicación con vecinos) sobre un software base que cobra extras aparte; (iv) en gestorías, la diferencia entre un SaaS de 30–80 €/mes y un proyecto a medida de 2.000–20.000 € más 150–600 €/mes sugiere que "herramienta + servicio" se vende a un tique muy superior al del SaaS puro; (v) en oposiciones, el sustituto real es ChatGPT gratis y el diferencial que venden los entrantes es contenido verificado contra el BOE.
 - **Señal de saturación:** en licitaciones, oposiciones, fincas, voz e IA jurídica, buena parte de los resultados de búsqueda son comparativas escritas por los propios entrantes. Indica muchos competidores pequeños y una guerra de SEO ya en marcha; no puedo afirmar que estén hechos con vibe coding ni cuántos tienen clientes.
-- **Riesgo de calendario:** quien construya algo ligado a Verifactu trabaja contra una fecha que se ha movido y puede volver a moverse (sociedades: 1-ene-2027, a cinco semanas de hoy, salvo que el aplazamiento anunciado se publique; autónomos: 1-jul-2027 u octubre de 2028). El pico de demanda puede retrasarse dos años, y el software de facturación en sí está servido por incumbentes baratos.
+- **Riesgo de calendario:** quien construya algo ligado a Verifactu trabaja contra una fecha que se ha movido y puede volver a moverse (sociedades: 1-ene-2027, a menos de seis semanas de hoy, salvo que el aplazamiento anunciado se publique; autónomos: 1-jul-2027 u octubre de 2028). El pico de demanda puede retrasarse dos años, y el software de facturación en sí está servido por incumbentes baratos.
 - **Lo que no aparece:** ningún caso de persona sola, no programadora, con ingresos verificados en estos verticales. La evidencia es de mercado (hay quien paga y a qué precio), no de que el perfil pueda capturarlo.
 
 ### Gaps
@@ -286,7 +286,7 @@ El resultado más probable a los 12 meses es entre cero y unas decenas o pocos c
 - [V; antiguo, 2022] 54% de 937 productos verificados por Stripe sin ingresos (resumen de búsqueda) — [Scraping Fish](https://scrapingfish.com/blog/indie-hackers-revenue)
 - [A] Plazos: ~3 meses hasta el primer cliente de pago (típico); mediana de 8 meses hasta 1.000 USD de MRR entre 28 productos que llegaron (resumen de búsqueda) — [SaaSRanger](https://saasranger.com/blog/micro-saas-revenue-reality-what-1000-founders-actually-earn/); [en.social](https://en.social/why-indie-products-earn-zero)
 - [A, autodeclarado] Incluso un caso de éxito citado como referencia (la app HabitKit, de un desarrollador en solitario) tardó 2,5 años en llegar a 10.000 USD de MRR (resumen de búsqueda) — [buildmvpfast.com](https://www.buildmvpfast.com/blog/602k-revenue-solo-indie-hacker-app-portfolio-breakdown-2026)
-- [A] Otros formatos: extensión de Chrome, mediana del primer año de 300–800 USD/mes según una guía (sin verificar, y con una mediana de usuarios de 13–18 que la contradice para el caso típico); directorio de nicho, "unos cientos de euros al mes en un año" como objetivo realista según un vendedor de plantillas de directorios; plantillas de n8n, un creador declara 3.688 USD en seis meses (resumen de búsqueda) — [jakeinsight.com](https://jakeinsight.com/side-income/2026-03-03-build-and-sell-a-chrome-extension-as-a-developer/); [DirectoryFast](https://directoryfa.st/blog/are-directories-still-profitable-2026); [opsily.com](https://opsily.com/blog/how-to-make-money-with-n8n)
+- [A] Otros formatos: extensión de Chrome, mediana del primer año de 300–800 USD/mes según una guía (sin verificar, y con una mediana de usuarios de 13–18 que la contradice para el caso típico); directorio de nicho, "unos cientos de euros al mes en un año" como objetivo realista según un vendedor de plantillas de directorios; plantillas de n8n, un creador declara 3.688 USD en seis meses (resumen de búsqueda; atribución de URL incierta entre guías de monetización de n8n) — [jakeinsight.com](https://jakeinsight.com/side-income/2026-03-03-build-and-sell-a-chrome-extension-as-a-developer/); [DirectoryFast](https://directoryfa.st/blog/are-directories-still-profitable-2026); [opsily.com](https://opsily.com/blog/how-to-make-money-with-n8n)
 - [A] Retención: 6–12% de churn mensual en productos baratos (resumen de búsqueda) — [ChurnTools](https://churntools.com/churn-rate-benchmarks)
 
 ### Inferences
@@ -307,4 +307,155 @@ El resultado más probable a los 12 meses es entre cero y unas decenas o pocos c
 - No existe (o no encontré) ningún estudio de cohortes sobre primerizos en solitario a 12 meses, y menos aún sobre no programadores que usan IA; todo lo anterior se infiere de distribuciones generales con sesgo de supervivencia y de autoselección.
 - No pude cuantificar cuántos abandonan antes de lanzar.
 - La comparación coste-ingreso depende de costes fijos españoles no verificados en esta sesión (cuota de autónomos, tasas de tiendas).
+
+## 7. Modelo (a): micro-SaaS para un nicho estrecho
+
+### Takeaway
+Es el modelo con más ingresos verificados publicados y, a la vez, con una mediana ínfima (~145 USD de MRR entre los que ingresan). Funciona para una minoría, sobre todo en B2B con precio de 29 €/mes o más y venta manual; a 5–10 €/mes, el churn y las comisiones lo hacen muy difícil para una persona sola.
+
+### Cited Findings
+- [V, vía terceros] Distribución entre 3.787 SaaS indie con ingresos (TrustMRR): mediana 145 USD de MRR, p75 894, p90 5.107, p95 13.205; 6,1% en ≥ 10.000 USD (resumen de búsqueda; atribución de URL incierta) — [StealWhatWorks](https://stealwhatworks.com/blogs/news/how-many-days-to-10k-mrr)
+- [V, vía prensa] 26,1% de los productos listados en Indie Hackers nunca ha ingresado nada; mediana de 169 USD en 30 días entre los que ingresan (resumen de búsqueda) — [TechStartups](https://techstartups.com/2026/09/28/what-percentage-of-indie-hacker-products-make-100k-in-arr/)
+- [A; CI] ~70% de los micro-SaaS por debajo de 1.000 USD de MRR y ~18% entre 1.000 y 5.000 USD (agregación secundaria de metodología no verificable) (resumen de búsqueda) — [shno.co](https://www.shno.co/marketing-statistics/micro-saas-launch-statistics); [Freemius](https://freemius.com/blog/state-of-micro-saas-2025/)
+- [A] Plazos: ~3 meses hasta el primer cliente de pago (4–6 semanas el 18% superior); mediana de 8 meses hasta 1.000 USD de MRR en 28 productos verificados que llegaron (resumen de búsqueda) — [SaaSRanger](https://saasranger.com/blog/micro-saas-revenue-reality-what-1000-founders-actually-earn/); [en.social](https://en.social/why-indie-products-earn-zero)
+- [V; CI] El crecimiento intermensual mediano de 991 startups verificadas fue del 1,6% y va a la baja desde marzo de 2026; solo 25 de 4.700+ llegan a 1 M USD de ARR (resumen de búsqueda) — [Marc Lou en X](https://x.com/marclou/status/2081666022223020540); [BigIdeasDB](https://bigideasdb.com/bootstrapped-saas-1m-arr)
+- [P] Costes: ~45 USD/mes de suelo al empezar a cobrar (Vercel Pro + Supabase Pro) o 0 USD mientras se construye; MoR a 5% + 0,50 USD por transacción (resumen de búsqueda) — [turbostarter.dev](https://www.turbostarter.dev/blog/supabase-vercel-pricing-real-costs); [tiun.io](https://tiun.io/blog/merchant-of-record-fees-2026)
+- [A; CI] Churn mensual del 6–12% en productos de menos de 500 USD al año; mediana B2B 3,9% y B2C 6,7% (resumen de búsqueda) — [ChurnTools](https://churntools.com/churn-rate-benchmarks)
+- [E] Riesgo técnico típico del formato (app con base de datos de clientes): 170 de 1.645 apps de Lovable con tablas legibles por cualquiera; 1.186 vulnerabilidades en 200 apps desplegadas auditadas (resumen de búsqueda) — [Wikipedia: Lovable](https://en.wikipedia.org/wiki/Lovable_(company)); [arXiv](https://arxiv.org/abs/2606.23130)
+- [V] España: 229 startups con ingresos verificados en TrustMRR, con casos de 0 USD y de 852 USD acumulados junto a un caso de 85.257 USD en 30 días (resumen de búsqueda) — [TrustMRR España](https://trustmrr.com/country/es); [TrustMRR: top10](https://trustmrr.com/startup/top10)
+- [P] Referencias de precio de SaaS pequeños españoles de gremio: NetFincas 24–36 €/mes; Plicando 31–37 €/mes; Vecindoc desde 49,99 €; Contabilify desde 79 €/mes (resumen de búsqueda) — [NetFincas](https://www.netfincas.com/precios-horizontal.html?v=20260630-2); [Plicando](https://plicando.com/guias/comparativa-alertas-licitaciones); [Vecindoc](https://vecindoc.es/administradores-de-fincas); [Contabilify](https://contabilify.com/precios)
+
+### Inferences
+- Con los percentiles citados, ~24% de los micro-SaaS que ingresan supera 1.000 USD de MRR y ~33% supera 500 USD; sobre el total de productos listados (incluidos los que no ingresan) son ~1 de cada 8–9 y ~1 de cada 6 (cálculo propio, ver §1).
+- A 29 €/mes bastan 17–35 clientes para 500–1.000 €/mes; a 9,90 €/mes hacen falta 51–101 y reponer 3–12 al mes por churn. El precio por cliente decide si el modelo es viable a 10–15 h/semana.
+
+#### Ficha compacta — modelo (a)
+| Campo | Dato |
+|---|---|
+| Qué se vende y a quién | Suscripción web que resuelve un problema estrecho de un gremio o rol (pymes, despachos, autónomos) o de prosumidores |
+| Precios típicos (€) | 5–17 €/mes para autónomos y consumo; 24–50 €/mes en herramientas de gremio (NetFincas, Plicando, Vecindoc); 79–290 €/mes en B2B de más valor (Contabilify, Tendios) |
+| Evidencia de ingresos reales | Verificada por Stripe pero muy concentrada: mediana 145 USD de MRR entre los que ingresan, p75 894, p90 5.107; 26% de lo listado nunca ingresa |
+| Señales de demanda | 229 startups españolas con ingresos verificados en TrustMRR; 20% de las startups de Stripe Atlas cobra en menos de 30 días; precios publicados de SaaS de gremio en España |
+| Señales de competencia / saturación | Crecimiento mediano del 1,6% mensual y a la baja; clones inmediatos; comparativas SEO de entrantes en cada nicho español |
+| Horas por semana una vez en marcha | 4–8 h (estimación propia, sin fuente): soporte, arreglos, pagos fallidos y reponer bajas |
+| Coste de arranque | ~20 USD/mes de Claude Pro + 0–45 USD/mes de infraestructura + dominio; 5% + 0,50 USD por venta con MoR |
+| Tiempo hasta el primer ingreso | ~3 meses típico (4–6 semanas el 18% superior); ~8 meses hasta 1.000 USD de MRR entre quienes llegan |
+| Riesgos principales | Distribución (el fallo dominante); churn del 6–12% a precios bajos; fuga de datos por configuración en código hecho con IA; soporte en solitario; dependencia de API de terceros |
+| Veredicto | **puede funcionar** — solo en B2B de nicho con precio ≥ 29 €/mes y venta manual; en consumo de bajo precio la evidencia apunta a resultado casi nulo |
+
+### Gaps
+- No hay datos de micro-SaaS creados por no programadores con IA separados del resto.
+- Sin datos verificados de SaaS de gremio españoles hechos por una sola persona.
+- Las horas semanales son estimación propia.
+
+## 8. Modelo (b): apps móviles con suscripción (incluidas las "AI wrapper")
+
+### Takeaway
+Es la categoría con mejores datos de plataforma y peor mediana: ~72 USD/mes al año de vida, con las apps lanzadas desde 2025 captando solo el 3% de los ingresos mientras los lanzamientos se multiplican por siete desde 2022. Las apps de IA cobran más por cliente pero lo pierden un 30% más rápido, y ChatGPT se lleva el 63% de los ingresos de la categoría.
+
+### Cited Findings
+- [V, vía terceros; CI: RevenueCat] Mediana ~72 USD/mes a los 12 meses; cuartil superior > 429 USD; decil superior > 2.574 USD; 4,6% llega a 10.000 USD de MRR en dos años (resumen de búsqueda) — [tasu.ai](https://tasu.ai/library/how-much-money-do-subscription-apps-make); [SaaStr](https://saastr.com/the-top-10-learnings-from-revenuecats-state-of-subscription-apps-how-115000-mobile-apps-deliver-16b-in-revenue-whats-working-whats-quietly-killing-growth)
+- [V, vía terceros] Apps anteriores a 2020: 69% de los ingresos; apps de 2025 en adelante: 3%. Cuartil superior +80% interanual, cuartil inferior −33% (resumen de búsqueda) — [DEV / axrisi](https://dev.to/axrisi/app-economy-2026-why-new-apps-get-3-of-subscription-revenue-3cj8); [ppc.land](https://ppc.land/the-app-middle-class-is-dying-and-revenuecats-data-shows-exactly-how-fast/)
+- [V, vía terceros] ~14.700 apps de suscripción nuevas al mes (enero de 2026) frente a 2.000 (enero de 2022) (resumen de búsqueda; atribución de URL incierta) — [SQ Magazine](https://sqmagazine.co.uk/revenuecat-statistics/)
+- [E] Lanzamientos totales en las tiendas: +60% interanual en el T1 de 2026 y +104% en abril (resumen de búsqueda) — [aidirectory.com](https://aidirectory.com/news/appfigures-data-new-app-launches-jumped-early-2026); [Startup Fortune](https://startupfortune.com/app-store-launches-are-up-104-year-on-year-as-ai-tools-ignite-a-mobile-software-boom/)
+- [V, vía terceros] Apps de IA: +41% de ingresos por cliente de pago, churn 30% más rápido, 59,8% en planes mensuales (resumen de búsqueda) — [RevenueCat](https://www.revenuecat.com/state-of-subscription-apps); [ARPU Brothers](https://arpubrothers.com/blog/revenuecat-subscription-app-report-2026/)
+- [E] ChatGPT concentra el 63% de los ingresos por compras de las apps de IA generativa; tres asistentes suman ~90% del tiempo de uso (resumen de búsqueda) — [BigGo Finance](https://finance.biggo.com/news/38262a84-7d68-49e3-99a4-d914598fb065); [Sensor Tower](https://sensortower.com/report/state-of-ai-2026)
+- [V, vía terceros] Muro de pago duro 11% de conversión frente a 2% en freemium; 84% de las cancelaciones de pruebas de 3 días ocurre entre el día 0 y el 1; valor de vida realizado mediano al año de 10,69 USD (precio bajo) a 62,19 USD (precio alto) por usuario (resumen de búsqueda) — [SaaStr](https://saastr.com/the-top-10-learnings-from-revenuecats-state-of-subscription-apps-how-115000-mobile-apps-deliver-16b-in-revenue-whats-working-whats-quietly-killing-growth); [ppc.land](https://ppc.land/the-app-middle-class-is-dying-and-revenuecats-data-shows-exactly-how-fast/)
+- [P] Referencia española de precio de app de estudio: OpositaTest 7,99–15,99 €/mes (resumen de búsqueda) — [OpositaTest](https://blog.opositatest.com/cuanto-cuesta-opositatest-precio-test-oposiciones/)
+- [V] Ejemplo español en TrustMRR: una app móvil de analítica verificada por RevenueCat muestra 0 USD de ingresos (resumen de búsqueda) — [TrustMRR: Axiom](https://trustmrr.com/startup/axiom)
+- [A, autodeclarado] Caso de éxito lento: HabitKit tardó 2,5 años en llegar a 10.000 USD de MRR (resumen de búsqueda) — [buildmvpfast.com](https://www.buildmvpfast.com/blog/602k-revenue-solo-indie-hacker-app-portfolio-breakdown-2026)
+
+### Inferences
+- Menos del 25% de las apps de suscripción llega a 500 USD/mes al año, y ~18% a 1.000 USD/mes (interpolación propia entre p75 y p90).
+- Un "wrapper" genérico compite contra el propio proveedor del modelo, que ya concentra ingresos y tiempo de uso; lo único defendible es contenido o flujo propio de un público estrecho (por ejemplo, tests verificados de una oposición concreta), donde en España ya hay incumbente y varios entrantes.
+
+#### Ficha compacta — modelo (b)
+| Campo | Dato |
+|---|---|
+| Qué se vende y a quién | App iOS/Android con suscripción semanal, mensual o anual para consumidores; "wrapper" = interfaz propia sobre la API de un modelo de IA |
+| Precios típicos (€) | 8–16 €/mes en España para apps de estudio (OpositaTest); a escala global, 10,69–62,19 USD de valor de vida por usuario de pago en el primer año |
+| Evidencia de ingresos reales | La mejor de todas (datos del SDK de RevenueCat) y la más dura: mediana 72 USD/mes al año; cuartil superior 429; decil superior 2.574 |
+| Señales de demanda | La categoría de IA generativa crece (+232% de ingresos en un año; más de 4.000 M USD en el S1 de 2026), pero lo capturan los grandes |
+| Señales de competencia / saturación | Lanzamientos +60% a +104% interanual; 14.700 apps de suscripción nuevas al mes; apps de 2025+ = 3% de ingresos; ChatGPT = 63% de los ingresos de IA |
+| Horas por semana una vez en marcha | 5–10 h (estimación propia, sin fuente): revisiones de tienda, actualizaciones de sistema, posicionamiento en tienda, reembolsos y soporte |
+| Coste de arranque | ~20 USD/mes de Claude Pro + API de LLM por uso + cuotas de tienda (no verificadas en esta sesión) |
+| Tiempo hasta el primer ingreso | Posible en semanas tras la aprobación si hay muro de pago e instalaciones; el problema es el volumen: 72 USD/mes de mediana al año |
+| Riesgos principales | Descubrimiento en tienda; churn acelerado en apps de IA; cancelaciones de prueba en el día 0–1; comisiones y rechazo en revisión (sin datos verificados); que el proveedor del modelo incorpore la función |
+| Veredicto | **saturado / en declive** para wrappers genéricos y apps de consumo sin canal propio; solo una app de público muy estrecho con canal propio entraría en "puede funcionar" |
+
+### Gaps
+- Comisiones y cuotas de Apple y Google, tiempos y tasas de rechazo de revisión: no verificados (búsqueda no ejecutada).
+- No encontré datos específicos de retención o ingresos de apps "wrapper" frente a otras apps de IA.
+- Sin datos de ingresos de apps españolas de oposiciones u otras verticales.
+
+## 9. Modelo (c): extensiones de navegador y plugins de Shopify/WordPress
+
+### Takeaway
+La extensión mediana tiene 13–18 usuarios y la tienda de Chrome ni siquiera cobra por el desarrollador, así que el caso típico ingresa cero. Los plugins con un motor externo de demanda son otra cosa: en España se venden plugins Verifactu para WooCommerce y PrestaShop a 79–199 €/año por parte de proveedores pequeños, aunque ya hay al menos cinco y la fecha obligatoria se mueve.
+
+### Cited Findings
+- [E] Chrome Web Store: mediana de 13 usuarios (muestra de 2.947, octubre de 2026) o de 14–18 (Exstats, T1–T2 de 2026); ~9% llega a 1.000 usuarios; 70,4% tiene ≤ 100; 221.717 extensiones publicadas (resumen de búsqueda) — [DEV / extensionbooster](https://dev.to/extensionbooster/chrome-extension-usage-statistics-the-median-is-13-users-2689); [Exstats](https://exstats.com/blog/state-of-browser-extensions-q2-2026)
+- [E] Sin pagos nativos desde 2020–2021: el cobro va por Stripe, Paddle o Lemon Squeezy, y los MoR se recomiendan porque gestionan el IVA (resumen de búsqueda) — [konabayev.com](https://konabayev.com/blog/extension-monetization-statistics-2026/); [manifestgo.app](https://manifestgo.app/blog/monetize-chrome-extension)
+- [A; CI: Fungies y ExtensionPay venden cobros para extensiones] Estimaciones sin verificar: extensiones freemium con 10.000+ usuarios activos ingresarían 2.000–10.000 USD/mes; una guía más conservadora sitúa lo realista en 200–4.000 USD/mes con mediana del primer año de 300–800 USD; otra da una media de ~295 USD/mes y un caso de ~4.300 USD de MRR sumando cuatro extensiones de pago; otra reconoce que la gran mayoría no gana nada (resumen de búsqueda) — [fungies.io](https://fungies.io/monetize-chrome-extension-2026/); [jakeinsight.com](https://jakeinsight.com/side-income/2026-03-03-build-and-sell-a-chrome-extension-as-a-developer/); [BigIdeasDB](https://bigideasdb.com/how-to-monetize-a-chrome-extension); [codetalenthub.io](https://www.codetalenthub.io/chrome-extensions-revenue-2026)
+- [E] Shopify App Store: ~17.891 apps de 11.352 partners (mayo de 2026); 0% de comisión sobre el primer millón de USD de ingresos del desarrollador y 15% después, más 2,9% de procesamiento (resumen de búsqueda; atribución de URL incierta entre rastreadores) — [uptek.com](https://uptek.com/shopify-statistics/app-store/); [termsandconditionstemplate.com](https://termsandconditionstemplate.com/shopify-app-store-2026)
+- [P] Plugins Verifactu en España (ver §5): VeriVenta 199 €/año o 19,90 €/mes; WP Verifactu 115,20–144 €/año; FactuPress 82,80–118,80 €/año; módulo PrestaShop desde una web personal 79–145 €/año; TiendaFactu desde 14,99 €/mes (resumen de búsqueda) — [Softnet](https://softnet.es/en/verifactu/); [WP Verifactu](https://wpverifactu.com/); [FactuPress](https://factupress.es/plugins/verifactu-para-woocommerce/); [David Escudero](https://davidescudero.com/servicios/verifactu-prestashop/); [Gappsy](https://www.gappsy.com/tools/tiendafactu/)
+- [E] La fecha que empuja esa demanda está en el aire: 2027 en la norma vigente, octubre de 2028 anunciado sin BOE (resumen de búsqueda) — [erpia.es](https://erpia.es/verifactu-aplazamiento)
+
+### Inferences
+- Para 500 USD/mes a 5 USD con conversión del 1–5% hacen falta 2.000–10.000 usuarios; solo ~9% de las extensiones pasa de 1.000. La extensión de consumo genérica es, en la práctica, una lotería de distribución.
+- Un plugin con motor regulatorio o de plataforma necesita muchos menos clientes (30–60 licencias a 199 €/año o 76–152 a 79 €/año para 500–1.000 €/mes), pero exige soporte a tiendas ajenas, seguir cada versión de la plataforma y responder de un requisito fiscal.
+
+#### Ficha compacta — modelo (c)
+| Campo | Dato |
+|---|---|
+| Qué se vende y a quién | Extensión de navegador de pago o freemium para usuarios y profesionales; plugin o app para comerciantes de Shopify, WooCommerce o PrestaShop |
+| Precios típicos (€) | Extensiones 5–15 USD/mes; plugins Verifactu 79–199 €/año o 15–20 €/mes |
+| Evidencia de ingresos reales | Ninguna verificada: solo medianas de usuarios (13–18) y estimaciones de blogs con interés comercial; en plugins españoles hay precios públicos pero no ingresos |
+| Señales de demanda | Shopify no cobra comisión hasta 1 M USD; obligación Verifactu para tiendas online; al menos cinco proveedores venden ya licencias |
+| Señales de competencia / saturación | 221.717 extensiones y 70% con ≤ 100 usuarios; ~17.900 apps en Shopify; cinco o más plugins Verifactu ya posicionados |
+| Horas por semana una vez en marcha | Extensión 2–5 h; plugin 4–8 h (estimación propia, sin fuente): soporte a tiendas, versiones de la plataforma, cambios normativos |
+| Coste de arranque | ~20 USD/mes de Claude Pro; cobro externo con MoR (5% + 0,50 USD); tasas de alta en tiendas no verificadas |
+| Tiempo hasta el primer ingreso | Meses en extensiones (primero hay que conseguir usuarios); semanas en un plugin regulatorio si se llega antes de la fecha (estimación propia) |
+| Riesgos principales | Revisión y cambios de política de las tiendas; roturas por versiones; demanda regulatoria de un solo golpe y con fecha móvil; responsabilidad sobre cumplimiento fiscal; soporte en solitario |
+| Veredicto | **puede funcionar** para plugins con motor regulatorio o de plataforma; extensiones de consumo genéricas: **saturado / en declive** |
+
+### Gaps
+- No encontré ingresos reales ni mediana de desarrolladores de Shopify ni de WordPress (búsqueda de WordPress no ejecutada).
+- Sin datos de plazos de revisión de la Chrome Web Store ni del impacto de Manifest V3.
+- No sé cuántas licencias venden los plugins Verifactu ni quién está detrás.
+
+## 10. Modelo (d): directorios de nicho y sitios de datos
+
+### Takeaway
+Es el formato más barato y menos expuesto técnicamente, pero depende de un canal en retroceso: donde Google responde con IA los clics caen entre un tercio y dos tercios, y hasta un vendedor de plantillas de directorios sitúa lo realista en "unos cientos de euros al mes en un año". Resisten mejor los modelos de datos con suscripción o de captación de contactos, que en España ya existen y están poblados (alertas de licitaciones a 20–37 €/mes).
+
+### Cited Findings
+- [E] AI Overviews: −61% de CTR orgánico en las consultas afectadas (Seer Interactive); −34% a −58% de clics al contenido mejor posicionado (Ahrefs); 8% de clics a enlaces externos con AI Overview frente a 15% sin él (Pew, julio de 2025) (resumen de búsqueda) — [xseek.io](https://www.xseek.io/blogs/articles/ai-traffic-decline-2026); [cintra.run](https://cintra.run/blog/organic-traffic-decline)
+- [A; CI: DirectoryFast vende plantillas para crear directorios] Los directorios que vivían de consultas informativas perdieron ese tráfico; el ingreso por impresiones es el más expuesto; objetivo realista para un directorio enfocado con prospección activa: unos cientos de euros al mes en un año, más en nichos de captación de contactos de alto valor (resumen de búsqueda) — [DirectoryFast](https://directoryfa.st/blog/are-directories-still-profitable-2026)
+- [A] Auditoría de 11 directorios con datos de Ahrefs (abril de 2026): la mayoría perdió tráfico; Yelp perdió ~9,6% de tráfico orgánico y aun así marcó récord de ingresos netos en 2025. Las páginas del propio sitio se contradicen sobre cuál era el único que crecía (resumen de búsqueda) — [DirectoryGems](https://www.directorygems.com/case-study/how-directory-sites-survive-ai-era)
+- [A] Contrapunto: las consultas comerciales de alta intención se mantienen o suben; los perdedores son sobre todo los contenidos informativos finos; los modelos de contactos o suscripción resisten mejor que los de anuncios (resumen de búsqueda) — [jobsafterai.com](https://www.jobsafterai.com/ai-niche-sites-what-the-income-data-actually-shows/); [DirectoryFast](https://directoryfa.st/blog/are-directories-still-profitable-2026)
+- [P] Ejemplo español de "datos con suscripción": alertas de licitaciones a 20 €/mes + IVA (Euroalert), 26 €/mes (Infoconcurso) y 31–37 €/mes (Plicando), en un mercado con 17 servicios comparados (resumen de búsqueda) — [Plicando](https://plicando.com/guias/comparativa-alertas-licitaciones); [Jorpex](https://jorpex.com/es/compare/alertas-licitaciones-comparativa/)
+
+### Inferences
+- Un directorio financiado con anuncios o afiliación necesita mucho tráfico orgánico informativo, que es justo el que se ha perdido; el dato de Yelp sugiere que lo que conserva valor es la intención comercial y la relación directa con quien paga (fichas destacadas, contactos), no las visitas.
+- La variante "sitio de datos con alertas de pago" es en realidad un micro-SaaS vertical (modelos a y g) y hereda su dificultad comercial; el directorio puro es la variante más cómoda y la peor pagada.
+
+#### Ficha compacta — modelo (d)
+| Campo | Dato |
+|---|---|
+| Qué se vende y a quién | Listado curado de proveedores, herramientas o recursos de un nicho (ingreso por anuncios, afiliación, fichas destacadas o contactos) o datos y alertas por suscripción |
+| Precios típicos (€) | Publicidad y afiliación variables (sin cifras fiables); alertas de datos 20–37 €/mes en España |
+| Evidencia de ingresos reales | Ninguna verificada; la estimación de un vendedor del sector es de unos cientos de euros al mes al cabo de un año |
+| Señales de demanda | Consultas comerciales de alta intención estables; modelos de contactos y suscripción más resistentes; Yelp con ingresos récord pese a perder tráfico |
+| Señales de competencia / saturación | −34% a −61% de clics con respuestas de IA; la mayoría de 11 directorios auditados pierde tráfico; 17 servicios de alertas de licitaciones |
+| Horas por semana una vez en marcha | 2–6 h (estimación propia, sin fuente): frescura de datos, enlaces y prospección |
+| Coste de arranque | El más bajo: ~20 USD/mes de Claude Pro + dominio + alojamiento estático casi gratuito |
+| Tiempo hasta el primer ingreso | 3–6 meses como mínimo si depende de SEO |
+| Riesgos principales | Dependencia de Google y de las respuestas de IA; datos que caducan; contenido replicable en horas por cualquiera; aspectos legales del uso de datos ajenos (no investigados) |
+| Veredicto | **saturado / en declive** para el directorio dependiente de SEO y anuncios; la variante de datos con suscripción se evalúa como (a)/(g) |
+
+### Gaps
+- No encontré ningún estudio independiente de ingresos de directorios en 2026; todo procede de blogs del sector, varios con interés comercial.
+- Sin ejemplos españoles de directorios con ingresos declarados.
+- No investigué los límites legales del scraping o la reutilización de datos públicos en España.
 
