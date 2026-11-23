@@ -2,7 +2,7 @@
 
 > **Aviso de método (leer antes de usar estas notas).** Fecha de trabajo: 23-11-2026.
 > 1. **Ninguna cifra pudo confirmarse en la página original.** `WebFetch` falló por política de red (error DNS) en todos los hosts probados: `www.boe.es`, `sede.agenciatributaria.gob.es`, `www.ecija.com`, `www.eleconomista.es`, `www.oie.es`, `www.muycanal.com`. Todo lo que sigue procede de resúmenes de `WebSearch` (33 búsquedas ejecutadas) y se marca **(resumen de búsqueda)**. Cuando el resumen no permitía saber cuál de las páginas devueltas contenía el dato, se enlazan una o dos páginas del conjunto y se añade **(atribución de conjunto)**.
-> 2. **El presupuesto de búsquedas de la sesión se agotó** (límite de 200 por turno, compartido entre agentes) antes de terminar. Quedaron **sin ninguna búsqueda ejecutada** los nichos (g) licitaciones, (h) subvenciones, (i) oposiciones y (j) automatización documental, y también: precios de accesibilidad y de control horario, programas de afiliados concretos, canal de denuncias, protección de datos e información de sostenibilidad. Para esos puntos **no hay hallazgos citables**. Lo que aparece como "pista no verificada" es conocimiento previo del modelo (corte de entrenamiento: junio de 2026), **no debe citarse como hecho** y solo sirve para orientar una segunda ronda. Al terminar se comprobó que las notas de otros investigadores de este mismo trabajo, en esta misma carpeta (`software_en_solitario.md`, `demanda_pymes_madrid.md`, `riesgos_legal_y_alternativas.md`, `servicios_ia_negocios_locales.md`), contienen datos con fuente sobre (g), (i) y (j): se han incorporado al apartado 3 y a las fichas marcados como **(nota hermana)**. Son también resúmenes de búsqueda y **no los he verificado yo**.
+> 2. **El presupuesto de búsquedas de la sesión se agotó** (límite de 200 por turno, compartido entre agentes) antes de terminar. Quedaron **sin ninguna búsqueda ejecutada** los nichos (g) licitaciones, (h) subvenciones, (i) oposiciones y (j) automatización documental, y también: precios de accesibilidad y de control horario, programas de afiliados concretos, canal de denuncias, protección de datos e información de sostenibilidad. Para esos puntos **no hay hallazgos propios**. Lo que aparece como "pista no verificada" es conocimiento previo del modelo (corte de entrenamiento: junio de 2026), **no debe citarse como hecho** y solo sirve para orientar una segunda ronda. Al terminar se comprobó que las notas de otros investigadores de este mismo trabajo, en esta misma carpeta (`software_en_solitario.md`, `demanda_pymes_madrid.md`, `riesgos_legal_y_alternativas.md`, `servicios_ia_negocios_locales.md`), contienen datos con fuente sobre (g), (i) y (j): se han incorporado al apartado 3 y a las fichas marcados como **(nota hermana)**. Son también resúmenes de búsqueda y **no los he verificado yo**.
 > 3. **Conflictos de interés.** Buena parte de las páginas recuperadas son blogs de proveedores de software de facturación y fichaje, asesorías, academias y agencias: les interesa exagerar urgencia y sanciones. Fuentes oficiales usadas (vía resumen): BOE, AEAT, INE, La Moncloa, CGPJ, Comunidad de Madrid. Despachos y firmas (interés comercial moderado, mayor fiabilidad técnica): KPMG, PwC, Cuatrecasas, ECIJA, Andersen, BDO, Iberley, Lefebvre. Autodeclaradas: ADAS (asociación de agentes digitalizadores que reclama pagos a Red.es), ATA (asociación de autónomos, vía *Autónomos y Emprendedor*), Colegio de Registradores (cobra los aranceles del registro de alquileres).
 
 ## 1. Para cada nicho: ¿quién debe cumplir, antes de cuándo y qué pasa si no cumple (multas)? Norma, fuente oficial y aplazamientos
@@ -68,7 +68,7 @@ A 23-11-2026 solo tienen fecha legal firme en el BOE la factura electrónica B2B
 - **Detalles no oficiales del Bono de IA (blogs de agencias):** pagos por hitos, formación de trabajadores, piloto en el primer semestre de 2027, y financiación de proyectos que transformen un proceso y no de suscripciones. Sin fecha de apertura ni importe por empresa. (resumen de búsqueda) — [WebConsulting](https://webconsulting.es/bono-inteligencia-artificial-pymes-kit-digital-ia/); [iCreativos](https://www.icreativos.com/blog/y-despu%C3%A9s-del-kit-digital/); [Merca2, 25-9-2026](https://www.merca2.es/2026/09/25/kit-digital-pymes-renuncias-sucesor-2461913/)
 
 #### (g) Licitaciones, (h) subvenciones, (i) oposiciones, (j) automatización documental
-*Sin hallazgos citables: no son nichos con plazo normativo y no se ejecutó ninguna búsqueda sobre ellos (presupuesto agotado). Véase "Gaps" de los apartados 1 y 3.*
+*Sin hallazgos propios: no son nichos con plazo normativo y no se ejecutó ninguna búsqueda sobre ellos (presupuesto agotado). Los datos de mercado disponibles proceden de notas hermanas y están en el apartado 3.*
 
 #### (k) Registro Único de Arrendamientos (alquiler turístico y de temporada)
 - **Régimen original:** el Real Decreto 1312/2024 creó el Registro Único de Arrendamientos y la Ventanilla Única Digital; el número de registro fue obligatorio para anunciarse en plataformas desde el 1-7-2025. (resumen de búsqueda) — [Infobae, 1-7-2025](https://www.infobae.com/espana/2025/07/01/solo-el-46-de-las-viviendas-turisticas-ha-solicitado-el-registro-obligatorio-que-entra-en-vigor-hoy-andalucia-lidera-la-lista-y-madrid-se-queda-atras/)
@@ -241,7 +241,7 @@ Todos los precios de servicio propio de este apartado son **estimaciones sin fue
 
 - **(a) Verifactu.** Producto: "puesta en marcha de la facturación" para autónomos y micropymes de barrio que aún facturan con Word o Excel: elegir programa (incluida la aplicación gratuita de la AEAT), darlo de alta, cargar clientes y productos, emitir la primera factura y enseñar al titular. Estimación: 80–250 € por cliente, pago único. Canal: asociaciones de comerciantes y gestorías que no quieren hacer el acompañamiento. Responsabilidad: limitarse a la configuración del programa y no opinar sobre fiscalidad; una mala configuración expone al cliente a la multa de 50.000 €.
 - **(b) Factura electrónica.** Mismo producto ampliado en 2027–2028: decidir entre solución pública gratuita y plataforma privada, y enseñar al administrativo a gestionar los estados de factura en 4 días. Estimación: 100–300 €. Hoy es prematuro para la pequeña empresa (obligada en octubre de 2028).
-- **(c) Formación en IA.** Producto principal: taller presencial de 4–6 horas para equipos de microempresas y despachos de Madrid, con un paquete de evidencias (política interna de uso de IA de dos páginas, hoja de firmas, prueba final y certificado de asistencia). Precio natural: 400–520 € por grupo de hasta 10 personas, porque coincide con el tope bonificable (10 × 4 h × 13 € = 520 €) y con el crédito mínimo de una microempresa (420 €). Producto secundario: sesión online abierta a 30–60 € por plaza, compitiendo con cursos de 30–37,50 €. Con Claude se preparan en poco tiempo ejemplos por sector y la política interna. Responsabilidad: no vender "certificados de cumplimiento del art. 4"; tras el ómnibus la obligación es de medios y lo honesto es un certificado de asistencia.
+- **(c) Formación en IA.** Producto principal: taller presencial de 4–6 horas para equipos de microempresas y despachos de Madrid, con un paquete de evidencias (política interna de uso de IA de dos páginas, hoja de firmas, prueba final y certificado de asistencia). Precio natural: 400–520 € por grupo de hasta 10 personas, porque coincide con el tope bonificable (10 × 4 h × 13 € = 520 €) y con el crédito mínimo de una microempresa (420 €). Fuera de ese encaje, la referencia de mercado para un taller de equipo ronda los 890 € (nota hermana). Producto secundario: sesión online abierta a 30–60 € por plaza, compitiendo con cursos de 30–37,50 €. Con Claude se preparan en poco tiempo ejemplos por sector y la política interna. Responsabilidad: no vender "certificados de cumplimiento del art. 4"; tras el ómnibus la obligación es de medios y lo honesto es un certificado de asistencia.
 - **(d) Accesibilidad.** Producto: revisión básica con informe priorizado (herramientas automáticas más comprobación manual), redacción de la declaración de accesibilidad y corrección de contenidos sin tocar código (textos alternativos, contraste, formularios). Estimación: 150–400 € por informe. Cliente realista: agencias web que subcontratan y pymes de más de 10 empleados. Límite: sin saber programar no se pueden corregir plantillas; no conviene "certificar" cumplimiento legal.
 - **(e) Registro horario.** Producto: elegir e instalar una aplicación de fichaje y redactar el protocolo interno. Estimación: 100–200 €. Poco valor añadido: las aplicaciones son de autoservicio y la norma nueva no existe.
 - **(f) Kit Digital y sucesores.** Ser agente digitalizador no es viable (programa cerrado, cobro diferido). Lo razonable es preparar para 2027 una oferta de formación e implantación de IA que pueda encajar como subcontrata de una empresa tecnológica adherida al Bono de IA.
@@ -263,7 +263,7 @@ Todos los precios de servicio propio de este apartado son **estimaciones sin fue
 ## 5. ¿Qué nichos tienen demanda clara, fechada y forzada con pocos proveedores pequeños, y cuáles están ya saturados?
 
 ### Takeaway
-Con la evidencia reunida, ningún nicho combina hoy fecha firme, obligación sobre pymes y pocos proveedores: los que tienen fecha en el BOE (factura electrónica, Verifactu) están copados por software barato y alternativas gratuitas, y el menos copado para una persona sola (formación práctica en IA para microempresas, pagada con crédito de formación) ya no descansa en una obligación dura. Verifactu, fichaje digital, Kit Digital, registro de alquiler turístico y atención a la clientela quedan como "saturado / en declive"; factura electrónica, formación en IA y accesibilidad como "puede funcionar"; licitaciones, subvenciones, oposiciones y automatización documental no pudieron evaluarse.
+Con la evidencia reunida, ningún nicho combina hoy fecha firme, obligación sobre pymes y pocos proveedores: los que tienen fecha en el BOE (factura electrónica, Verifactu) están copados por programas baratos y alternativas gratuitas, y el menos copado para una persona sola (formación práctica en IA para microempresas, pagada en parte con crédito de formación) ya no descansa en una obligación dura. Quedan como "puede funcionar" la formación en IA, el acompañamiento en facturación cuando la fecha sea firme (2027–2028), la accesibilidad como subcontrata y, con datos solo de notas hermanas, la automatización documental para despachos y la redacción de ofertas para licitaciones; como "saturado / en declive", el contenido y la afiliación de Verifactu, el fichaje digital, el Kit Digital, el registro de alquiler turístico, la atención a la clientela, las alertas de licitaciones y los test de oposiciones. Las subvenciones a éxito no pudieron evaluarse.
 
 ### Cited Findings
 
@@ -292,7 +292,8 @@ Con la evidencia reunida, ningún nicho combina hoy fecha firme, obligación sob
 - **Sin obligación nueva a día de hoy:** (e) registro horario digital; NIS2.
 - **Programa cerrado o trámite anulado:** (f) Kit Digital; (k) registro de alquiler turístico.
 - **Obligación que no recae en pymes:** (l) atención a la clientela.
-- **No evaluados:** (g), (h), (i), (j).
+- **Sin plazo normativo, valorados solo con datos de notas hermanas:** (g) licitaciones: alertas saturadas (17 servicios comparados, desde 20 €/mes), redacción de ofertas sin datos; (i) oposiciones: saturado (incumbente barato, al menos siete entrantes con IA y ChatGPT gratis); (j) automatización documental: mercado de pago acreditado y universo localizable en Madrid.
+- **No evaluado:** (h) subvenciones a éxito.
 
 #### Fichas compactas por nicho
 Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (todas, resumen de búsqueda). Las horas, el coste de arranque, el tiempo hasta el primer ingreso y los precios de servicio propio son **estimaciones sin fuente**.
@@ -301,11 +302,11 @@ Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (
 - Qué y a quién: puesta en marcha de un programa de facturación adaptado (alta, plantilla, carga de datos, primera factura, formación) para autónomos y micropymes locales; charlas a asociaciones de comerciantes; contenido comparativo.
 - Precios típicos: programas de 6,60 a 29 €/mes y aplicación gratuita de la AEAT ([OIE](https://www.oie.es/programas-verifactu)); servicio de implantación, estimación de 80–250 € por cliente.
 - Evidencia de ingresos o de proveedores de pago: decenas de programas de pago con precio público; ninguna evidencia de ingresos de implantadores individuales; sin programas de afiliados verificados.
-- Señales de demanda: 1-1-2027 (sociedades) y 1-7-2027 (resto), con aplazamiento a octubre de 2028 anunciado el 5-10-2026 ([elEconomista](https://www.eleconomista.es/economia/noticias/14018805/10/26/hacienda-vuelve-a-retrasar-la-entrada-en-vigor-de-verifactu-hasta-octubre-de-2028.html)); universo máximo de 3,31 millones de empresas y 3,50 millones de autónomos, con solapes y exclusiones; multa de 50.000 € por ejercicio.
+- Señales de demanda: 1-1-2027 (sociedades) y 1-7-2027 (resto), con aplazamiento a octubre de 2028 anunciado el 5-10-2026 ([elEconomista](https://www.eleconomista.es/economia/noticias/14018805/10/26/hacienda-vuelve-a-retrasar-la-entrada-en-vigor-de-verifactu-hasta-octubre-de-2028.html)); universo máximo de 3,31 millones de empresas y 3,50 millones de autónomos, con solapes y exclusiones; multa de 50.000 € por ejercicio; el 61 % de las asesorías cree que la mayoría de sus clientes autónomos no está preparada (nota hermana; [Autónomos y Emprendedor, 19-11-2026](https://autonomosyemprendedor.es/pymes/asesorias-creen-que-mayoria-autonomos-estan-listos-verifactu-ni-factura-electronica/20261119154043056962.html)).
 - Competencia: más de 30 webs comerciales en los resultados; las gestorías ya avisan a su cartera; alternativa pública gratuita.
 - Horas por semana en marcha: 5–10. Coste de arranque: menos de 100 €. Tiempo al primer ingreso: 2–6 semanas con red local; meses e incierto por contenido.
 - Riesgos: cuarto aplazamiento y pérdida de urgencia; gratuidad; responsabilidad por mala configuración; canal natural (gestorías) ocupado.
-- **Veredicto: saturado / en declive.**
+- **Veredicto: saturado / en declive** como contenido, comparativas o afiliación. El acompañamiento presencial a quien no está preparado **puede funcionar**, pero no antes de que la fecha sea firme (2027–2028) y es el mismo servicio que la ficha (b).
 
 **(b) Factura electrónica entre empresas**
 - Qué y a quién: diagnóstico y puesta en marcha (solución pública gratuita o plataforma privada) y formación del administrativo en estados de factura, para micropymes que facturan a otras empresas; se puede empaquetar con Verifactu.
@@ -319,12 +320,12 @@ Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (
 
 **(c) Formación en IA para pymes (art. 4 y crédito de formación)**
 - Qué y a quién: taller presencial de 4–6 horas con paquete de evidencias para microempresas y despachos de Madrid; sesión online abierta por plaza.
-- Precios típicos: 30–37,50 € por alumno (5 h online), 450 € por persona (60 h), desde 5.000 € por empresa ([Formadores IT](https://www.formadoresit.online/cursos/inteligencia-artificial/ia-machine-learning/curso-alfabetizacion-en-ia-para-empleados-online/); [Upliora](https://www.upliora.es/blog/quien-imparte-formacion-ia-in-company-espana-2026)); tope bonificable de 13 €/h presencial; propuesta estimada de 400–520 € por grupo.
+- Precios típicos: 30–37,50 € por alumno (5 h online), 450 € por persona (60 h), desde 5.000 € por empresa ([Formadores IT](https://www.formadoresit.online/cursos/inteligencia-artificial/ia-machine-learning/curso-alfabetizacion-en-ia-para-empleados-online/); [Upliora](https://www.upliora.es/blog/quien-imparte-formacion-ia-in-company-espana-2026)); tope bonificable de 13 €/h presencial; en la gama media, un taller online para todo el equipo a 890 € y, en la alta, 5.900 € por 12 horas para 10 personas (nota hermana; [Intelixia](https://intelixialab.es/ayudas/)); propuesta estimada de 400–520 € por grupo para microempresas, o hasta unos 890 € sin ceñirse al crédito.
 - Evidencia: numerosos proveedores de pago con precio público, incluidos profesionales con dominio propio; sin cifras de ingresos.
 - Señales de demanda: art. 4 aplicable a toda empresa que use IA desde el 2-2-2025, sin umbral de tamaño, aunque rebajado a "apoyar" desde el 27-7-2026 ([ECIJA](https://www.ecija.com/actualidad-insights/el-parlamento-europeo-y-el-consejo-aprueban-el-omnibus-digital-sobre-ia/)); 1,51 millones de empresas con asalariados y crédito mínimo de 420 € al año; Bono de IA de 600 M€ anunciado con formación incluida.
 - Competencia: más de 25 webs en los resultados; cursos de catálogo desde 30 € por alumno; menos competencia en presencial y por sector.
 - Horas por semana: 8–12. Coste de arranque: menos de 300 €. Tiempo al primer ingreso: 4–8 semanas.
-- Riesgos: gancho legal débil (sin sanción española tras decaer la ley); guerra de precios online; trámite de bonificación y requisitos de entidad formadora sin verificar; crédito anual pequeño.
+- Riesgos: gancho legal débil (sin sanción española tras decaer la ley); guerra de precios online; trámite de bonificación y requisitos de entidad formadora sin verificar; crédito anual pequeño (a precio de mercado la bonificación solo cubre el 10–20 % de la factura, según una nota hermana); hay que vender cada taller.
 - **Veredicto: puede funcionar** (el más cercano a "funciona ya" para este perfil).
 
 **(d) Accesibilidad web**
@@ -357,17 +358,41 @@ Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (
 - Riesgos: cobro diferido; requisitos de adhesión; cambio de Gobierno tras el 29-N.
 - **Veredicto: saturado / en declive** (Kit Digital); el Bono de IA es una opción a vigilar para 2027.
 
-**(g) Licitaciones: alertas y redacción de ofertas con IA**
-- Sin datos verificados en esta sesión (ninguna búsqueda ejecutada). **Veredicto: no evaluado.** Hipótesis de partida sin verificar: puede funcionar como servicio de redacción para pymes; las alertas compiten con la plataforma pública gratuita.
+**(g) Licitaciones: alertas y redacción de ofertas con IA** (datos de mercado de una nota hermana, no verificados por mí)
+- Qué y a quién: lectura de pliegos y borrador de memoria técnica con IA para pymes que licitan pocas veces; no revender alertas.
+- Precios típicos: alertas de 20–37 €/mes (Euroalert, Infoconcurso, Plicando) y plataformas con IA de 141–290 €/mes (Tendios) ([Plicando](https://plicando.com/guias/comparativa-alertas-licitaciones); [Comparasoft](https://comparasoft.es/software/tendios)); redacción como servicio sin precio verificado (estimación de 150–500 € por oferta).
+- Evidencia de ingresos o de proveedores de pago: muchos proveedores de pago con precio público; ninguna cifra de ingresos; nada sobre honorarios de redactores.
+- Señales de demanda: sin cifras de licitaciones ni de participación de pymes (no investigado); sin plazo normativo, demanda continua.
+- Competencia: 17 servicios de alertas en una sola comparativa y media docena más con comparativas propias.
+- Horas por semana: 5–10. Coste de arranque: menos de 100 €. Tiempo al primer ingreso: 1–3 meses.
+- Riesgos: un error formal excluye al cliente; ciclos largos y resultado incierto; clientes que licitan poco; herramientas con IA que absorben el trabajo.
+- **Veredicto: saturado / en declive** para las alertas; **puede funcionar** (sin verificar) para la redacción como servicio.
 
 **(h) Subvenciones: búsqueda y redacción a éxito**
-- Sin datos verificados en esta sesión. **Veredicto: no evaluado.** Hipótesis sin verificar: puede funcionar, con cobro tardío y dependencia de convocatorias; el Bono de IA y los remanentes del Kit Digital serían el caso de uso de 2027.
+- Sin datos verificados sobre honorarios, proveedores ni ingresos (ninguna búsqueda ejecutada; las notas hermanas tampoco los tienen).
+- Señales de demanda disponibles: dinero público y privado anunciado para IA y digitalización —Bono de IA de 600 M€ antes de fin de 2027, 200 M€ adicionales "ultimados" para Kit Digital y Kit Consulting, ayudas de la Cámara de España de hasta el 85 % y fondos de Sage de 3,5 M€ ([Capital](https://capital.es/empresas/sanchez-anuncia-un-bono-de-600-millones-para-que-pymes-y-autonomos-incorporen-la-ia/218982/); [MuyPymes](https://www.muypymes.com/2026/11/17/sage-fondos-transformacion-ia-millones-pymes))—, sin ventanilla estatal abierta hoy.
+- Riesgos conocidos: cobro tardío y dependiente de resoluciones; el Kit Digital dejó un 20 % de bonos caducados o renunciados y agentes con cobros retrasados.
+- **Veredicto: no evaluado.** Hipótesis sin verificar: puede funcionar en 2027 si se abren las convocatorias anunciadas.
 
-**(i) Oposiciones: generadores de test y tutores con IA**
-- Sin datos verificados en esta sesión. **Veredicto: no evaluado.** Hipótesis sin verificar: saturado en oposiciones masivas; posible hueco en convocatorias locales pequeñas.
+**(i) Oposiciones: generadores de test y tutores con IA** (datos de mercado de una nota hermana, no verificados por mí)
+- Qué y a quién: solo tendría sentido un banco de test comprobado para una oposición local concreta; no un generador genérico.
+- Precios típicos: OpositaTest 7,99–15,99 €/mes y cursos anuales de 295–945 € ([OpositaTest](https://blog.opositatest.com/cuanto-cuesta-opositatest-precio-test-oposiciones/)).
+- Evidencia: incumbente con precios públicos; entrantes con cifras autodeclaradas ("946+ opositores" en OpoRuta); ningún ingreso verificado.
+- Señales de demanda: unos 2,4 millones de personas preparando oposición al año según prensa, sin fuente primaria ([El Español](https://www.elespanol.com/invertia/disruptores/ecosistema-startup/startups/20250810/unico-examen-funcionario-miles-modos-prepararlo-entrena-ia-mente-opositores/1003743875081_0.html)); el 27 % usa IA y, de ellos, el 87 % usa ChatGPT (encuesta de parte).
+- Competencia: al menos siete plataformas con IA más el sustituto gratuito.
+- Horas por semana: 8–12. Coste de arranque: menos de 300 €. Tiempo al primer ingreso: 3–6 meses.
+- Riesgos: errores en las preguntas; sustituto gratuito; hace falta construir producto sin saber programar; con cuotas de 8 € hacen falta de 63 a 125 suscriptores para 500–1.000 €/mes (cálculo de la nota hermana).
+- **Veredicto: saturado / en declive.**
 
-**(j) Automatización documental para administradores de fincas, gestorías y despachos pequeños**
-- Sin datos verificados en esta sesión; solo indicios de que ya existen productos para gestorías, comunidades y despachos ([Copilot Gestoría](https://copilotgestoria.com/blog/verifactu-aplazado-2027-fechas-oficiales-comunicar-clientes-gestorias); [Vecindoc](https://vecindoc.es/blog/registro-unico-alquiler-turistico-anulado-comunidades-2026)). **Veredicto: no evaluado.** Hipótesis sin verificar: puede funcionar como servicio a medida; encaja como cliente natural del taller de IA del nicho (c).
+**(j) Automatización documental para administradores de fincas, gestorías y despachos pequeños** (datos de mercado de notas hermanas, no verificados por mí)
+- Qué y a quién: plantillas e instrucciones de IA para actas, convocatorias, respuestas a propietarios y recogida de documentación, sobre las herramientas que el despacho ya usa, más formación del equipo.
+- Precios típicos: programas de fincas de 24–50 €/mes (NetFincas, Vecindoc), IA para gestorías desde 79 €/mes (Contabilify), IA jurídica a 125 €/usuario/mes (Maite.ai); proyectos a medida con piloto desde 850 € y cuotas de 150–600 €/mes ([NetFincas](https://www.netfincas.com/precios-horizontal.html?v=20260630-2); [Contabilify](https://contabilify.com/precios); [Tecnea](https://www.tecnea.es/es/ia-para/asesorias-y-gestorias)); propuesta estimada de 300–800 € de puesta en marcha y 50–150 €/mes.
+- Evidencia: mercado de pago acreditado por tarifas públicas de varios proveedores; ningún ingreso verificado de personas solas.
+- Señales de demanda: en Madrid, unos 3.500 administradores de fincas colegiados (más de 200.000 comunidades) y 11.906 empresas de gestoría, asesoría y contabilidad ([CAFMadrid](https://tuadministrador.cafmadrid.es/); [Global Growth](https://www.globalgrowth.consulting/datos/gestorias-asesorias/ccaa/madrid)); sin plazo normativo.
+- Competencia: programas de gremio que añaden IA, consultoras pequeñas y, en asesorías, grandes proveedores (Sage, A3).
+- Horas por semana: 8–12. Coste de arranque: menos de 300 €. Tiempo al primer ingreso: 1–3 meses.
+- Riesgos: protección de datos de terceros; ciclo de venta largo; dependencia de herramientas ajenas; mantenimiento sin saber programar.
+- **Veredicto: puede funcionar.**
 
 **(k) Registro de alquiler turístico y automatización para anfitriones en Madrid**
 - Qué y a quién: ya no hay trámite estatal que vender; quedaría orientación sobre trámites locales y registro de viajeros.
@@ -387,7 +412,7 @@ Las cifras con enlace proceden de los hallazgos citados en los apartados 1 a 4 (
 ### Gaps
 - Ningún nicho alcanza "funciona ya" porque no se encontró evidencia de ingresos reales de proveedores individuales; es una ausencia de prueba por búsqueda incompleta, no una prueba de que no existan.
 - Las señales de saturación miden quién aparece en buscadores, no cuántos clientes atiende cada proveedor ni si las microempresas de Madrid están bien servidas en persona.
-- Los cuatro nichos no normativos (g, h, i, j) no pudieron evaluarse y eran, a priori, los menos dependientes de plazos que se mueven.
+- Los cuatro nichos no normativos (g, h, i, j) no tuvieron búsqueda propia: tres se valoran con datos de notas hermanas que no he verificado y el de subvenciones queda sin evaluar. Eran, a priori, los menos dependientes de plazos que se mueven.
 - No se contrastó ninguna cifra con una segunda consulta directa a la fuente oficial.
 
 ## 6. ¿Cuánto durará cada ventana de demanda y qué ingreso recurrente queda cuando pase el plazo?
@@ -429,7 +454,7 @@ Las ventanas con fecha son la factura electrónica (unos 10 meses para las empre
 - **(f) Kit Digital y sucesores.** Kit Digital y Kit Consulting se agotan en 2026 salvo que se materialicen los 200 M€ anunciados; el Bono de IA abriría una ventana en 2027–2028.
 - **(k) Alquiler turístico.** La ventana se cerró el 19-5-2026.
 - **(l) Atención a la clientela.** Ventana de 35 días y solo para grandes empresas; no deja cola para una persona sola.
-- **(g), (h), (i), (j).** Sin plazo normativo: serían demanda estructural y repetitiva (las licitaciones y las subvenciones se convocan todo el año; las oposiciones se preparan durante meses o años; los despachos generan documentos a diario), pero no se pudo verificar nada en esta sesión.
+- **(g), (h), (i), (j).** Sin plazo normativo: son demanda estructural y repetitiva (las licitaciones y las subvenciones se convocan todo el año; las oposiciones se preparan durante meses o años; los despachos generan documentos a diario). Los modelos de pago que existen son suscripciones mensuales (alertas a 20–37 €/mes, test a 7,99–15,99 €/mes, programas de despacho a 24–150 €/mes, según notas hermanas), lo que indica que el ingreso recurrente es posible pero ya tiene dueño; para una persona sola la repetición vendría de una cuota de mantenimiento en (j) o de encargos sucesivos en (g).
 
 #### Lectura de conjunto
 - Los plazos legales de este periodo se han movido casi todos: Verifactu cuatro veces, el registro horario sigue bloqueado, el registro turístico fue anulado, el art. 4 fue rebajado y la ley española de IA decayó. Construir un ingreso sobre una fecha concreta es arriesgado; es más sólido un servicio que el cliente quiera comprar aunque la fecha se retrase (formación práctica, puesta en marcha).
