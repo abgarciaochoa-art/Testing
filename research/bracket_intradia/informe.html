@@ -1,0 +1,632 @@
+<title>Horquilla intradía 2:1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Maqueta: una columna de lectura (~70ch) con gráficos que se abren al ancho de la columna;
+   la "orden horquilla" del ejemplo del usuario como pieza propia del tema. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --ink: #17202b;
+  --ink-2: #4d5866;
+  --ink-3: #7b8594;
+  --rule: #dfe3e9;
+  --grid: #eceff3;
+  --accent: #1f5fbf;
+  --gain: #0b7a3e;
+  --loss: #b3261e;
+  --lock: #6a4ce2;
+  --s1: #257de0; --s2: #f47230; --s3: #00b894; --s4: #f2a600; --s5: #ee7fac;
+  --st-orig: #7b8594; --st-filt: #a9b1bd; --st-plan: #6a4ce2; --st-corre: #008a17;
+  --band: rgba(31, 95, 191, 0.08);
+  --f-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --surface: #191e26; --ink: #e8ecf1; --ink-2: #aab3bf; --ink-3: #7f8996;
+    --rule: #2c333d; --grid: #232a33; --accent: #7aa7ee; --gain: #3fbf74; --loss: #f07a72;
+    --lock: #9887ef;
+    --s1: #338ced; --s2: #e76624; --s3: #00a888; --s4: #d28e05; --s5: #e24d8b;
+    --st-orig: #8a94a2; --st-filt: #5d6672; --st-plan: #9887ef; --st-corre: #0aac23;
+    --band: rgba(122, 167, 238, 0.10);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --surface: #191e26; --ink: #e8ecf1; --ink-2: #aab3bf; --ink-3: #7f8996;
+  --rule: #2c333d; --grid: #232a33; --accent: #7aa7ee; --gain: #3fbf74; --loss: #f07a72;
+  --lock: #9887ef;
+  --s1: #338ced; --s2: #e76624; --s3: #00a888; --s4: #d28e05; --s5: #e24d8b;
+  --st-orig: #8a94a2; --st-filt: #5d6672; --st-plan: #9887ef; --st-corre: #0aac23;
+  --band: rgba(122, 167, 238, 0.10);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px;
+  line-height: 1.6; padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px;
+}
+.col { max-width: 760px; margin: 0 auto; }
+header.hero { padding-block: 48px 24px; display: grid; gap: 28px; }
+.eyebrow { font: 500 12px/1.4 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; color: var(--ink); margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 26px; line-height: 1.2; font-weight: 600; margin-top: 56px; }
+h3 { font-size: 18px; font-weight: 600; margin-top: 28px; }
+p { margin: 12px 0 0; max-width: 68ch; }
+.lead { font-size: 18px; color: var(--ink-2); }
+.num, td.n, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+@media (max-width: 680px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
+.ticket { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; }
+.ticket svg { width: 100%; height: auto; display: block; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+@media (max-width: 680px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { background: var(--surface); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.stat b { font: 500 24px/1.1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.answer { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin-top: 8px; }
+.answer p { margin-top: 6px; }
+figure { margin: 24px 0 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 16px 12px; }
+figure .ttl { font: 600 15px/1.3 var(--f-display); }
+figure .sub { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+figcaption { font-size: 13px; color: var(--ink-3); margin-top: 10px; line-height: 1.5; }
+.chart { position: relative; margin-top: 10px; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 16px; height: 2px; vertical-align: middle; margin-right: 6px; border-radius: 1px; }
+.legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+.legend i.dash { background: none !important; border-top: 2px dashed; height: 0; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 150px; z-index: 5; }
+.tip .h { color: var(--ink-3); margin-bottom: 2px; }
+.tip .r { display: flex; align-items: center; gap: 8px; }
+.tip .r i { width: 12px; height: 2px; display: inline-block; border-radius: 1px; }
+.tip .r b { font-family: var(--f-mono); font-weight: 500; min-width: 56px; }
+.tip .r span { color: var(--ink-2); }
+.multi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+@media (max-width: 680px) { .multi { grid-template-columns: minmax(0, 1fr); } }
+.multi .pan h4 { margin: 0; font: 600 14px/1.3 var(--f-display); }
+.multi .pan .ps { font-size: 12px; color: var(--ink-3); }
+.tw { overflow-x: auto; margin-top: 16px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { font: 500 12px/1.3 var(--f-body); color: var(--ink-3); letter-spacing: 0.02em; background: var(--surface); }
+td.n, th.n { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+td.pos { color: var(--gain); }
+td.neg { color: var(--loss); }
+td.strong { font-weight: 600; }
+.sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+.routine { display: grid; gap: 0; margin-top: 16px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.phase { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; padding: 16px; border-bottom: 1px solid var(--grid); }
+.phase:last-child { border-bottom: 0; }
+@media (max-width: 600px) { .phase { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.phase h4 { margin: 0; font: 600 14px/1.3 var(--f-display); color: var(--accent); }
+.phase ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.phase li { max-width: 62ch; }
+.note { font-size: 14px; color: var(--ink-2); }
+.cav { margin: 12px 0 0; padding-left: 18px; display: grid; gap: 8px; }
+.cav li { max-width: 68ch; }
+a { color: var(--accent); }
+.src { font-size: 14px; display: grid; gap: 6px; padding-left: 18px; margin-top: 12px; }
+code { font-family: var(--f-mono); font-size: 0.9em; background: var(--grid); padding: 1px 5px; border-radius: 4px; }
+.axis text { fill: var(--ink-3); font: 11px var(--f-mono); }
+.axis line, .axis path { stroke: var(--rule); }
+.gridl { stroke: var(--grid); }
+.lbl { font: 500 11px var(--f-body); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="col">
+<header class="hero">
+  <div class="eyebrow">Investigación · velas de 1 minuto · 2005–2026</div>
+  <div class="hero-grid">
+    <div style="display:grid;gap:14px;min-width:0">
+      <h1>Entrar en Nvidia, arriesgar 0,50&nbsp;$ y buscar 1&nbsp;$: ¿hay ventaja?</h1>
+      <p class="lead">He probado tu horquilla con datos reales de minuto a minuto en Nvidia, 40 grandes del S&amp;P 500, el Nasdaq-100, el oro y el bitcóin. También he probado sus variantes: tamaño del stop, objetivo, el candado que propones y los filtros de tendencia, momento, volumen y hora.</p>
+    </div>
+    <div class="ticket" aria-label="Tu orden de ejemplo en Nvidia en unidades de riesgo">
+      <svg viewBox="0 0 360 230" role="img" aria-labelledby="tk-t">
+        <title id="tk-t">Horquilla de ejemplo: entrada 145,00, stop 144,50 (−1R), objetivo 146,00 (+2R), candado a 145,90 que sube el stop a 145,50</title>
+        <g font-family="JetBrains Mono, monospace" font-size="12">
+          <line x1="96" x2="350" y1="30" y2="30" stroke="var(--gain)" stroke-width="2"/>
+          <text x="88" y="34" text-anchor="end" fill="var(--ink)">146,00</text>
+          <text x="350" y="22" text-anchor="end" fill="var(--gain)">objetivo +2R</text>
+          <line x1="96" x2="350" y1="48" y2="48" stroke="var(--lock)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="88" y="52" text-anchor="end" fill="var(--ink-2)">145,90</text>
+          <text x="350" y="62" text-anchor="end" fill="var(--lock)">+1,8R: candado</text>
+          <line x1="96" x2="350" y1="110" y2="110" stroke="var(--lock)" stroke-width="1.5"/>
+          <text x="88" y="114" text-anchor="end" fill="var(--ink-2)">145,50</text>
+          <text x="350" y="102" text-anchor="end" fill="var(--lock)">stop sube a +1R</text>
+          <line x1="96" x2="350" y1="170" y2="170" stroke="var(--ink)" stroke-width="2"/>
+          <text x="88" y="174" text-anchor="end" fill="var(--ink)" font-weight="500">145,00</text>
+          <text x="350" y="162" text-anchor="end" fill="var(--ink)">entrada</text>
+          <line x1="96" x2="350" y1="200" y2="200" stroke="var(--loss)" stroke-width="2"/>
+          <text x="88" y="204" text-anchor="end" fill="var(--ink)">144,50</text>
+          <text x="350" y="220" text-anchor="end" fill="var(--loss)">stop −1R (0,34 %)</text>
+          <path d="M104 170 L116 160 L126 176 L138 140 L148 150 L160 104 L170 118 L182 60 L192 52 L204 74" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="192" cy="52" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="answer">
+    <p><b>La respuesta corta.</b> La horquilla, por sí sola, no da ventaja. Si el precio se mueve al azar, un objetivo de +2R antes que un stop de −1R se toca una de cada tres veces, y eso es lo que pasa en los datos. Los costes se comen el resto: con tu stop de 0,34 % en Nvidia, unos 0,08R por operación. Hay una ventaja pequeña y medible en tres cosas:</p>
+    <ul>
+      <li>Operar solo a favor del movimiento del día.</li>
+      <li>Usar un stop más ancho, de unos 0,2 ATR.</li>
+      <li>Hacer pocas operaciones y dejar correr las buenas con tu candado o hasta el cierre.</li>
+    </ul>
+    <p>Esa ventaja es de unas centésimas de R por operación: suficiente para ganar algo, demasiado pequeña para verla en un día.</p>
+  </div>
+</header>
+
+<h2>1. Lo que dice la matemática</h2>
+<p>Llamo <b>R</b> a lo que arriesgas (los 0,50 $). Si el precio no tiene tendencia, la probabilidad de tocar el objetivo antes que el stop depende solo de la relación entre los dos: 1/(1+objetivo). Con 1:1 aciertas el 50 %, con 2:1 el 33 % y con 3:1 el 25 %. En los tres casos ganas 0R de media. La volatilidad solo cambia lo rápido que se resuelve la operación, no quién gana.</p>
+<p>Con costes, el acierto que necesitas para no perder es <span class="mono">(1 + coste en R) / (1 + objetivo)</span>. A 2:1, con 0,08R de coste, hace falta acertar el <b>36 %</b>, y con 0,44R (bitcóin con tu tamaño de stop), el <b>48 %</b>. Todo lo que sigue consiste en buscar entradas que suban el acierto por encima de esa raya.</p>
+<p>Los datos lo confirman: entrando a cualquier hora con stop de 0,1 ATR, el acierto real se queda pegado al teórico en los cinco mercados.</p>
+<div class="tw"><table id="t-base"></table></div>
+<p class="note">ATR: el rango medio diario de los 14 días anteriores. R bruto: resultado medio por operación antes de costes. R neto: después de costes.</p>
+
+<h3>Los datos</h3>
+<div class="tw"><table>
+<thead><tr><th>Mercado</th><th>Fuente y vela</th><th>Periodo</th><th class="n">Sesiones</th><th>Coste supuesto por lado</th></tr></thead>
+<tbody>
+<tr><td><span class="sw" style="background:var(--s1)"></span>Nvidia</td><td>Dukascopy, 1 min</td><td>feb → nov 2026</td><td class="n">192</td><td>0,01 % + 0,01 % de deslizamiento en el stop</td></tr>
+<tr><td><span class="sw" style="background:var(--s2)"></span>40 acciones del S&amp;P 500</td><td>Yahoo, 2 min</td><td>15 oct → 25 nov 2026</td><td class="n">30</td><td>igual que Nvidia</td></tr>
+<tr><td><span class="sw" style="background:var(--s3)"></span>Nasdaq-100</td><td>OANDA, 1 min</td><td>2005 → may 2020</td><td class="n">3.750</td><td>0,005 % + 0,005 %</td></tr>
+<tr><td><span class="sw" style="background:var(--s4)"></span>Bitcóin</td><td>Binance, 1 min</td><td>2022 → nov 2026</td><td class="n">1.739</td><td>0,05 % (futuros, orden a mercado) + 0,02 %</td></tr>
+<tr><td><span class="sw" style="background:var(--s5)"></span>Oro</td><td>OANDA, 1 min</td><td>2006 → may 2020</td><td class="n">3.449</td><td>0,015 % + 0,01 %</td></tr>
+</tbody></table></div>
+<p class="note">Todo en la sesión de Nueva York (9:30–16:00), también el oro y el bitcóin. Cada operación entra en la vela siguiente a la señal y se cierra 5 minutos antes del final. Si una vela toca el stop y el objetivo a la vez, cuenta como stop; pasa en menos del 1 % de las operaciones. En Nvidia, 0,01 % por lado son unos 1,5 céntimos por acción, lo de un broker barato: unos 4,5 céntimos la ida y vuelta.</p>
+
+<h2>2. Las cartas buenas</h2>
+<p>La pregunta útil es cuándo sube el acierto por encima del 33 %. El gráfico clasifica cientos de miles de entradas por cuánto se había movido ya el precio desde la apertura a favor de la operación, medido en ATR.</p>
+<figure>
+  <div class="ttl">Resultado de una horquilla 2:1 según el movimiento previo del día</div>
+  <div class="sub">R bruto por operación · stop 0,2 ATR · largos y cortos juntos</div>
+  <div class="chart" id="c-mapa"></div>
+  <div class="legend" id="l-mapa"></div>
+  <figcaption>En el Nasdaq-100 y el bitcóin, entrar cuando el día ya va entre 0,25 y 0,75 ATR a tu favor da entre +0,05R y +0,14R. Entrar contra el día resta. El oro no muestra esa pauta.</figcaption>
+</figure>
+<p>Los filtros concretos dicen lo mismo. Abajo, el R bruto de cada señal a 2:1 con stop de 0,1 ATR (tu tamaño de stop en Nvidia); en negrita, los que superan dos errores estándar.</p>
+<div class="tw"><table id="t-filtros"></table></div>
+<ul class="cav">
+  <li><b>A favor del día funciona.</b> En el bitcóin (5 años) y el Nasdaq-100 (15 años) suma en las dos mitades de la muestra. Sirve tanto estar por encima de la VWAP y de la apertura, como ir ya +0,25 ATR desde la apertura, como romper el máximo de los primeros 30 minutos.</li>
+  <li><b>Comprar caídas resta</b> en acciones, Nvidia y bitcóin. Solo el oro revierte, y lo hizo sobre todo entre 2006 y 2013.</li>
+  <li><b>La tendencia de días (precio sobre la media de 20 y 50) no ayuda</b> dentro del día. Lo que manda es la dirección de la sesión.</li>
+  <li><b>En Nvidia y en las 40 acciones, en 2026, ganan los cortos.</b> El periodo incluye la caída de noviembre (Nvidia de 228 $ a 150 $). Si solo operas largos, en un mercado así pierdes aunque el filtro sea bueno. La regla útil es seguir al día en los dos sentidos, o no operar los días que van en contra.</li>
+  <li><b>La hora importa poco.</b> En el Nasdaq-100, el filtro rinde algo más entre las 10:30 y las 12:00 que en la primera hora. Las diferencias entre franjas son pequeñas y no compensa afinar más.</li>
+</ul>
+
+<h2>3. Cuánto arriesgar</h2>
+<p>El coste de una operación es fijo en dinero, pero en R pesa más cuanto más corto es el stop. La ventaja de los filtros, en cambio, se mantiene parecida entre 0,05 y 0,3 ATR. Por eso los stops muy cortos pierden casi siempre.</p>
+<figure>
+  <div class="ttl">Coste por operación según el tamaño del stop</div>
+  <div class="sub">R por operación de ida y vuelta · la banda es la ventaja bruta típica de un buen filtro (0,03–0,10R)</div>
+  <div class="chart" id="c-coste"></div>
+  <div class="legend" id="l-coste"></div>
+  <figcaption>Tu stop de 0,50 $ sobre 145 $ es un 0,34 %. Con el ATR medio de Nvidia en 2026 (3,4 %), son 0,1 ATR. A finales de noviembre, con un ATR del 10 %, el mismo 0,50 $ son 0,03 ATR: ruido puro. El stop debe ir en fracción del ATR, no en dólares fijos.</figcaption>
+</figure>
+<p>Con 0,2 ATR, el coste baja a unos 0,04R en Nvidia y 0,05R en el Nasdaq-100. En el bitcóin sigue en 0,22R, y en el oro en 0,17R. Por eso, para esta estrategia, esos dos mercados no salen a cuenta con comisiones normales.</p>
+<h3>Los más líquidos del S&amp;P 500 hoy</h3>
+<p>Volumen mediano en dólares de los últimos 6 meses. El ATR es el de las últimas 14 sesiones, muy alto por la caída de noviembre. La última columna es el stop de 0,2 ATR en dólares por acción.</p>
+<div class="tw"><table id="t-liq"></table></div>
+
+<h2>4. Cómo salir</h2>
+<p>Has planteado dos opciones: vender en +2R, o subir el stop a +1R al llegar a +1,8R y dejarla correr. Si el precio no tiene tendencia, dan lo mismo. Con el filtro de momento, cuanto más dejas correr, más ganas por operación, porque los días que arrancan a tu favor tienden a seguir.</p>
+<figure>
+  <div class="ttl">R bruto por operación según la salida</div>
+  <div class="sub">Señal: el día va ≥ 0,25 ATR a favor · stop 0,1 ATR · largos y cortos</div>
+  <div class="chart" id="c-salidas"></div>
+  <div class="legend" id="l-salidas"></div>
+  <figcaption>Tu candado mejora el 2:1 fijo en todos los mercados. Sin objetivo, cerrando al final del día, se gana aún más, pero el acierto baja al 20–30 %: rachas de 8 o 10 pérdidas seguidas son normales.</figcaption>
+</figure>
+
+<h2>5. Cuatro maneras de operar, sumadas</h2>
+<p>R neto acumulado, ya con costes, de cuatro versiones:</p>
+<ul class="cav">
+  <li><b>Original:</b> largo siempre que estés fuera, stop de 0,1 ATR y 2:1, sin límite de operaciones.</li>
+  <li><b>Con filtro:</b> lo mismo, pero solo por encima de la VWAP y de la apertura.</li>
+  <li><b>Plan:</b> a favor del día en los dos sentidos, stop de 0,2 ATR, candado y una operación por lado y día.</li>
+  <li><b>Plan y dejar correr:</b> el plan sin objetivo, hasta el cierre.</li>
+</ul>
+<p>Cada gráfico tiene su propia escala.</p>
+<figure>
+  <div class="ttl">R neto acumulado</div>
+  <div class="sub">1R = lo que arriesgas por operación; con 0,25 % de la cuenta por operación, 100R = 25 %</div>
+  <div class="multi" id="c-curvas"></div>
+  <div class="legend" id="l-curvas"></div>
+  <figcaption>La versión original pierde en todos los mercados, sobre todo por costes. Hace unas 13 operaciones al día y cada una paga entre 0,08 y 0,44R. En Nvidia son −289R en 192 sesiones: con 0,25 % por operación, un −0,4 % diario. El plan queda en tablas. Dejar correr gana en Nvidia (+35R), en las 40 acciones y en el Nasdaq-100 (+201R en 15 años). En el bitcóin y el oro pierde menos, pero sigue perdiendo.</figcaption>
+</figure>
+<div class="tw"><table id="t-plan"></table></div>
+<p class="note">Plan con stop de 0,2 ATR, a favor del día, una operación por lado y día. t: el resultado medio entre su error estándar, agrupando por día. Por debajo de 2 puede ser suerte. Solo el Nasdaq-100 con 3:1 se acerca a 2.</p>
+
+<h2>6. Tu día con Nvidia</h2>
+<p>Ganaste 5 de 7 a 2:1: +8R. Si eso fue el 2 % de la cuenta, arriesgabas un 0,25 % por operación. Sin ninguna ventaja (33 % de acierto), un día así sale con una probabilidad del <b id="p57">4,5 %</b>. Es decir, una vez cada 22 sesiones, más o menos una vez al mes, por pura suerte. Con un 40 % de acierto, que sería una ventaja enorme, sigue siendo solo un 9,6 %. Un día no distingue a un buen sistema de uno malo.</p>
+<div class="tw"><table id="t-ops"></table></div>
+<p class="note">Operaciones necesarias para que una ventaja de ese tamaño se distinga del azar (t = 2). Cada operación 2:1 tiene una desviación de unos 1,4R.</p>
+
+<h2>7. El plan, día a día</h2>
+<div class="routine">
+  <div class="phase"><h4>Antes de abrir</h4><ul>
+    <li>Elige de 3 a 5 valores de la tabla de liquidez y añade el QQQ o el Nasdaq-100. Mejor si tienen noticia o volumen relativo alto ese día.</li>
+    <li>Calcula el ATR de 14 días de cada uno. Tu R es 0,2 ATR. En Nvidia, con un ATR del 3,4 %, son unos 0,7 % (≈1 $). Con el ATR de ahora (10 %), unos 3 $.</li>
+    <li>Tamaño: arriesga del 0,25 % al 0,5 % de la cuenta por operación. Acciones = riesgo en € ÷ R en €.</li>
+  </ul></div>
+  <div class="phase"><h4>Para entrar</h4><ul>
+    <li>Largo solo si el precio está por encima de la VWAP y de la apertura, y ya ha subido ≥ 0,25 ATR desde la apertura o rompe el máximo de los primeros 30 minutos. El corto es el espejo.</li>
+    <li>Si no puedes ponerte corto, no operes los días que caen. Es donde pierden los largos.</li>
+    <li>Una operación por lado y valor al día. La primera señal es la que mejor rinde, y cada operación de más paga costes.</li>
+    <li>No compres porque "ha bajado mucho". En acciones y bitcóin, esa entrada resta.</li>
+  </ul></div>
+  <div class="phase"><h4>Con la operación abierta</h4><ul>
+    <li>Stop inicial a −1R, siempre puesto en el broker.</li>
+    <li>Tu candado: a +1,8R, el stop sube a +1R, y a partir de ahí lo sigues a 0,8R del máximo. En días de tendencia clara, sin objetivo hasta 5 minutos antes del cierre.</li>
+    <li>Nada abierto de un día para otro.</li>
+  </ul></div>
+  <div class="phase"><h4>Límites</h4><ul>
+    <li>Si pierdes 2R en el día o encadenas dos stops, cierras el día. No crea ventaja, pero corta los días malos.</li>
+    <li>Usa un broker de comisión baja con acciones reales o futuros. Un CFD con 0,10 $ de diferencial en Nvidia triplica el coste.</li>
+  </ul></div>
+  <div class="phase"><h4>Después</h4><ul>
+    <li>Apunta cada operación: señal, R, máximo a favor, motivo de salida. Hasta 200 o 300 operaciones no sabrás si tu versión tiene ventaja. Empieza con tamaño mínimo o en simulado.</li>
+  </ul></div>
+</div>
+
+<h2>8. ¿Y el oro y el bitcóin?</h2>
+<p><b>Bitcóin:</b> tiene el momento intradía más claro de todos. A favor del día da +0,06R a 2:1 y +0,20R dejando correr, positivo en las dos mitades (2022–2024 y 2024–2026), aunque más flojo en la segunda. Pero con 0,05 % por lado, el coste es de 0,44R con tu stop y de 0,22R con 0,2 ATR. Solo saldría con comisiones de creador (órdenes limitadas) o con stops mucho más anchos.</p>
+<p><b>Oro:</b> entre las 9:30 y las 16:00 no sigue al día: ni el filtro de momento ni la ruptura de apertura suman. Revierte un poco, y su ATR es pequeño (1,3 %), así que los costes pesan mucho. Para esta estrategia es el peor de los cinco.</p>
+
+<h2>9. Límites del estudio</h2>
+<ul class="cav">
+  <li>El acceso a datos de este entorno es limitado. Nvidia solo tiene 192 sesiones útiles (de febrero a noviembre de 2026) y las 40 acciones, 30 sesiones en plena caída. Sus números positivos tienen t entre 1 y 1,5, así que no son prueba. Lo robusto son el bitcóin (5 años) y el Nasdaq-100 (15 años, hasta 2020).</li>
+  <li>Los datos del Nasdaq-100 y del oro terminan en mayo de 2020. Ruptura de apertura y momento intradía se han publicado y popularizado después (Zarattini y Aziz, 2023–2024), y la ventaja puede haber bajado.</li>
+  <li>Velas de 1 minuto (2 en las 40 acciones). El stop se llena a su precio más un deslizamiento fijo. En una noticia puede saltar mucho más.</li>
+  <li>He probado unas 10.000 combinaciones. La mejor de ellas siempre parece buena por azar. Por eso me fijo en lo que se repite en mercados distintos y en las dos mitades de cada muestra, no en el máximo.</li>
+  <li>Los costes son supuestos de un broker barato. Con un broker de EE. UU. y cuenta de margen por debajo de 25.000 $, la regla de day trading (PDT) limita a 3 operaciones intradía en 5 días.</li>
+</ul>
+
+<h2>Fuentes</h2>
+<ul class="src">
+  <li>Zarattini, Barbon y Aziz (2024), <a href="https://papers.ssrn.com/abstract=4729284">A Profitable Day Trading Strategy for the U.S. Equity Market</a>: ruptura de los 5 primeros minutos en acciones con volumen relativo alto, con stop del 10 % del ATR y salida al cierre.</li>
+  <li>Zarattini y Aziz (2023), <a href="https://papers.ssrn.com/abstract=4416622">Can Day Trading Really Be Profitable?</a>: ruptura de apertura en el QQQ, 2016–2023.</li>
+  <li>Gao, Han, Li y Zhou (2018), "Market intraday momentum", <i>Journal of Financial Economics</i>: la primera media hora predice la última.</li>
+  <li>Barber, Lee, Liu y Odean, <a href="https://faculty.haas.berkeley.edu/odean/papers/day%20traders/Day%20Trading%20Skill%20110523.pdf">The Cross-Section of Speculator Skill</a>: en Taiwán, menos del 1 % de los day traders gana de forma predecible, neto de comisiones.</li>
+  <li>Chague, De-Losso y Giovannetti (2019), <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3423101">Day Trading for a Living?</a>: en Brasil, el 97 % de quienes insistieron más de 300 días perdió dinero.</li>
+  <li>Código y tablas: <code>research/bracket_intradia/</code> en la rama <code>claude/dreamy-darwin-u474zk</code>.</li>
+</ul>
+</div>
+
+<script>
+const D = {"base":[{"inst":"NVDA","tp":1.0,"teorico":0.5,"acierto":0.4889,"R_bruto":-0.0222,"t_bruto":-1.4948,"R_neto":-0.1013,"coste_R":0.0791,"ops_dia":23.8958},{"inst":"NVDA","tp":1.5,"teorico":0.4,"acierto":0.4011,"R_bruto":-0.0146,"t_bruto":-0.6824,"R_neto":-0.0969,"coste_R":0.0824,"ops_dia":17.2448},{"inst":"NVDA","tp":2.0,"teorico":0.3333,"acierto":0.3384,"R_bruto":-0.0269,"t_bruto":-0.9579,"R_neto":-0.1117,"coste_R":0.0848,"ops_dia":13.4688},{"inst":"NVDA","tp":3.0,"teorico":0.25,"acierto":0.2779,"R_bruto":-0.0168,"t_bruto":-0.4215,"R_neto":-0.1043,"coste_R":0.0875,"ops_dia":9.9896},{"inst":"BTC","tp":1.0,"teorico":0.5,"acierto":0.4963,"R_bruto":-0.0081,"t_bruto":-1.4138,"R_neto":-0.433,"coste_R":0.4248,"ops_dia":21.5365},{"inst":"BTC","tp":1.5,"teorico":0.4,"acierto":0.4063,"R_bruto":-0.0064,"t_bruto":-0.8011,"R_neto":-0.4408,"coste_R":0.4343,"ops_dia":15.8488},{"inst":"BTC","tp":2.0,"teorico":0.3333,"acierto":0.351,"R_bruto":0.0001,"t_bruto":0.0055,"R_neto":-0.4384,"coste_R":0.4384,"ops_dia":12.6849},{"inst":"BTC","tp":3.0,"teorico":0.25,"acierto":0.2877,"R_bruto":0.0025,"t_bruto":0.1752,"R_neto":-0.4434,"coste_R":0.4459,"ops_dia":9.4043},{"inst":"NAS100","tp":1.0,"teorico":0.5,"acierto":0.5002,"R_bruto":0.0026,"t_bruto":0.804,"R_neto":-0.0944,"coste_R":0.097,"ops_dia":27.1259},{"inst":"NAS100","tp":1.5,"teorico":0.4,"acierto":0.4076,"R_bruto":0.0064,"t_bruto":1.4317,"R_neto":-0.0947,"coste_R":0.1011,"ops_dia":19.5936},{"inst":"NAS100","tp":2.0,"teorico":0.3333,"acierto":0.3502,"R_bruto":0.014,"t_bruto":2.4356,"R_neto":-0.0899,"coste_R":0.1039,"ops_dia":15.568},{"inst":"NAS100","tp":3.0,"teorico":0.25,"acierto":0.2836,"R_bruto":0.0252,"t_bruto":3.089,"R_neto":-0.0824,"coste_R":0.1076,"ops_dia":11.1493},{"inst":"XAU","tp":1.0,"teorico":0.5,"acierto":0.499,"R_bruto":-0.002,"t_bruto":-0.5573,"R_neto":-0.3175,"coste_R":0.3155,"ops_dia":20.6744},{"inst":"XAU","tp":1.5,"teorico":0.4,"acierto":0.4121,"R_bruto":0.009,"t_bruto":1.8062,"R_neto":-0.3165,"coste_R":0.3255,"ops_dia":14.9281},{"inst":"XAU","tp":2.0,"teorico":0.3333,"acierto":0.3561,"R_bruto":0.0136,"t_bruto":2.0919,"R_neto":-0.3187,"coste_R":0.3323,"ops_dia":11.8542},{"inst":"XAU","tp":3.0,"teorico":0.25,"acierto":0.2963,"R_bruto":0.0305,"t_bruto":3.3109,"R_neto":-0.3109,"coste_R":0.3414,"ops_dia":8.5605},{"inst":"acciones40","tp":1.0,"teorico":0.5,"acierto":0.4769,"R_bruto":-0.045,"t_bruto":-1.7337,"R_neto":-0.1126,"coste_R":0.0676,"ops_dia":18.9167},{"inst":"acciones40","tp":2.0,"teorico":0.3333,"acierto":0.326,"R_bruto":-0.0637,"t_bruto":-1.3581,"R_neto":-0.1359,"coste_R":0.0721,"ops_dia":11.6463},{"inst":"acciones40","tp":3.0,"teorico":0.25,"acierto":0.2607,"R_bruto":-0.0803,"t_bruto":-1.2413,"R_neto":-0.1548,"coste_R":0.0745,"ops_dia":8.8426}],"coste":[{"inst":"NVDA","f_atr":0.03,"coste_R":0.2762,"stop_pct":0.001},{"inst":"NVDA","f_atr":0.05,"coste_R":0.1671,"stop_pct":0.0017},{"inst":"NVDA","f_atr":0.075,"coste_R":0.112,"stop_pct":0.0026},{"inst":"NVDA","f_atr":0.1,"coste_R":0.0848,"stop_pct":0.0034},{"inst":"NVDA","f_atr":0.15,"coste_R":0.0569,"stop_pct":0.0052},{"inst":"NVDA","f_atr":0.2,"coste_R":0.0431,"stop_pct":0.0069},{"inst":"NVDA","f_atr":0.3,"coste_R":0.0291,"stop_pct":0.0105},{"inst":"NVDA","f_atr":0.5,"coste_R":0.018,"stop_pct":0.0176},{"inst":"BTC","f_atr":0.03,"coste_R":1.4181,"stop_pct":0.0009},{"inst":"BTC","f_atr":0.05,"coste_R":0.8653,"stop_pct":0.0015},{"inst":"BTC","f_atr":0.075,"coste_R":0.5816,"stop_pct":0.0022},{"inst":"BTC","f_atr":0.1,"coste_R":0.4384,"stop_pct":0.0029},{"inst":"BTC","f_atr":0.15,"coste_R":0.2953,"stop_pct":0.0044},{"inst":"BTC","f_atr":0.2,"coste_R":0.2224,"stop_pct":0.0058},{"inst":"BTC","f_atr":0.3,"coste_R":0.1493,"stop_pct":0.0088},{"inst":"BTC","f_atr":0.5,"coste_R":0.0896,"stop_pct":0.0149},{"inst":"NAS100","f_atr":0.03,"coste_R":0.3358,"stop_pct":0.0005},{"inst":"NAS100","f_atr":0.05,"coste_R":0.2043,"stop_pct":0.0008},{"inst":"NAS100","f_atr":0.075,"coste_R":0.1374,"stop_pct":0.0012},{"inst":"NAS100","f_atr":0.1,"coste_R":0.1039,"stop_pct":0.0016},{"inst":"NAS100","f_atr":0.15,"coste_R":0.0702,"stop_pct":0.0024},{"inst":"NAS100","f_atr":0.2,"coste_R":0.0534,"stop_pct":0.0031},{"inst":"NAS100","f_atr":0.3,"coste_R":0.0366,"stop_pct":0.0047},{"inst":"NAS100","f_atr":0.5,"coste_R":0.0226,"stop_pct":0.0079},{"inst":"XAU","f_atr":0.03,"coste_R":1.0981,"stop_pct":0.0004},{"inst":"XAU","f_atr":0.05,"coste_R":0.6588,"stop_pct":0.0006},{"inst":"XAU","f_atr":0.075,"coste_R":0.4406,"stop_pct":0.001},{"inst":"XAU","f_atr":0.1,"coste_R":0.3323,"stop_pct":0.0013},{"inst":"XAU","f_atr":0.15,"coste_R":0.224,"stop_pct":0.0019},{"inst":"XAU","f_atr":0.2,"coste_R":0.1696,"stop_pct":0.0026},{"inst":"XAU","f_atr":0.3,"coste_R":0.1153,"stop_pct":0.0039},{"inst":"XAU","f_atr":0.5,"coste_R":0.0702,"stop_pct":0.0065}],"ventaja_f":[{"inst":"BTC","f_atr":0.03,"R_bruto":0.05},{"inst":"BTC","f_atr":0.05,"R_bruto":0.0662},{"inst":"BTC","f_atr":0.075,"R_bruto":0.0652},{"inst":"BTC","f_atr":0.1,"R_bruto":0.0673},{"inst":"BTC","f_atr":0.15,"R_bruto":0.0754},{"inst":"BTC","f_atr":0.2,"R_bruto":0.0694},{"inst":"BTC","f_atr":0.3,"R_bruto":0.0758},{"inst":"BTC","f_atr":0.5,"R_bruto":0.0467},{"inst":"NAS100","f_atr":0.03,"R_bruto":0.0402},{"inst":"NAS100","f_atr":0.05,"R_bruto":0.0255},{"inst":"NAS100","f_atr":0.075,"R_bruto":0.0269},{"inst":"NAS100","f_atr":0.1,"R_bruto":0.0286},{"inst":"NAS100","f_atr":0.15,"R_bruto":0.0374},{"inst":"NAS100","f_atr":0.2,"R_bruto":0.0393},{"inst":"NAS100","f_atr":0.3,"R_bruto":0.036},{"inst":"NAS100","f_atr":0.5,"R_bruto":0.0237},{"inst":"NVDA","f_atr":0.03,"R_bruto":0.0096},{"inst":"NVDA","f_atr":0.05,"R_bruto":0.0238},{"inst":"NVDA","f_atr":0.075,"R_bruto":0.045},{"inst":"NVDA","f_atr":0.1,"R_bruto":0.0575},{"inst":"NVDA","f_atr":0.15,"R_bruto":0.0934},{"inst":"NVDA","f_atr":0.2,"R_bruto":0.1248},{"inst":"NVDA","f_atr":0.3,"R_bruto":0.1138},{"inst":"NVDA","f_atr":0.5,"R_bruto":0.0765},{"inst":"XAU","f_atr":0.03,"R_bruto":0.0027},{"inst":"XAU","f_atr":0.05,"R_bruto":-0.0053},{"inst":"XAU","f_atr":0.075,"R_bruto":-0.0093},{"inst":"XAU","f_atr":0.1,"R_bruto":-0.0005},{"inst":"XAU","f_atr":0.15,"R_bruto":0.0018},{"inst":"XAU","f_atr":0.2,"R_bruto":0.0077},{"inst":"XAU","f_atr":0.3,"R_bruto":0.0217},{"inst":"XAU","f_atr":0.5,"R_bruto":0.0088}],"mapa":[{"tramo":"< -0,75","ops":144,"acierto":0.3889,"R":-0.0872,"inst":"NVDA"},{"tramo":"-0,75 a -0,5","ops":126,"acierto":0.3175,"R":-0.1894,"inst":"NVDA"},{"tramo":"-0,5 a -0,25","ops":257,"acierto":0.3852,"R":-0.0406,"inst":"NVDA"},{"tramo":"-0,25 a 0","ops":471,"acierto":0.3652,"R":0.0111,"inst":"NVDA"},{"tramo":"0 a 0,25","ops":384,"acierto":0.3646,"R":0.0026,"inst":"NVDA"},{"tramo":"0,25 a 0,5","ops":180,"acierto":0.4333,"R":0.1077,"inst":"NVDA"},{"tramo":"0,5 a 0,75","ops":90,"acierto":0.3889,"R":0.0057,"inst":"NVDA"},{"tramo":"> 0,75","ops":97,"acierto":0.4433,"R":0.2518,"inst":"NVDA"},{"tramo":"< -0,75","ops":1533,"acierto":0.3431,"R":-0.1019,"inst":"BTC"},{"tramo":"-0,75 a -0,5","ops":1024,"acierto":0.3604,"R":-0.1141,"inst":"BTC"},{"tramo":"-0,5 a -0,25","ops":1919,"acierto":0.396,"R":-0.0159,"inst":"BTC"},{"tramo":"-0,25 a 0","ops":4235,"acierto":0.3927,"R":0.012,"inst":"BTC"},{"tramo":"0 a 0,25","ops":3083,"acierto":0.3883,"R":-0.0139,"inst":"BTC"},{"tramo":"0,25 a 0,5","ops":1517,"acierto":0.3968,"R":0.0728,"inst":"BTC"},{"tramo":"0,5 a 0,75","ops":689,"acierto":0.4194,"R":0.1369,"inst":"BTC"},{"tramo":"> 0,75","ops":1279,"acierto":0.3933,"R":0.0774,"inst":"BTC"},{"tramo":"< -0,75","ops":3265,"acierto":0.3752,"R":-0.0256,"inst":"NAS100"},{"tramo":"-0,75 a -0,5","ops":2918,"acierto":0.3722,"R":-0.0332,"inst":"NAS100"},{"tramo":"-0,5 a -0,25","ops":5434,"acierto":0.3844,"R":0.0096,"inst":"NAS100"},{"tramo":"-0,25 a 0","ops":10388,"acierto":0.366,"R":-0.002,"inst":"NAS100"},{"tramo":"0 a 0,25","ops":7581,"acierto":0.3676,"R":0.0052,"inst":"NAS100"},{"tramo":"0,25 a 0,5","ops":4204,"acierto":0.393,"R":0.0446,"inst":"NAS100"},{"tramo":"0,5 a 0,75","ops":1922,"acierto":0.4116,"R":0.07,"inst":"NAS100"},{"tramo":"> 0,75","ops":2462,"acierto":0.3834,"R":0.0137,"inst":"NAS100"},{"tramo":"< -0,75","ops":2142,"acierto":0.4052,"R":0.0178,"inst":"XAU"},{"tramo":"-0,75 a -0,5","ops":1809,"acierto":0.3925,"R":-0.054,"inst":"XAU"},{"tramo":"-0,5 a -0,25","ops":3659,"acierto":0.4274,"R":0.0575,"inst":"XAU"},{"tramo":"-0,25 a 0","ops":8247,"acierto":0.3947,"R":0.0146,"inst":"XAU"},{"tramo":"0 a 0,25","ops":6044,"acierto":0.385,"R":0.0016,"inst":"XAU"},{"tramo":"0,25 a 0,5","ops":2913,"acierto":0.3927,"R":0.012,"inst":"XAU"},{"tramo":"0,5 a 0,75","ops":1197,"acierto":0.3926,"R":0.0268,"inst":"XAU"},{"tramo":"> 0,75","ops":1683,"acierto":0.3862,"R":0.0207,"inst":"XAU"},{"tramo":"< -0,75","ops":771,"acierto":0.3606,"R":-0.0702,"inst":"acciones40"},{"tramo":"-0,75 a -0,5","ops":734,"acierto":0.3556,"R":-0.1256,"inst":"acciones40"},{"tramo":"-0,5 a -0,25","ops":1398,"acierto":0.3755,"R":-0.0213,"inst":"acciones40"},{"tramo":"-0,25 a 0","ops":2205,"acierto":0.3478,"R":-0.0608,"inst":"acciones40"},{"tramo":"0 a 0,25","ops":1871,"acierto":0.4062,"R":0.1156,"inst":"acciones40"},{"tramo":"0,25 a 0,5","ops":1013,"acierto":0.387,"R":0.0103,"inst":"acciones40"},{"tramo":"0,5 a 0,75","ops":568,"acierto":0.4014,"R":0.0827,"inst":"acciones40"},{"tramo":"> 0,75","ops":577,"acierto":0.4107,"R":0.0789,"inst":"acciones40"}],"salidas":[{"inst":"BTC","salida":"1,5:1","R":0.0522,"acierto":0.4262},{"inst":"BTC","salida":"1:1","R":0.0307,"acierto":0.5146},{"inst":"BTC","salida":"2:1","R":0.0675,"acierto":0.3691},{"inst":"BTC","salida":"3:1","R":0.0956,"acierto":0.3043},{"inst":"BTC","salida":"a 1R stop a 0, dinámico 1","R":0.0949,"acierto":0.5169},{"inst":"BTC","salida":"a 1R stop a 0, objetivo 3","R":0.0823,"acierto":0.2196},{"inst":"BTC","salida":"candado 1,8→1 y dinámico 0,8","R":0.118,"acierto":0.3934},{"inst":"BTC","salida":"dinámico 1R desde la entrada","R":0.0905,"acierto":0.409},{"inst":"BTC","salida":"sin objetivo (cierre)","R":0.1971,"acierto":0.2159},{"inst":"NAS100","salida":"1,5:1","R":0.0204,"acierto":0.4145},{"inst":"NAS100","salida":"1:1","R":0.0128,"acierto":0.5057},{"inst":"NAS100","salida":"2:1","R":0.0283,"acierto":0.3568},{"inst":"NAS100","salida":"3:1","R":0.0425,"acierto":0.2919},{"inst":"NAS100","salida":"a 1R stop a 0, dinámico 1","R":0.0456,"acierto":0.5033},{"inst":"NAS100","salida":"a 1R stop a 0, objetivo 3","R":0.0337,"acierto":0.2058},{"inst":"NAS100","salida":"candado 1,8→1 y dinámico 0,8","R":0.0535,"acierto":0.3779},{"inst":"NAS100","salida":"dinámico 1R desde la entrada","R":0.0444,"acierto":0.3864},{"inst":"NAS100","salida":"sin objetivo (cierre)","R":0.088,"acierto":0.2134},{"inst":"NVDA","salida":"1,5:1","R":0.0283,"acierto":0.4201},{"inst":"NVDA","salida":"1:1","R":0.0199,"acierto":0.5095},{"inst":"NVDA","salida":"2:1","R":0.0576,"acierto":0.3732},{"inst":"NVDA","salida":"3:1","R":0.116,"acierto":0.3242},{"inst":"NVDA","salida":"a 1R stop a 0, dinámico 1","R":0.0732,"acierto":0.522},{"inst":"NVDA","salida":"a 1R stop a 0, objetivo 3","R":0.0676,"acierto":0.2251},{"inst":"NVDA","salida":"candado 1,8→1 y dinámico 0,8","R":0.0719,"acierto":0.3924},{"inst":"NVDA","salida":"dinámico 1R desde la entrada","R":0.0562,"acierto":0.397},{"inst":"NVDA","salida":"sin objetivo (cierre)","R":0.2411,"acierto":0.2584},{"inst":"XAU","salida":"1,5:1","R":-0.0112,"acierto":0.4046},{"inst":"XAU","salida":"1:1","R":-0.0149,"acierto":0.4917},{"inst":"XAU","salida":"2:1","R":-0.0009,"acierto":0.3512},{"inst":"XAU","salida":"3:1","R":0.0119,"acierto":0.2918},{"inst":"XAU","salida":"a 1R stop a 0, dinámico 1","R":0.0454,"acierto":0.4964},{"inst":"XAU","salida":"a 1R stop a 0, objetivo 3","R":0.0136,"acierto":0.2083},{"inst":"XAU","salida":"candado 1,8→1 y dinámico 0,8","R":0.0547,"acierto":0.3728},{"inst":"XAU","salida":"dinámico 1R desde la entrada","R":0.0418,"acierto":0.3841},{"inst":"XAU","salida":"sin objetivo (cierre)","R":0.0379,"acierto":0.2227},{"inst":"acciones40","salida":"1,5:1","R":0.0405,"acierto":0.4228},{"inst":"acciones40","salida":"1:1","R":0.023,"acierto":0.5115},{"inst":"acciones40","salida":"2:1","R":0.0551,"acierto":0.3671},{"inst":"acciones40","salida":"3:1","R":0.0947,"acierto":0.3088},{"inst":"acciones40","salida":"a 1R stop a 0, dinámico 1","R":0.0567,"acierto":0.5202},{"inst":"acciones40","salida":"a 1R stop a 0, objetivo 3","R":0.0601,"acierto":0.2121},{"inst":"acciones40","salida":"candado 1,8→1 y dinámico 0,8","R":0.0763,"acierto":0.3914},{"inst":"acciones40","salida":"dinámico 1R desde la entrada","R":0.0446,"acierto":0.3977},{"inst":"acciones40","salida":"sin objetivo (cierre)","R":0.1903,"acierto":0.242}],"filtros":[{"inst":"NVDA","lado":"largo","senal":"siempre","R_bruto":-0.0269,"t_bruto":-0.9579,"ops_dia":13.4688,"acierto":0.3384},{"inst":"NVDA","lado":"largo","senal":"tendencia_diaria","R_bruto":-0.099,"t_bruto":-2.1723,"ops_dia":4.974,"acierto":0.3079},{"inst":"NVDA","lado":"largo","senal":"vwap+apertura","R_bruto":-0.0065,"t_bruto":-0.1814,"ops_dia":6.0729,"acierto":0.3413},{"inst":"NVDA","lado":"largo","senal":"dia_fuerte","R_bruto":-0.0219,"t_bruto":-0.452,"ops_dia":3.9323,"acierto":0.343},{"inst":"NVDA","lado":"largo","senal":"bajo_vwap_compra","R_bruto":-0.0746,"t_bruto":-1.6944,"ops_dia":4.5781,"acierto":0.3242},{"inst":"NVDA","lado":"largo","senal":"orb30","R_bruto":-0.0461,"t_bruto":-0.9086,"ops_dia":2.8177,"acierto":0.3401},{"inst":"BTC","lado":"largo","senal":"siempre","R_bruto":0.0001,"t_bruto":0.0055,"ops_dia":12.6849,"acierto":0.351},{"inst":"BTC","lado":"largo","senal":"tendencia_diaria","R_bruto":-0.0029,"t_bruto":-0.1713,"ops_dia":4.3479,"acierto":0.3498},{"inst":"BTC","lado":"largo","senal":"vwap+apertura","R_bruto":0.0372,"t_bruto":2.525,"ops_dia":6.0023,"acierto":0.3615},{"inst":"BTC","lado":"largo","senal":"dia_fuerte","R_bruto":0.0625,"t_bruto":3.1981,"ops_dia":3.5658,"acierto":0.368},{"inst":"BTC","lado":"largo","senal":"bajo_vwap_compra","R_bruto":-0.0367,"t_bruto":-2.2082,"ops_dia":4.3514,"acierto":0.3391},{"inst":"BTC","lado":"largo","senal":"orb30","R_bruto":0.0668,"t_bruto":3.9679,"ops_dia":4.1898,"acierto":0.3776},{"inst":"NAS100","lado":"largo","senal":"siempre","R_bruto":0.014,"t_bruto":2.4356,"ops_dia":15.568,"acierto":0.3502},{"inst":"NAS100","lado":"largo","senal":"tendencia_diaria","R_bruto":0.018,"t_bruto":2.1706,"ops_dia":7.2645,"acierto":0.3523},{"inst":"NAS100","lado":"largo","senal":"vwap+apertura","R_bruto":0.0302,"t_bruto":3.3979,"ops_dia":6.5925,"acierto":0.3578},{"inst":"NAS100","lado":"largo","senal":"dia_fuerte","R_bruto":0.0302,"t_bruto":2.5829,"ops_dia":3.7723,"acierto":0.3617},{"inst":"NAS100","lado":"largo","senal":"bajo_vwap_compra","R_bruto":-0.0025,"t_bruto":-0.2789,"ops_dia":5.9795,"acierto":0.3428},{"inst":"NAS100","lado":"largo","senal":"orb30","R_bruto":0.0167,"t_bruto":1.4462,"ops_dia":3.728,"acierto":0.3602},{"inst":"XAU","lado":"largo","senal":"siempre","R_bruto":0.0136,"t_bruto":2.0919,"ops_dia":11.8542,"acierto":0.3561},{"inst":"XAU","lado":"largo","senal":"tendencia_diaria","R_bruto":0.0365,"t_bruto":3.4802,"ops_dia":4.6039,"acierto":0.3621},{"inst":"XAU","lado":"largo","senal":"vwap+apertura","R_bruto":-0.0111,"t_bruto":-1.1318,"ops_dia":5.6805,"acierto":0.347},{"inst":"XAU","lado":"largo","senal":"dia_fuerte","R_bruto":0.0032,"t_bruto":0.2328,"ops_dia":3.0331,"acierto":0.3541},{"inst":"XAU","lado":"largo","senal":"bajo_vwap_compra","R_bruto":0.0598,"t_bruto":5.3681,"ops_dia":3.9063,"acierto":0.3724},{"inst":"XAU","lado":"largo","senal":"orb30","R_bruto":0.0059,"t_bruto":0.4725,"ops_dia":3.5938,"acierto":0.3575},{"inst":"acciones40","lado":"largo","senal":"siempre","R_bruto":-0.0637,"t_bruto":-1.3581,"ops_dia":11.6463,"acierto":0.326},{"inst":"acciones40","lado":"largo","senal":"tendencia_diaria","R_bruto":-0.0156,"t_bruto":-0.4285,"ops_dia":2.8833,"acierto":0.3404},{"inst":"acciones40","lado":"largo","senal":"vwap+apertura","R_bruto":-0.0052,"t_bruto":-0.1143,"ops_dia":4.6398,"acierto":0.3446},{"inst":"acciones40","lado":"largo","senal":"dia_fuerte","R_bruto":-0.0218,"t_bruto":-0.5076,"ops_dia":3.1056,"acierto":0.3429},{"inst":"acciones40","lado":"largo","senal":"bajo_vwap_compra","R_bruto":-0.0875,"t_bruto":-1.2786,"ops_dia":4.5435,"acierto":0.3189},{"inst":"acciones40","lado":"largo","senal":"orb30","R_bruto":-0.0216,"t_bruto":-0.3465,"ops_dia":1.8667,"acierto":0.3477},{"inst":"NVDA","lado":"corto","senal":"siempre","R_bruto":0.0424,"t_bruto":1.5577,"ops_dia":13.6771,"acierto":0.3621},{"inst":"NVDA","lado":"corto","senal":"tendencia_diaria","R_bruto":0.0345,"t_bruto":0.6038,"ops_dia":3.5104,"acierto":0.3605},{"inst":"NVDA","lado":"corto","senal":"vwap+apertura","R_bruto":0.0664,"t_bruto":1.6757,"ops_dia":6.4115,"acierto":0.3737},{"inst":"NVDA","lado":"corto","senal":"dia_fuerte","R_bruto":0.1369,"t_bruto":2.7739,"ops_dia":3.9375,"acierto":0.4034},{"inst":"NVDA","lado":"corto","senal":"bajo_vwap_compra","R_bruto":0.0377,"t_bruto":0.8768,"ops_dia":4.25,"acierto":0.3578},{"inst":"NVDA","lado":"corto","senal":"orb30","R_bruto":0.0758,"t_bruto":1.6452,"ops_dia":3.276,"acierto":0.3816},{"inst":"BTC","lado":"corto","senal":"siempre","R_bruto":0.0231,"t_bruto":2.2563,"ops_dia":12.5515,"acierto":0.3561},{"inst":"BTC","lado":"corto","senal":"tendencia_diaria","R_bruto":0.0342,"t_bruto":1.6622,"ops_dia":3.3197,"acierto":0.3606},{"inst":"BTC","lado":"corto","senal":"vwap+apertura","R_bruto":0.0527,"t_bruto":3.7847,"ops_dia":6.3145,"acierto":0.3633},{"inst":"BTC","lado":"corto","senal":"dia_fuerte","R_bruto":0.0722,"t_bruto":3.9477,"ops_dia":3.8108,"acierto":0.3702},{"inst":"BTC","lado":"corto","senal":"bajo_vwap_compra","R_bruto":-0.0265,"t_bruto":-1.4916,"ops_dia":4.0265,"acierto":0.3425},{"inst":"BTC","lado":"corto","senal":"orb30","R_bruto":0.0627,"t_bruto":3.7426,"ops_dia":4.3105,"acierto":0.3702},{"inst":"NAS100","lado":"corto","senal":"siempre","R_bruto":0.0052,"t_bruto":0.8682,"ops_dia":15.5899,"acierto":0.3471},{"inst":"NAS100","lado":"corto","senal":"tendencia_diaria","R_bruto":0.0067,"t_bruto":0.4634,"ops_dia":2.608,"acierto":0.345},{"inst":"NAS100","lado":"corto","senal":"vwap+apertura","R_bruto":0.011,"t_bruto":1.3194,"ops_dia":8.0597,"acierto":0.3469},{"inst":"NAS100","lado":"corto","senal":"dia_fuerte","R_bruto":0.0269,"t_bruto":2.5548,"ops_dia":5.2912,"acierto":0.3533},{"inst":"NAS100","lado":"corto","senal":"bajo_vwap_compra","R_bruto":-0.0193,"t_bruto":-1.8469,"ops_dia":4.7832,"acierto":0.3445},{"inst":"NAS100","lado":"corto","senal":"orb30","R_bruto":0.0197,"t_bruto":1.8858,"ops_dia":5.0691,"acierto":0.3534},{"inst":"XAU","lado":"corto","senal":"siempre","R_bruto":0.0149,"t_bruto":2.2629,"ops_dia":11.8713,"acierto":0.3561},{"inst":"XAU","lado":"corto","senal":"tendencia_diaria","R_bruto":0.034,"t_bruto":2.5062,"ops_dia":2.9037,"acierto":0.364},{"inst":"XAU","lado":"corto","senal":"vwap+apertura","R_bruto":-0.006,"t_bruto":-0.6366,"ops_dia":6.1702,"acierto":0.3463},{"inst":"XAU","lado":"corto","senal":"dia_fuerte","R_bruto":-0.0043,"t_bruto":-0.3524,"ops_dia":3.5828,"acierto":0.3488},{"inst":"XAU","lado":"corto","senal":"bajo_vwap_compra","R_bruto":0.0493,"t_bruto":4.1354,"ops_dia":3.6045,"acierto":0.3729},{"inst":"XAU","lado":"corto","senal":"orb30","R_bruto":-0.0085,"t_bruto":-0.7119,"ops_dia":3.9574,"acierto":0.3487},{"inst":"acciones40","lado":"corto","senal":"siempre","R_bruto":0.0705,"t_bruto":1.4458,"ops_dia":11.4806,"acierto":0.3719},{"inst":"acciones40","lado":"corto","senal":"tendencia_diaria","R_bruto":0.1127,"t_bruto":1.5152,"ops_dia":4.8463,"acierto":0.3875},{"inst":"acciones40","lado":"corto","senal":"vwap+apertura","R_bruto":0.1273,"t_bruto":1.9231,"ops_dia":5.8259,"acierto":0.3878},{"inst":"acciones40","lado":"corto","senal":"dia_fuerte","R_bruto":0.1132,"t_bruto":1.4225,"ops_dia":4.1102,"acierto":0.3854},{"inst":"acciones40","lado":"corto","senal":"bajo_vwap_compra","R_bruto":0.041,"t_bruto":0.7673,"ops_dia":3.4593,"acierto":0.3638},{"inst":"acciones40","lado":"corto","senal":"orb30","R_bruto":0.167,"t_bruto":1.8386,"ops_dia":2.7537,"acierto":0.4095}],"curvas":{"BTC":{"fechas":["2022-02-20","2022-02-27","2022-03-06","2022-03-13","2022-03-20","2022-03-27","2022-04-03","2022-04-10","2022-04-17","2022-04-24","2022-05-01","2022-05-08","2022-05-15","2022-05-22","2022-05-29","2022-06-05","2022-06-12","2022-06-19","2022-06-26","2022-07-03","2022-07-10","2022-07-17","2022-07-24","2022-07-31","2022-08-07","2022-08-14","2022-08-21","2022-08-28","2022-09-04","2022-09-11","2022-09-18","2022-09-25","2022-10-02","2022-10-09","2022-10-16","2022-10-23","2022-10-30","2022-11-06","2022-11-13","2022-11-20","2022-11-27","2022-12-04","2022-12-11","2022-12-18","2022-12-25","2023-01-01","2023-01-08","2023-01-15","2023-01-22","2023-01-29","2023-02-05","2023-02-12","2023-02-19","2023-02-26","2023-03-05","2023-03-12","2023-03-19","2023-03-26","2023-04-02","2023-04-09","2023-04-16","2023-04-23","2023-04-30","2023-05-07","2023-05-14","2023-05-21","2023-05-28","2023-06-04","2023-06-11","2023-06-18","2023-06-25","2023-07-02","2023-07-09","2023-07-16","2023-07-23","2023-07-30","2023-08-06","2023-08-13","2023-08-20","2023-08-27","2023-09-03","2023-09-10","2023-09-17","2023-09-24","2023-10-01","2023-10-08","2023-10-15","2023-10-22","2023-10-29","2023-11-05","2023-11-12","2023-11-19","2023-11-26","2023-12-03","2023-12-10","2023-12-17","2023-12-24","2023-12-31","2024-01-07","2024-01-14","2024-01-21","2024-01-28","2024-02-04","2024-02-11","2024-02-18","2024-02-25","2024-03-03","2024-03-10","2024-03-17","2024-03-24","2024-03-31","2024-04-07","2024-04-14","2024-04-21","2024-04-28","2024-05-05","2024-05-12","2024-05-19","2024-05-26","2024-06-02","2024-06-09","2024-06-16","2024-06-23","2024-06-30","2024-07-07","2024-07-14","2024-07-21","2024-07-28","2024-08-04","2024-08-11","2024-08-18","2024-08-25","2024-09-01","2024-09-08","2024-09-15","2024-09-22","2024-09-29","2024-10-06","2024-10-13","2024-10-20","2024-10-27","2024-11-03","2024-11-10","2024-11-17","2024-11-24","2024-12-01","2024-12-08","2024-12-15","2024-12-22","2024-12-29","2025-01-05","2025-01-12","2025-01-19","2025-01-26","2025-02-02","2025-02-09","2025-02-16","2025-02-23","2025-03-02","2025-03-09","2025-03-16","2025-03-23","2025-03-30","2025-04-06","2025-04-13","2025-04-20","2025-04-27","2025-05-04","2025-05-11","2025-05-18","2025-05-25","2025-06-01","2025-06-08","2025-06-15","2025-06-22","2025-06-29","2025-07-06","2025-07-13","2025-07-20","2025-07-27","2025-08-03","2025-08-10","2025-08-17","2025-08-24","2025-08-31","2025-09-07","2025-09-14","2025-09-21","2025-09-28","2025-10-05","2025-10-12","2025-10-19","2025-10-26","2025-11-02","2025-11-09","2025-11-16","2025-11-23","2025-11-30","2025-12-07","2025-12-14","2025-12-21","2025-12-28","2026-01-04","2026-01-11","2026-01-18","2026-01-25","2026-02-01","2026-02-08","2026-02-15","2026-02-22","2026-03-01","2026-03-08","2026-03-15","2026-03-22","2026-03-29","2026-04-05","2026-04-12","2026-04-19","2026-04-26","2026-05-03","2026-05-10","2026-05-17","2026-05-24","2026-05-31","2026-06-07","2026-06-14","2026-06-21","2026-06-28","2026-07-05","2026-07-12","2026-07-19","2026-07-26","2026-08-02","2026-08-09","2026-08-16","2026-08-23","2026-08-30","2026-09-06","2026-09-13","2026-09-20","2026-09-27","2026-10-04","2026-10-11","2026-10-18","2026-10-25","2026-11-01","2026-11-08","2026-11-15","2026-11-22","2026-11-29"],"original":[-1.0,-26.1,-62.7,-92.1,-85.9,-101.2,-162.3,-201.8,-244.0,-287.2,-335.7,-381.3,-431.3,-446.0,-463.1,-494.7,-513.8,-549.0,-558.6,-570.9,-559.2,-567.5,-600.8,-597.3,-612.5,-643.7,-689.5,-727.1,-772.4,-791.9,-853.5,-860.9,-891.5,-903.5,-923.6,-967.0,-1017.2,-1092.3,-1209.8,-1219.5,-1229.3,-1262.9,-1296.1,-1384.3,-1423.1,-1460.1,-1557.1,-1737.2,-1775.1,-1774.8,-1805.9,-1845.0,-1863.1,-1901.6,-1923.4,-1994.1,-2029.5,-2052.2,-2069.0,-2082.1,-2126.4,-2184.7,-2223.7,-2244.0,-2275.6,-2296.4,-2324.3,-2364.9,-2407.6,-2417.3,-2435.2,-2450.1,-2479.5,-2522.2,-2560.6,-2592.2,-2660.5,-2770.2,-2915.9,-2957.1,-3009.9,-3028.6,-3072.9,-3111.8,-3162.4,-3238.9,-3282.5,-3338.6,-3408.1,-3427.0,-3490.1,-3552.7,-3568.5,-3577.2,-3608.7,-3662.5,-3696.4,-3758.7,-3828.7,-3887.4,-3908.1,-3924.1,-3939.3,-3985.6,-4025.5,-4049.5,-4099.9,-4131.9,-4161.8,-4181.8,-4192.9,-4203.3,-4252.0,-4287.9,-4296.5,-4336.6,-4374.5,-4397.9,-4424.5,-4456.9,-4512.2,-4578.0,-4607.9,-4652.4,-4671.8,-4711.2,-4726.2,-4751.3,-4831.4,-4856.4,-4872.6,-4873.0,-4923.0,-4974.4,-4973.9,-5002.5,-5020.0,-5085.3,-5131.4,-5152.7,-5189.3,-5249.8,-5285.0,-5301.0,-5312.9,-5347.5,-5383.1,-5430.4,-5494.9,-5521.4,-5527.3,-5592.5,-5597.9,-5643.6,-5683.8,-5711.9,-5725.3,-5797.9,-5867.3,-5899.9,-5922.5,-5927.5,-5954.4,-6011.8,-6050.6,-6063.1,-6076.2,-6127.0,-6188.1,-6254.5,-6277.1,-6322.4,-6364.0,-6405.6,-6489.0,-6515.8,-6547.3,-6595.1,-6667.2,-6701.5,-6785.5,-6821.5,-6882.3,-6931.3,-6968.1,-7008.9,-7043.1,-7100.4,-7173.1,-7203.2,-7308.5,-7340.1,-7350.2,-7410.9,-7463.3,-7521.5,-7562.4,-7562.0,-7579.4,-7591.3,-7647.2,-7670.7,-7717.9,-7801.4,-7843.3,-7930.8,-8035.2,-8095.3,-8102.8,-8112.3,-8136.8,-8152.7,-8177.9,-8199.6,-8250.3,-8268.4,-8287.0,-8310.1,-8328.3,-8354.4,-8408.7,-8452.3,-8492.0,-8543.2,-8642.1,-8660.5,-8690.6,-8762.1,-8769.7,-8782.6,-8806.6,-8832.8,-8894.3,-8912.8,-8975.5,-9081.9,-9130.4,-9134.5,-9172.6,-9197.2,-9227.8,-9286.7,-9344.2,-9388.9,-9421.8,-9465.4,-9513.6,-9578.5,-9647.4,-9669.7],"filtro":[0.4,-15.8,-11.9,-31.4,-32.7,-35.5,-57.6,-68.7,-80.4,-93.9,-112.5,-130.7,-143.2,-152.5,-160.4,-168.1,-180.4,-209.7,-216.8,-225.3,-219.4,-220.9,-237.0,-240.0,-255.0,-267.4,-290.3,-305.1,-321.6,-328.6,-340.2,-348.3,-365.2,-381.9,-382.5,-392.3,-447.1,-480.8,-506.7,-515.0,-518.2,-541.5,-558.6,-562.6,-586.5,-596.3,-656.5,-773.7,-777.5,-777.6,-801.8,-818.1,-814.3,-834.4,-851.2,-881.8,-910.0,-920.8,-928.9,-936.7,-962.0,-977.5,-996.6,-1009.2,-1018.3,-1028.6,-1045.2,-1063.1,-1058.6,-1064.6,-1088.4,-1100.4,-1108.3,-1125.8,-1140.3,-1147.2,-1169.9,-1202.8,-1228.3,-1240.7,-1249.2,-1274.0,-1298.0,-1329.1,-1354.4,-1379.4,-1402.7,-1433.3,-1460.4,-1472.3,-1494.2,-1525.4,-1538.6,-1552.2,-1567.1,-1585.0,-1603.6,-1621.0,-1658.1,-1678.7,-1686.6,-1701.4,-1709.1,-1741.1,-1758.3,-1770.9,-1786.1,-1789.8,-1803.9,-1809.1,-1810.2,-1818.5,-1826.7,-1834.0,-1838.9,-1855.0,-1872.1,-1882.7,-1889.3,-1898.2,-1918.1,-1933.1,-1947.2,-1954.2,-1974.0,-1994.0,-1994.6,-2012.4,-2024.3,-2041.5,-2042.5,-2044.2,-2063.0,-2077.9,-2082.8,-2110.2,-2130.9,-2147.8,-2161.0,-2178.0,-2188.7,-2212.8,-2235.6,-2236.5,-2254.8,-2261.3,-2268.9,-2282.9,-2305.9,-2318.3,-2327.3,-2337.3,-2360.5,-2396.2,-2419.6,-2430.9,-2442.2,-2460.5,-2467.7,-2467.8,-2482.5,-2484.3,-2497.2,-2545.0,-2573.0,-2579.4,-2593.6,-2624.0,-2663.6,-2688.6,-2697.0,-2706.8,-2733.7,-2765.5,-2785.6,-2807.5,-2820.5,-2862.2,-2897.3,-2919.3,-2952.5,-2984.1,-3013.6,-3038.5,-3059.6,-3083.8,-3116.2,-3137.1,-3162.4,-3191.7,-3212.1,-3229.4,-3247.6,-3270.5,-3274.5,-3287.5,-3299.9,-3301.7,-3310.2,-3317.6,-3337.3,-3350.1,-3388.8,-3436.2,-3461.2,-3497.4,-3520.1,-3525.2,-3530.4,-3544.0,-3547.1,-3552.6,-3569.4,-3587.5,-3604.9,-3617.0,-3625.9,-3627.2,-3644.1,-3658.6,-3692.9,-3712.4,-3732.6,-3754.0,-3780.0,-3795.9,-3818.5,-3833.2,-3843.8,-3853.4,-3863.4,-3881.3,-3903.7,-3912.0,-3931.3,-4032.1,-4055.3,-4060.0,-4072.7,-4096.2,-4114.7,-4130.0,-4155.4,-4174.9,-4189.9,-4220.4,-4235.8,-4272.5,-4281.7,-4284.5],"plan":[0.0,-2.4,2.1,-1.2,-2.0,-1.9,0.3,4.7,3.2,3.9,3.3,2.0,2.2,0.1,1.0,-1.9,-1.7,0.0,-2.0,-2.1,-1.3,2.3,-5.3,-5.9,-8.9,-11.1,-14.7,-21.1,-21.4,-28.1,-32.1,-32.5,-26.1,-30.1,-28.0,-31.4,-33.2,-32.9,-34.2,-35.0,-35.5,-40.1,-36.5,-36.7,-38.9,-43.9,-45.9,-36.6,-41.3,-43.3,-44.5,-45.8,-45.3,-47.0,-46.4,-52.8,-49.5,-52.4,-50.5,-53.0,-56.6,-54.8,-60.9,-57.2,-55.4,-54.5,-54.6,-59.8,-55.1,-53.5,-50.6,-54.4,-50.6,-47.0,-48.7,-55.1,-58.2,-63.9,-67.7,-66.7,-60.0,-64.5,-68.4,-78.0,-75.4,-76.2,-81.7,-90.9,-92.9,-94.5,-96.4,-95.0,-95.8,-92.5,-101.1,-104.9,-109.9,-114.7,-110.8,-108.1,-109.3,-113.0,-112.7,-111.0,-119.5,-124.6,-127.3,-129.9,-133.9,-142.9,-139.8,-139.2,-131.0,-132.1,-133.1,-140.0,-147.7,-150.3,-147.2,-146.4,-147.3,-144.8,-148.8,-150.0,-149.2,-150.2,-154.7,-163.2,-154.7,-150.5,-148.8,-148.9,-152.9,-153.6,-153.5,-158.6,-167.1,-164.3,-166.3,-167.4,-171.8,-173.6,-179.1,-182.1,-184.1,-184.4,-189.1,-186.8,-188.6,-185.8,-186.3,-184.8,-191.1,-190.5,-194.2,-192.6,-194.0,-196.6,-185.3,-188.1,-189.6,-192.9,-192.7,-198.2,-201.7,-203.0,-203.1,-205.3,-211.8,-211.2,-210.0,-208.3,-212.0,-219.1,-216.5,-223.0,-222.7,-222.2,-220.1,-228.6,-229.2,-231.0,-236.4,-234.6,-237.0,-234.4,-235.3,-242.0,-246.4,-244.0,-245.2,-247.4,-245.3,-247.4,-252.3,-249.6,-254.6,-254.6,-251.9,-254.2,-251.4,-251.9,-252.0,-255.2,-253.0,-254.7,-259.9,-258.4,-259.3,-265.2,-256.6,-256.1,-263.0,-266.9,-270.4,-273.4,-276.8,-273.1,-278.0,-280.6,-282.0,-282.1,-287.0,-290.0,-285.7,-288.2,-288.8,-285.2,-288.9,-291.8,-296.8,-303.7,-309.1,-307.9,-312.2,-306.0,-311.5,-311.3,-311.3,-309.1,-314.0,-313.9,-321.9,-325.4,-326.3,-331.2,-328.5,-334.1,-333.6,-336.1],"plan_corre":[0.0,-3.6,2.2,-1.2,-0.5,0.4,2.9,1.9,2.3,6.4,9.7,15.5,14.1,12.3,13.1,14.5,11.8,8.2,6.2,6.2,12.4,17.5,14.4,16.5,13.4,11.3,7.7,0.9,-0.2,-7.0,-6.4,-8.1,-6.8,-11.6,-0.7,-0.5,5.1,0.6,-8.4,-9.2,-10.2,-14.8,-12.1,-15.2,-19.6,-24.6,-27.3,-10.2,-5.4,-8.6,-9.9,-11.4,-1.1,-3.7,-2.8,0.5,5.9,2.6,3.2,-0.5,-2.6,2.0,-6.4,-4.3,-6.7,-5.8,-7.4,-14.1,3.1,4.5,7.4,2.7,4.8,17.5,15.2,8.8,3.0,-3.1,-4.0,-0.2,16.4,12.0,10.8,1.1,1.3,3.5,-1.6,-10.8,-12.4,-17.6,-18.8,-10.0,-11.9,-11.5,-20.2,-22.3,-27.2,-30.6,-24.9,-16.2,-15.8,-19.8,-22.1,-18.1,-20.2,-24.8,-22.4,-24.8,-28.8,-37.8,-29.1,-32.0,-20.4,-21.5,-21.2,-31.0,-38.4,-39.5,-30.4,-34.6,-36.7,-35.4,-40.5,-40.0,-38.3,-41.1,-39.1,-47.7,-35.9,-27.0,-25.2,-28.5,-32.5,-27.5,-27.9,-35.4,-44.0,-43.9,-46.8,-52.0,-59.0,-64.0,-68.5,-69.3,-72.6,-71.3,-75.7,-72.0,-68.7,-66.7,-67.1,-62.3,-66.7,-69.3,-72.7,-63.8,-64.8,-67.2,-50.3,-48.0,-47.9,-51.1,-51.2,-51.3,-52.0,-53.3,-55.6,-63.1,-67.7,-70.2,-69.1,-67.7,-66.3,-75.5,-70.3,-76.7,-76.0,-75.2,-78.0,-88.6,-93.8,-97.9,-104.5,-98.2,-98.6,-96.8,-98.4,-104.7,-109.1,-109.2,-99.8,-101.5,-99.3,-100.1,-107.2,-102.3,-103.7,-102.2,-99.7,-102.2,-98.4,-100.0,-102.2,-104.7,-99.8,-105.2,-106.9,-94.4,-94.8,-100.7,-89.3,-83.9,-90.9,-94.5,-98.2,-101.5,-103.1,-103.0,-107.9,-109.1,-110.8,-110.4,-113.8,-122.1,-114.5,-118.8,-120.4,-112.5,-115.2,-113.9,-119.2,-127.0,-134.0,-131.7,-138.6,-121.6,-130.4,-127.5,-132.0,-128.6,-133.8,-130.2,-138.8,-143.8,-148.2,-154.3,-144.0,-151.2,-144.4,-142.8]},"NAS100":{"fechas":["2005-03-31","2005-04-30","2005-05-31","2005-06-30","2005-07-31","2005-08-31","2005-09-30","2005-10-31","2005-11-30","2005-12-31","2006-01-31","2006-02-28","2006-03-31","2006-04-30","2006-05-31","2006-06-30","2006-07-31","2006-08-31","2006-09-30","2006-10-31","2006-11-30","2006-12-31","2007-01-31","2007-02-28","2007-03-31","2007-04-30","2007-05-31","2007-06-30","2007-07-31","2007-08-31","2007-09-30","2007-10-31","2007-11-30","2007-12-31","2008-01-31","2008-02-29","2008-03-31","2008-04-30","2008-05-31","2008-06-30","2008-07-31","2008-08-31","2008-09-30","2008-10-31","2008-11-30","2008-12-31","2009-01-31","2009-02-28","2009-03-31","2009-04-30","2009-05-31","2009-06-30","2009-07-31","2009-08-31","2009-09-30","2009-10-31","2009-11-30","2009-12-31","2010-01-31","2010-02-28","2010-03-31","2010-04-30","2010-05-31","2010-06-30","2010-07-31","2010-08-31","2010-09-30","2010-10-31","2010-11-30","2010-12-31","2011-01-31","2011-02-28","2011-03-31","2011-04-30","2011-05-31","2011-06-30","2011-07-31","2011-08-31","2011-09-30","2011-10-31","2011-11-30","2011-12-31","2012-01-31","2012-02-29","2012-03-31","2012-04-30","2012-05-31","2012-06-30","2012-07-31","2012-08-31","2012-09-30","2012-10-31","2012-11-30","2012-12-31","2013-01-31","2013-02-28","2013-03-31","2013-04-30","2013-05-31","2013-06-30","2013-07-31","2013-08-31","2013-09-30","2013-10-31","2013-11-30","2013-12-31","2014-01-31","2014-02-28","2014-03-31","2014-04-30","2014-05-31","2014-06-30","2014-07-31","2014-08-31","2014-09-30","2014-10-31","2014-11-30","2014-12-31","2015-01-31","2015-02-28","2015-03-31","2015-04-30","2015-05-31","2015-06-30","2015-07-31","2015-08-31","2015-09-30","2015-10-31","2015-11-30","2015-12-31","2016-01-31","2016-02-29","2016-03-31","2016-04-30","2016-05-31","2016-06-30","2016-07-31","2016-08-31","2016-09-30","2016-10-31","2016-11-30","2016-12-31","2017-01-31","2017-02-28","2017-03-31","2017-04-30","2017-05-31","2017-06-30","2017-07-31","2017-08-31","2017-09-30","2017-10-31","2017-11-30","2017-12-31","2018-01-31","2018-02-28","2018-03-31","2018-04-30","2018-05-31","2018-06-30","2018-07-31","2018-08-31","2018-09-30","2018-10-31","2018-11-30","2018-12-31","2019-01-31","2019-02-28","2019-03-31","2019-04-30","2019-05-31","2019-06-30","2019-07-31","2019-08-31","2019-09-30","2019-10-31","2019-11-30","2019-12-31","2020-01-31","2020-02-29","2020-03-31","2020-04-30","2020-05-31"],"original":[-13.2,-99.5,-83.4,-168.9,-157.5,-212.4,-262.6,-333.7,-351.6,-418.2,-451.2,-486.6,-509.7,-554.6,-647.3,-691.9,-731.2,-734.3,-735.1,-733.2,-728.8,-752.7,-751.9,-799.6,-842.7,-853.6,-870.3,-922.0,-988.1,-1010.3,-1012.2,-1036.4,-1077.3,-1107.6,-1156.8,-1209.1,-1232.8,-1217.4,-1227.8,-1274.3,-1287.9,-1275.0,-1331.5,-1381.4,-1407.0,-1406.6,-1416.2,-1422.9,-1435.4,-1406.2,-1407.8,-1411.0,-1397.7,-1406.6,-1404.5,-1448.6,-1441.7,-1459.3,-1534.4,-1518.5,-1518.1,-1522.8,-1554.2,-1604.6,-1599.4,-1616.8,-1581.3,-1590.3,-1629.1,-1638.4,-1651.8,-1651.4,-1689.9,-1708.5,-1734.9,-1778.4,-1808.3,-1852.3,-1880.8,-1870.1,-1895.4,-1928.1,-1915.7,-1924.1,-1922.4,-1948.8,-2000.0,-2008.3,-2024.1,-2050.6,-2083.8,-2165.4,-2211.1,-2238.2,-2255.0,-2311.1,-2325.4,-2336.9,-2367.6,-2388.8,-2410.0,-2458.4,-2494.6,-2522.6,-2532.7,-2576.4,-2624.5,-2629.8,-2731.2,-2781.3,-2784.3,-2813.9,-2875.2,-2885.2,-2989.0,-3020.1,-3025.2,-3103.5,-3169.9,-3142.1,-3230.0,-3272.3,-3293.5,-3386.2,-3430.5,-3509.2,-3538.9,-3518.2,-3544.7,-3585.4,-3620.4,-3641.2,-3615.3,-3671.1,-3666.1,-3720.3,-3716.5,-3770.8,-3802.5,-3891.5,-3936.0,-3990.8,-3984.4,-3983.6,-4039.6,-4095.7,-4137.5,-4187.5,-4178.7,-4221.2,-4261.3,-4318.6,-4354.9,-4429.1,-4440.0,-4483.4,-4553.2,-4588.7,-4580.7,-4614.4,-4626.9,-4617.1,-4646.6,-4756.5,-4764.3,-4833.4,-4833.1,-4833.7,-4887.4,-4899.2,-4944.5,-4982.4,-5023.6,-5080.0,-5110.1,-5135.0,-5144.1,-5181.2,-5198.5,-5246.7,-5237.4,-5238.8,-5247.2],"filtro":[-5.6,-32.0,-52.1,-80.3,-100.7,-145.0,-174.2,-198.8,-232.6,-229.5,-259.7,-275.8,-304.7,-332.3,-396.4,-412.7,-422.1,-421.1,-427.6,-417.1,-420.1,-433.3,-444.9,-466.6,-505.4,-510.7,-531.3,-550.9,-564.0,-588.3,-593.8,-598.8,-621.0,-625.5,-639.6,-653.1,-654.4,-650.0,-636.3,-653.8,-651.5,-646.2,-650.9,-671.2,-681.4,-664.5,-668.8,-669.3,-644.8,-646.7,-641.0,-642.9,-651.3,-673.4,-666.9,-690.1,-701.9,-713.5,-723.5,-722.5,-707.6,-706.9,-716.7,-721.9,-709.2,-710.0,-699.3,-705.4,-719.0,-731.1,-723.8,-725.5,-714.3,-752.7,-771.0,-759.0,-753.5,-755.7,-775.4,-767.5,-778.5,-774.6,-769.7,-791.6,-798.3,-784.4,-796.6,-780.2,-797.2,-828.0,-855.1,-890.2,-894.4,-899.0,-921.2,-938.3,-948.8,-944.6,-963.8,-965.9,-982.0,-994.9,-1028.7,-1023.0,-1013.8,-1037.5,-1051.5,-1039.3,-1074.2,-1087.5,-1080.2,-1098.1,-1105.7,-1133.3,-1145.0,-1136.2,-1132.2,-1163.1,-1162.2,-1162.6,-1189.6,-1190.3,-1205.8,-1248.4,-1263.0,-1294.5,-1307.6,-1301.3,-1314.2,-1319.3,-1331.0,-1340.1,-1327.2,-1352.6,-1355.5,-1370.6,-1384.5,-1448.4,-1444.5,-1477.7,-1466.5,-1502.1,-1512.5,-1498.8,-1511.7,-1537.8,-1552.7,-1567.0,-1573.6,-1571.4,-1597.9,-1625.2,-1634.7,-1659.9,-1632.5,-1637.6,-1655.8,-1660.9,-1675.7,-1677.5,-1665.8,-1660.9,-1666.3,-1711.3,-1711.8,-1728.3,-1717.6,-1713.5,-1725.6,-1743.6,-1759.3,-1775.9,-1780.2,-1784.2,-1783.9,-1776.4,-1784.9,-1790.3,-1793.3,-1805.3,-1809.2,-1793.7,-1796.6],"plan":[2.0,3.5,0.9,-1.9,-7.0,-13.4,-15.0,-24.2,-32.0,-28.4,-29.3,-28.1,-34.1,-41.5,-42.4,-39.8,-41.4,-31.8,-36.8,-23.6,-28.1,-25.7,-25.2,-30.5,-32.8,-36.5,-40.7,-50.1,-53.0,-45.2,-51.3,-54.1,-62.0,-61.0,-56.1,-52.6,-58.6,-62.6,-63.9,-56.8,-58.7,-55.5,-52.0,-45.7,-36.9,-28.4,-18.3,-22.9,-9.1,-5.2,6.6,6.8,1.8,6.1,-2.2,-2.3,-4.0,-17.1,-19.2,-23.5,-27.4,-18.5,-14.6,-12.9,-0.4,1.5,5.7,3.8,1.2,7.5,9.0,2.0,5.0,-2.4,-10.3,-1.2,9.0,11.0,9.2,13.2,10.2,11.5,9.1,-5.3,-2.7,11.1,19.0,26.7,31.9,27.3,25.0,29.0,31.5,41.0,25.4,29.1,32.0,44.8,37.7,37.7,31.9,47.2,44.4,47.2,50.4,48.3,62.3,66.2,70.5,73.1,81.9,90.1,89.5,88.4,94.8,101.3,102.0,103.0,109.1,103.3,93.7,89.9,85.9,83.5,93.0,87.8,80.2,69.5,71.7,76.5,80.3,84.4,74.9,74.3,81.4,83.4,79.8,67.6,63.4,49.9,65.4,66.9,67.3,61.7,46.1,47.5,51.9,56.5,57.2,72.6,61.9,53.3,59.4,56.1,57.6,55.3,53.5,58.9,54.2,36.8,39.2,34.8,47.6,44.5,44.1,31.0,38.0,28.2,27.6,27.2,27.8,32.6,39.5,45.1,51.4,54.7,51.1,57.4,56.1,67.0,55.9,55.9,53.1],"plan_corre":[2.6,3.0,-5.4,-11.2,-12.8,-21.7,-24.0,-26.2,-31.3,-23.1,-22.4,-23.6,-33.5,-39.9,-34.8,-29.4,-32.2,-30.5,-34.2,-25.0,-22.6,-22.0,-16.2,-22.0,-30.0,-35.2,-38.3,-41.6,-39.7,-38.8,-45.1,-35.1,-38.0,-37.8,-29.9,-28.7,-32.9,-38.3,-32.6,-15.4,-21.9,-15.3,4.1,10.5,19.2,28.9,43.5,42.6,51.2,50.2,64.4,62.2,58.8,61.4,50.9,39.8,33.5,17.0,16.3,15.8,12.3,19.9,16.7,19.5,31.7,28.1,26.7,21.5,15.7,14.6,37.0,29.9,37.5,23.7,13.3,34.9,40.3,35.8,29.1,29.9,22.7,24.7,20.4,11.5,11.1,28.4,32.4,49.4,52.1,42.6,43.5,55.8,60.9,63.2,41.4,55.5,59.7,76.7,65.4,67.7,62.2,62.0,57.2,61.2,75.2,75.6,87.1,96.0,109.6,121.6,128.6,127.1,136.2,131.7,145.0,146.7,148.8,142.6,147.3,138.9,147.2,147.1,149.2,142.6,146.8,142.7,135.8,127.6,131.1,139.0,134.3,138.7,131.6,133.3,135.9,132.9,129.8,108.4,115.4,105.9,128.3,133.6,128.6,124.1,119.0,110.9,124.4,130.7,131.0,148.4,135.8,132.3,143.4,143.8,155.0,148.1,150.8,162.0,155.9,144.4,160.3,157.9,169.9,183.6,191.9,184.2,192.6,181.9,187.9,181.5,178.3,184.2,191.7,197.7,208.2,212.8,202.1,208.4,216.3,221.2,201.4,204.3,201.4]},"NVDA":{"fechas":["2026-02-20","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-03-02","2026-03-03","2026-03-05","2026-03-06","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-06-01","2026-06-02","2026-06-03","2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17","2026-06-18","2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01","2026-07-02","2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16","2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-23","2026-10-26","2026-10-27","2026-10-28","2026-10-30","2026-11-02","2026-11-03","2026-11-04","2026-11-05","2026-11-06","2026-11-09","2026-11-10","2026-11-11","2026-11-12","2026-11-13","2026-11-16","2026-11-17","2026-11-18","2026-11-19","2026-11-20","2026-11-23","2026-11-24","2026-11-25"],"original":[4.1,-0.4,4.0,5.7,-0.5,-6.0,2.4,0.6,4.1,-0.1,4.1,5.6,3.2,1.3,-5.0,-9.8,-12.3,-14.5,-13.6,-21.6,-23.1,-21.1,-20.2,-30.4,-35.6,-43.5,-32.8,-31.6,-29.8,-28.1,-27.3,-32.6,-28.0,-22.7,-15.4,-9.7,-5.9,-7.4,-8.2,-2.3,-8.9,-4.3,-13.4,-4.6,4.2,10.9,3.9,-14.0,-15.3,-15.5,-20.9,-17.0,-13.7,-12.4,-13.3,-13.9,-12.3,-10.9,-18.3,-27.4,-32.8,-34.3,-34.2,-41.7,-42.8,-45.0,-45.4,-45.5,-38.8,-42.7,-50.6,-44.2,-53.1,-54.7,-55.8,-62.0,-60.3,-60.7,-60.2,-62.9,-68.8,-64.9,-69.7,-69.8,-74.4,-80.7,-80.4,-75.5,-70.1,-68.8,-73.3,-70.5,-65.2,-55.7,-56.4,-48.4,-60.2,-54.7,-54.0,-58.6,-58.3,-64.3,-65.0,-59.3,-62.5,-66.9,-80.0,-75.4,-81.0,-79.1,-76.9,-67.6,-65.5,-63.8,-68.5,-68.1,-77.0,-83.6,-85.1,-84.7,-86.8,-90.1,-89.4,-95.5,-96.8,-102.3,-110.7,-107.6,-112.0,-110.0,-121.5,-118.7,-117.8,-113.0,-107.7,-110.2,-124.3,-126.9,-129.4,-132.6,-133.0,-134.8,-135.2,-132.1,-128.9,-121.7,-120.5,-126.4,-124.7,-126.1,-138.6,-142.9,-145.8,-143.5,-150.1,-145.2,-153.1,-153.4,-163.5,-169.1,-176.5,-175.4,-183.4,-189.4,-196.4,-196.9,-200.2,-199.3,-210.4,-211.0,-207.4,-207.7,-216.3,-222.1,-232.5,-232.7,-238.0,-251.5,-258.9,-256.0,-263.1,-264.0,-255.4,-259.1,-263.9,-266.3,-273.4,-278.2,-290.9,-289.5,-292.2,-288.8],"filtro":[0.9,-5.6,-3.5,-2.6,-2.6,-5.8,2.5,-1.2,0.8,-3.8,-1.5,-3.1,-4.4,-7.7,-9.9,-12.8,-12.8,-16.0,-18.4,-18.4,-22.8,-28.1,-27.5,-27.5,-30.8,-31.9,-21.2,-22.5,-21.6,-24.9,-25.5,-25.5,-24.3,-19.0,-13.6,-8.4,-6.2,-6.7,-7.1,-6.6,-7.7,-6.0,-10.5,-8.6,-2.6,-0.3,-0.3,-0.3,-1.6,1.1,-1.0,2.8,-0.1,-2.8,-5.6,-3.4,-6.3,-5.4,-6.5,-7.6,-9.5,-11.0,-15.5,-15.5,-18.8,-18.8,-23.7,-26.5,-22.9,-21.1,-22.2,-16.8,-17.9,-17.9,-20.0,-22.2,-22.4,-28.2,-28.6,-28.6,-29.6,-28.2,-28.4,-29.7,-33.0,-33.0,-34.7,-33.4,-31.8,-32.9,-32.4,-31.8,-31.3,-25.8,-26.9,-18.9,-22.2,-17.2,-19.8,-20.9,-22.2,-26.5,-26.5,-23.8,-28.2,-31.9,-31.9,-33.2,-36.4,-33.8,-31.7,-22.4,-23.0,-24.8,-27.0,-26.6,-27.7,-27.7,-29.3,-31.3,-33.5,-36.0,-40.4,-41.5,-42.9,-44.0,-44.0,-41.6,-44.9,-55.9,-56.2,-54.6,-54.0,-51.3,-50.3,-49.5,-50.6,-53.9,-54.9,-56.0,-57.8,-59.9,-60.4,-59.8,-57.5,-52.8,-52.0,-55.3,-56.3,-57.8,-65.3,-64.9,-68.9,-69.3,-74.2,-71.1,-74.5,-75.2,-76.7,-76.7,-77.8,-76.7,-80.1,-80.2,-82.7,-87.5,-86.2,-89.1,-92.4,-93.0,-91.4,-95.6,-97.8,-97.8,-100.3,-102.4,-107.2,-107.2,-107.4,-106.9,-108.0,-110.4,-103.4,-103.4,-107.7,-107.7,-108.8,-107.8,-107.8,-109.0,-110.0,-109.0],"plan":[-1.0,-3.1,-4.0,-3.9,-2.1,-1.2,0.7,0.9,-1.3,-2.4,-1.3,-1.4,-2.5,-3.5,-2.4,-3.4,-2.9,-3.9,-6.0,-2.8,-3.8,-4.9,-2.9,-1.8,-2.8,-0.7,1.1,0.1,1.7,1.7,0.8,2.6,3.3,4.6,5.7,4.7,3.6,1.5,0.4,0.1,-1.0,-2.0,-1.8,-0.6,-2.8,-1.3,0.1,1.4,0.3,1.0,-0.0,1.4,3.0,4.2,6.5,4.4,2.3,1.3,0.3,2.8,1.8,-0.3,-2.4,-3.4,-4.5,-5.5,-6.6,-7.6,-5.9,-5.9,-4.8,-3.3,-1.4,-2.5,-1.0,-3.1,-4.2,-5.2,-6.2,-6.2,-4.4,-5.5,-5.9,-5.9,-5.8,-2.8,-3.8,-5.9,-5.5,-6.6,-6.0,-5.8,-3.3,-4.3,-2.4,-0.5,0.2,0.2,2.2,3.4,3.4,4.0,3.2,2.1,1.1,-0.5,1.8,2.4,3.5,2.4,2.2,5.2,4.2,5.7,4.9,3.8,5.9,7.4,7.6,7.6,6.6,5.5,5.5,7.4,6.4,7.3,10.2,9.1,8.1,7.0,4.9,3.9,2.8,6.2,5.1,4.1,7.6,7.6,7.6,7.6,6.6,6.0,4.9,4.9,3.9,2.8,1.8,2.7,3.8,1.7,0.6,-1.5,-2.6,-4.7,-6.8,-7.9,-6.8,-7.9,-7.7,-5.8,-4.5,-5.5,-3.8,-4.2,-4.9,-7.0,-9.1,-10.2,-9.5,-10.5,-8.7,-9.8,-7.5,-3.4,-5.5,-5.5,-7.5,-6.2,-5.7,-4.6,-5.6,-6.6,-5.4,-2.1,-3.1,-3.1,-1.7,-1.6,-0.4,-0.4,-0.6,-0.3],"plan_corre":[-1.0,-3.1,-4.0,-3.9,1.3,2.3,7.3,7.5,5.4,4.2,6.8,6.8,5.7,4.7,7.0,5.9,6.5,5.4,3.3,6.6,5.5,4.5,4.9,8.5,7.4,9.5,15.0,13.9,16.9,16.9,16.0,17.1,17.9,20.4,22.0,20.9,19.9,17.8,16.7,16.3,15.3,14.3,15.1,22.4,20.3,19.2,20.9,27.2,26.2,24.1,23.1,27.5,28.9,29.1,31.1,29.0,26.9,25.9,24.8,27.3,26.2,24.2,22.1,21.0,20.0,19.0,17.9,16.9,20.3,20.7,23.2,24.1,27.5,26.5,27.4,25.4,24.3,23.3,22.3,22.3,24.1,23.0,22.6,22.6,22.7,24.5,23.4,21.4,21.8,20.7,20.2,20.4,22.3,21.2,20.2,23.5,24.7,25.3,24.2,25.6,23.6,24.1,23.3,22.2,21.2,19.7,25.5,26.0,25.0,24.0,23.7,27.9,26.9,28.3,27.4,26.4,28.6,30.0,30.3,30.3,29.2,28.2,28.2,30.1,29.0,30.4,35.1,34.1,33.0,32.0,29.9,28.8,27.8,30.0,29.0,27.9,31.5,31.5,31.5,31.5,30.5,29.8,28.8,28.8,27.8,26.7,25.6,26.6,27.7,25.6,24.5,22.4,21.3,19.2,17.0,16.0,17.1,16.0,17.8,20.0,20.5,19.4,22.4,22.0,21.3,19.1,17.0,16.0,17.8,16.7,17.9,16.8,19.1,20.7,18.6,18.6,16.5,23.8,24.2,25.7,24.7,23.7,28.7,30.6,29.6,29.6,31.8,31.9,37.5,35.4,35.2,35.5]},"XAU":{"fechas":["2006-08-31","2006-09-30","2006-10-31","2006-11-30","2006-12-31","2007-01-31","2007-02-28","2007-03-31","2007-04-30","2007-05-31","2007-06-30","2007-07-31","2007-08-31","2007-09-30","2007-10-31","2007-11-30","2007-12-31","2008-01-31","2008-02-29","2008-03-31","2008-04-30","2008-05-31","2008-06-30","2008-07-31","2008-08-31","2008-09-30","2008-10-31","2008-11-30","2008-12-31","2009-01-31","2009-02-28","2009-03-31","2009-04-30","2009-05-31","2009-06-30","2009-07-31","2009-08-31","2009-09-30","2009-10-31","2009-11-30","2009-12-31","2010-01-31","2010-02-28","2010-03-31","2010-04-30","2010-05-31","2010-06-30","2010-07-31","2010-08-31","2010-09-30","2010-10-31","2010-11-30","2010-12-31","2011-01-31","2011-02-28","2011-03-31","2011-04-30","2011-05-31","2011-06-30","2011-07-31","2011-08-31","2011-09-30","2011-10-31","2011-11-30","2011-12-31","2012-01-31","2012-02-29","2012-03-31","2012-04-30","2012-05-31","2012-06-30","2012-07-31","2012-08-31","2012-09-30","2012-10-31","2012-11-30","2012-12-31","2013-01-31","2013-02-28","2013-03-31","2013-04-30","2013-05-31","2013-06-30","2013-07-31","2013-08-31","2013-09-30","2013-10-31","2013-11-30","2013-12-31","2014-01-31","2014-02-28","2014-03-31","2014-04-30","2014-05-31","2014-06-30","2014-07-31","2014-08-31","2014-09-30","2014-10-31","2014-11-30","2014-12-31","2015-01-31","2015-02-28","2015-03-31","2015-04-30","2015-05-31","2015-06-30","2015-07-31","2015-08-31","2015-09-30","2015-10-31","2015-11-30","2015-12-31","2016-01-31","2016-02-29","2016-03-31","2016-04-30","2016-05-31","2016-06-30","2016-07-31","2016-08-31","2016-09-30","2016-10-31","2016-11-30","2016-12-31","2017-01-31","2017-02-28","2017-03-31","2017-04-30","2017-05-31","2017-06-30","2017-07-31","2017-08-31","2017-09-30","2017-10-31","2017-11-30","2017-12-31","2018-01-31","2018-02-28","2018-03-31","2018-04-30","2018-05-31","2018-06-30","2018-07-31","2018-08-31","2018-09-30","2018-10-31","2018-11-30","2018-12-31","2019-01-31","2019-02-28","2019-03-31","2019-04-30","2019-05-31","2019-06-30","2019-07-31","2019-08-31","2019-09-30","2019-10-31","2019-11-30","2019-12-31","2020-01-31","2020-02-29","2020-03-31","2020-04-30","2020-05-31"],"original":[-13.9,-71.2,-119.1,-173.2,-266.7,-348.9,-428.7,-514.1,-607.2,-690.8,-794.6,-898.1,-974.6,-1023.7,-1065.4,-1147.6,-1178.5,-1214.2,-1243.6,-1333.6,-1364.6,-1375.0,-1407.2,-1472.2,-1539.7,-1572.6,-1605.5,-1626.7,-1636.8,-1643.2,-1689.2,-1724.1,-1775.9,-1833.5,-1937.9,-2005.8,-2104.8,-2170.5,-2229.9,-2244.5,-2336.3,-2401.7,-2433.0,-2523.3,-2568.1,-2631.9,-2680.2,-2761.7,-2828.8,-2954.2,-3034.5,-3089.7,-3163.8,-3294.5,-3354.4,-3433.3,-3473.1,-3572.2,-3713.5,-3771.4,-3849.8,-3895.8,-3922.8,-3978.1,-4060.4,-4063.8,-4146.6,-4156.1,-4215.9,-4303.7,-4344.0,-4403.7,-4492.9,-4563.2,-4698.2,-4786.8,-4868.3,-4964.4,-5072.0,-5129.2,-5290.3,-5344.3,-5389.1,-5399.1,-5432.0,-5475.8,-5518.8,-5606.0,-5684.0,-5699.9,-5737.4,-5804.9,-5871.2,-5982.8,-6040.2,-6131.4,-6214.8,-6353.8,-6496.9,-6542.7,-6615.3,-6639.1,-6699.9,-6826.8,-6891.1,-6932.7,-6999.6,-7153.7,-7215.5,-7266.8,-7354.4,-7464.1,-7566.3,-7624.4,-7644.8,-7702.3,-7763.6,-7842.5,-7928.0,-7939.1,-8063.1,-8193.5,-8343.5,-8532.3,-8629.6,-8700.6,-8756.2,-8872.4,-8950.8,-9072.7,-9182.3,-9303.0,-9410.6,-9509.9,-9621.0,-9748.3,-9810.0,-9927.9,-10060.3,-10170.4,-10269.1,-10391.6,-10605.7,-10771.4,-10997.6,-11107.2,-11229.8,-11366.8,-11513.3,-11584.9,-11728.4,-11852.4,-11912.9,-12043.7,-12132.8,-12180.9,-12215.4,-12321.7,-12417.5,-12508.8,-12621.9,-12748.2,-12933.0,-13002.2,-13021.7,-13029.8],"filtro":[-16.5,-47.2,-82.3,-132.1,-183.5,-213.6,-236.1,-278.0,-324.9,-359.0,-412.7,-472.4,-531.5,-583.4,-603.4,-646.1,-681.7,-695.8,-700.9,-742.3,-752.7,-764.5,-785.8,-815.2,-853.3,-851.7,-863.9,-870.9,-899.7,-919.3,-950.1,-972.0,-1002.4,-1048.5,-1130.6,-1184.4,-1246.6,-1300.7,-1330.8,-1350.5,-1386.3,-1424.4,-1461.7,-1522.5,-1570.0,-1613.3,-1641.0,-1658.0,-1711.7,-1794.8,-1826.1,-1852.9,-1885.7,-1941.1,-1989.8,-2034.3,-2061.1,-2109.0,-2200.7,-2228.2,-2258.0,-2286.4,-2309.3,-2337.0,-2366.6,-2365.9,-2388.0,-2408.1,-2428.6,-2460.6,-2495.8,-2531.2,-2594.1,-2637.4,-2701.7,-2741.3,-2809.2,-2851.2,-2888.1,-2938.8,-2977.4,-3000.8,-3026.8,-3043.8,-3067.4,-3079.5,-3095.2,-3146.6,-3184.9,-3215.7,-3232.0,-3267.7,-3322.4,-3373.0,-3421.2,-3476.9,-3529.3,-3570.5,-3631.6,-3663.4,-3701.8,-3716.2,-3743.4,-3780.3,-3798.4,-3836.1,-3891.0,-3953.1,-3978.6,-4018.2,-4058.2,-4111.6,-4159.2,-4186.1,-4190.5,-4217.5,-4256.4,-4288.5,-4333.4,-4339.1,-4402.9,-4479.7,-4548.0,-4589.9,-4634.0,-4698.6,-4733.2,-4786.8,-4855.4,-4917.1,-4977.9,-5025.6,-5051.8,-5077.0,-5137.9,-5177.1,-5228.9,-5292.0,-5332.9,-5399.4,-5445.3,-5506.9,-5634.5,-5715.8,-5754.5,-5819.8,-5885.3,-5950.8,-6003.8,-6061.7,-6117.7,-6174.0,-6206.6,-6287.9,-6324.3,-6324.3,-6342.3,-6377.9,-6425.5,-6482.1,-6561.6,-6633.8,-6701.1,-6740.3,-6770.6,-6770.2],"plan":[-1.6,-14.0,-12.5,-18.1,-17.1,-16.7,-25.5,-39.0,-60.5,-60.3,-52.3,-42.8,-48.6,-61.5,-59.8,-73.4,-75.5,-60.3,-54.0,-54.8,-65.5,-79.9,-82.9,-93.8,-94.0,-89.2,-89.9,-93.6,-98.1,-101.3,-103.4,-94.9,-96.7,-105.0,-111.6,-112.4,-121.8,-126.0,-120.0,-123.4,-126.6,-122.5,-124.5,-125.4,-132.6,-136.1,-143.6,-147.3,-154.3,-153.9,-157.9,-144.1,-151.7,-155.4,-171.3,-173.8,-176.8,-180.9,-193.5,-193.2,-199.2,-206.1,-211.8,-222.0,-227.8,-229.1,-230.6,-233.0,-230.3,-233.5,-242.7,-250.2,-259.3,-266.7,-280.2,-277.2,-280.6,-285.8,-280.2,-284.9,-287.1,-283.9,-288.5,-289.2,-292.6,-295.0,-301.2,-312.5,-317.6,-327.8,-321.2,-320.2,-323.8,-324.8,-326.9,-331.0,-336.5,-346.5,-360.1,-350.6,-345.8,-339.0,-344.8,-350.1,-344.7,-352.2,-363.7,-371.1,-369.0,-374.7,-382.8,-379.1,-378.8,-391.5,-392.3,-389.8,-394.0,-387.3,-398.4,-406.9,-410.5,-416.1,-419.9,-413.7,-414.7,-426.7,-427.7,-436.2,-441.2,-446.8,-454.6,-459.1,-460.8,-463.0,-475.7,-457.3,-465.4,-458.9,-465.0,-476.2,-483.3,-490.9,-512.1,-518.3,-523.8,-528.2,-535.3,-548.2,-556.8,-572.2,-574.2,-587.5,-592.3,-594.0,-602.9,-606.4,-603.2,-596.4,-595.1,-603.3,-616.1,-624.6,-630.7,-628.6,-629.8,-634.3],"plan_corre":[-1.6,-15.7,-6.4,-15.7,-11.9,-5.9,-15.4,-28.3,-49.6,-48.5,-48.6,-45.0,-44.4,-58.6,-63.7,-78.6,-81.8,-67.8,-55.9,-44.3,-59.0,-74.3,-82.4,-85.2,-81.7,-62.9,-58.1,-65.2,-68.9,-67.4,-70.8,-65.9,-68.2,-75.2,-83.2,-89.4,-103.5,-99.3,-92.7,-90.6,-88.4,-90.8,-86.5,-82.9,-83.7,-83.5,-89.5,-86.0,-88.8,-90.0,-86.4,-74.6,-80.6,-74.1,-89.6,-94.2,-92.2,-92.8,-113.1,-117.0,-121.0,-126.4,-127.9,-135.3,-135.4,-135.7,-113.2,-116.2,-113.9,-120.8,-124.9,-133.9,-151.5,-162.0,-178.3,-173.7,-177.5,-184.1,-185.3,-191.2,-184.3,-184.8,-184.5,-192.3,-186.2,-188.1,-193.9,-202.9,-208.5,-220.7,-219.7,-219.7,-228.1,-225.5,-220.8,-224.6,-229.3,-237.8,-252.9,-234.5,-220.5,-214.9,-223.4,-231.7,-227.6,-235.5,-247.6,-260.2,-262.4,-270.1,-283.5,-282.6,-281.6,-296.7,-293.6,-282.3,-282.3,-281.5,-285.7,-291.6,-295.6,-299.5,-295.6,-282.7,-282.4,-296.3,-298.2,-310.9,-319.7,-327.0,-338.1,-344.2,-339.8,-337.1,-344.8,-334.4,-346.5,-343.6,-347.8,-360.4,-370.1,-385.6,-406.2,-411.9,-413.8,-415.0,-422.2,-434.0,-448.8,-463.4,-467.4,-477.3,-480.4,-484.2,-495.3,-490.9,-492.5,-481.5,-484.7,-490.2,-502.8,-507.8,-506.0,-501.4,-506.4,-511.3]},"acciones40":{"fechas":["2026-10-15","2026-10-16","2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-23","2026-10-26","2026-10-27","2026-10-28","2026-10-29","2026-10-30","2026-11-02","2026-11-03","2026-11-04","2026-11-05","2026-11-06","2026-11-09","2026-11-10","2026-11-11","2026-11-12","2026-11-13","2026-11-16","2026-11-17","2026-11-18","2026-11-19","2026-11-20","2026-11-23","2026-11-24","2026-11-25"],"original":[1.0,-4.0,-5.2,-4.9,-4.5,-8.0,-9.1,-8.3,-7.3,-7.7,-9.3,-12.4,-17.9,-18.6,-19.7,-29.1,-31.1,-27.3,-25.2,-24.5,-24.9,-27.1,-30.4,-33.7,-36.5,-42.9,-50.9,-51.6,-52.3,-47.5],"filtro":[0.4,-1.6,-2.2,-2.2,-3.1,-3.6,-4.1,-3.7,-2.9,-4.0,-5.7,-7.5,-7.6,-8.6,-8.8,-9.3,-10.5,-8.0,-7.0,-6.7,-7.2,-7.9,-9.5,-10.4,-11.1,-12.4,-13.4,-14.2,-14.2,-11.3],"plan":[-0.0,0.1,-0.3,-0.2,-0.7,-0.1,-0.8,-0.9,-0.9,-0.9,-1.1,-1.4,-0.8,-1.1,-1.2,0.2,0.1,0.7,0.3,0.0,0.1,0.6,0.4,0.3,0.0,0.6,1.2,1.1,1.5,1.5],"plan_corre":[0.1,0.7,0.2,-0.2,-0.7,-0.0,-0.8,-1.2,-1.1,-1.3,-1.8,-2.2,-1.1,-1.5,-1.7,1.8,1.6,2.6,1.9,1.7,1.7,1.8,1.8,1.6,1.7,3.1,4.6,4.1,4.5,4.6]}},"resumen_curvas":[{"inst":"BTC","forma":"original","total":-9669.7,"R_dia":-5.561,"dias":1739,"sharpe":-10.97},{"inst":"BTC","forma":"filtro","total":-4284.5,"R_dia":-2.464,"dias":1739,"sharpe":-9.99},{"inst":"BTC","forma":"plan","total":-336.1,"R_dia":-0.193,"dias":1739,"sharpe":-2.24},{"inst":"BTC","forma":"plan_corre","total":-142.8,"R_dia":-0.082,"dias":1739,"sharpe":-0.62},{"inst":"NAS100","forma":"original","total":-5247.2,"R_dia":-1.399,"dias":3750,"sharpe":-3.69},{"inst":"NAS100","forma":"filtro","total":-1796.6,"R_dia":-0.479,"dias":3750,"sharpe":-2.16},{"inst":"NAS100","forma":"plan","total":53.1,"R_dia":0.014,"dias":3750,"sharpe":0.15},{"inst":"NAS100","forma":"plan_corre","total":201.4,"R_dia":0.054,"dias":3750,"sharpe":0.43},{"inst":"NVDA","forma":"original","total":-288.8,"R_dia":-1.504,"dias":192,"sharpe":-4.48},{"inst":"NVDA","forma":"filtro","total":-109.0,"R_dia":-0.568,"dias":192,"sharpe":-3.06},{"inst":"NVDA","forma":"plan","total":-0.3,"R_dia":-0.002,"dias":192,"sharpe":-0.02},{"inst":"NVDA","forma":"plan_corre","total":35.5,"R_dia":0.185,"dias":192,"sharpe":1.46},{"inst":"XAU","forma":"original","total":-13029.8,"R_dia":-3.778,"dias":3449,"sharpe":-10.56},{"inst":"XAU","forma":"filtro","total":-6770.2,"R_dia":-1.963,"dias":3449,"sharpe":-10.01},{"inst":"XAU","forma":"plan","total":-634.3,"R_dia":-0.184,"dias":3449,"sharpe":-2.11},{"inst":"XAU","forma":"plan_corre","total":-511.3,"R_dia":-0.148,"dias":3449,"sharpe":-1.27},{"inst":"acciones40","forma":"original","total":-47.5,"R_dia":-1.582,"dias":30,"sharpe":-7.98},{"inst":"acciones40","forma":"filtro","total":-11.3,"R_dia":-0.377,"dias":30,"sharpe":-5.37},{"inst":"acciones40","forma":"plan","total":1.5,"R_dia":0.051,"dias":30,"sharpe":1.79},{"inst":"acciones40","forma":"plan_corre","total":4.6,"R_dia":0.154,"dias":30,"sharpe":2.85}],"liquidez":[{"ticker":"MU","precio":646.95,"dolar_vol_m":30325.49,"rango_medio_pct":5.83,"atr14_pct":10.13},{"ticker":"NVDA","precio":150.49,"dolar_vol_m":27065.96,"rango_medio_pct":3.3,"atr14_pct":10.03},{"ticker":"SNDK","precio":85.36,"dolar_vol_m":16873.29,"rango_medio_pct":7.66,"atr14_pct":11.88},{"ticker":"AAPL","precio":358.54,"dolar_vol_m":13822.87,"rango_medio_pct":2.25,"atr14_pct":2.22},{"ticker":"AMD","precio":424.54,"dolar_vol_m":13741.56,"rango_medio_pct":5.35,"atr14_pct":10.35},{"ticker":"TSLA","precio":400.0,"dolar_vol_m":12964.07,"rango_medio_pct":3.74,"atr14_pct":5.37},{"ticker":"MSFT","precio":492.85,"dolar_vol_m":12921.61,"rango_medio_pct":2.53,"atr14_pct":3.31},{"ticker":"META","precio":628.96,"dolar_vol_m":10887.89,"rango_medio_pct":3.3,"atr14_pct":4.08},{"ticker":"INTC","precio":57.4,"dolar_vol_m":10561.23,"rango_medio_pct":5.72,"atr14_pct":8.4},{"ticker":"AMZN","precio":254.12,"dolar_vol_m":9498.28,"rango_medio_pct":2.63,"atr14_pct":4.19},{"ticker":"GOOGL","precio":274.96,"dolar_vol_m":9291.34,"rango_medio_pct":2.65,"atr14_pct":4.17},{"ticker":"AVGO","precio":312.34,"dolar_vol_m":8722.11,"rango_medio_pct":3.48,"atr14_pct":6.82},{"ticker":"MRVL","precio":140.54,"dolar_vol_m":5040.99,"rango_medio_pct":6.85,"atr14_pct":10.54},{"ticker":"PLTR","precio":172.17,"dolar_vol_m":4600.13,"rango_medio_pct":4.49,"atr14_pct":5.81},{"ticker":"ORCL","precio":107.13,"dolar_vol_m":4427.36,"rango_medio_pct":4.89,"atr14_pct":6.88}],"usuario":{"p_5de7_acierto_0.33":0.0452674897119341,"p_5de7_acierto_0.36":0.0625462124544,"p_5de7_acierto_0.40":0.096256,"ops_para_ver_0.02R":20000.0,"ops_para_ver_0.05R":3201.0,"ops_para_ver_0.1R":801.0,"ops_para_ver_0.2R":201.0},"plan_tabla":[{"inst":"NVDA","salida":"2:1","tramo":"todo","ops_dia":1.2083,"acierto":0.4224,"R_bruto":0.0727,"R_neto":0.0301,"t":0.35},{"inst":"NVDA","salida":"2:1","tramo":"1a_mitad","ops_dia":1.1979,"acierto":0.4261,"R_bruto":0.0753,"R_neto":0.0336,"t":0.2694},{"inst":"NVDA","salida":"2:1","tramo":"2a_mitad","ops_dia":1.2188,"acierto":0.4188,"R_bruto":0.0702,"R_neto":0.0267,"t":0.2236},{"inst":"NVDA","salida":"3:1","tramo":"todo","ops_dia":1.2083,"acierto":0.3966,"R_bruto":0.1165,"R_neto":0.0722,"t":0.7152},{"inst":"NVDA","salida":"3:1","tramo":"1a_mitad","ops_dia":1.1979,"acierto":0.4087,"R_bruto":0.1717,"R_neto":0.1286,"t":0.8515},{"inst":"NVDA","salida":"3:1","tramo":"2a_mitad","ops_dia":1.2188,"acierto":0.3846,"R_bruto":0.0621,"R_neto":0.0167,"t":0.1239},{"inst":"NVDA","salida":"candado 1,8→1 y dinámico 0,8","tramo":"todo","ops_dia":1.2083,"acierto":0.4267,"R_bruto":0.0453,"R_neto":-0.0014,"t":-0.0158},{"inst":"NVDA","salida":"candado 1,8→1 y dinámico 0,8","tramo":"1a_mitad","ops_dia":1.1979,"acierto":0.4261,"R_bruto":0.0084,"R_neto":-0.0377,"t":-0.3153},{"inst":"NVDA","salida":"candado 1,8→1 y dinámico 0,8","tramo":"2a_mitad","ops_dia":1.2188,"acierto":0.4274,"R_bruto":0.0815,"R_neto":0.0343,"t":0.2752},{"inst":"NVDA","salida":"a 1R stop a 0, dinámico 1","tramo":"todo","ops_dia":1.2083,"acierto":0.556,"R_bruto":0.0915,"R_neto":0.0448,"t":0.571},{"inst":"NVDA","salida":"a 1R stop a 0, dinámico 1","tramo":"1a_mitad","ops_dia":1.1979,"acierto":0.5478,"R_bruto":0.0258,"R_neto":-0.0203,"t":-0.1992},{"inst":"NVDA","salida":"a 1R stop a 0, dinámico 1","tramo":"2a_mitad","ops_dia":1.2188,"acierto":0.5641,"R_bruto":0.1561,"R_neto":0.1088,"t":0.9102},{"inst":"NVDA","salida":"sin objetivo (cierre)","tramo":"todo","ops_dia":1.2083,"acierto":0.3966,"R_bruto":0.1996,"R_neto":0.1529,"t":1.2785},{"inst":"NVDA","salida":"sin objetivo (cierre)","tramo":"1a_mitad","ops_dia":1.1979,"acierto":0.4087,"R_bruto":0.2307,"R_neto":0.1846,"t":1.0535},{"inst":"NVDA","salida":"sin objetivo (cierre)","tramo":"2a_mitad","ops_dia":1.2188,"acierto":0.3846,"R_bruto":0.169,"R_neto":0.1217,"t":0.7429},{"inst":"BTC","salida":"2:1","tramo":"todo","ops_dia":0.9885,"acierto":0.3741,"R_bruto":0.0249,"R_neto":-0.1913,"t":-5.85},{"inst":"BTC","salida":"2:1","tramo":"1a_mitad","ops_dia":0.962,"acierto":0.3589,"R_bruto":0.0117,"R_neto":-0.1971,"t":-4.2154},{"inst":"BTC","salida":"2:1","tramo":"2a_mitad","ops_dia":1.0161,"acierto":0.3884,"R_bruto":0.0375,"R_neto":-0.1859,"t":-4.0587},{"inst":"BTC","salida":"3:1","tramo":"todo","ops_dia":0.9885,"acierto":0.338,"R_bruto":0.0539,"R_neto":-0.1662,"t":-4.4006},{"inst":"BTC","salida":"3:1","tramo":"1a_mitad","ops_dia":0.962,"acierto":0.323,"R_bruto":0.0585,"R_neto":-0.1534,"t":-2.8201},{"inst":"BTC","salida":"3:1","tramo":"2a_mitad","ops_dia":1.0161,"acierto":0.3522,"R_bruto":0.0495,"R_neto":-0.1782,"t":-3.3964},{"inst":"BTC","salida":"candado 1,8→1 y dinámico 0,8","tramo":"todo","ops_dia":0.9885,"acierto":0.388,"R_bruto":0.0312,"R_neto":-0.1955,"t":-5.8943},{"inst":"BTC","salida":"candado 1,8→1 y dinámico 0,8","tramo":"1a_mitad","ops_dia":0.962,"acierto":0.3744,"R_bruto":0.0361,"R_neto":-0.183,"t":-3.7682},{"inst":"BTC","salida":"candado 1,8→1 y dinámico 0,8","tramo":"2a_mitad","ops_dia":1.0161,"acierto":0.4009,"R_bruto":0.0265,"R_neto":-0.2074,"t":-4.5709},{"inst":"BTC","salida":"a 1R stop a 0, dinámico 1","tramo":"todo","ops_dia":0.9885,"acierto":0.4933,"R_bruto":0.021,"R_neto":-0.2056,"t":-6.8098},{"inst":"BTC","salida":"a 1R stop a 0, dinámico 1","tramo":"1a_mitad","ops_dia":0.962,"acierto":0.4761,"R_bruto":-0.0016,"R_neto":-0.2207,"t":-5.1846},{"inst":"BTC","salida":"a 1R stop a 0, dinámico 1","tramo":"2a_mitad","ops_dia":1.0161,"acierto":0.5096,"R_bruto":0.0425,"R_neto":-0.1914,"t":-4.4691},{"inst":"BTC","salida":"sin objetivo (cierre)","tramo":"todo","ops_dia":0.9885,"acierto":0.32,"R_bruto":0.1436,"R_neto":-0.0831,"t":-1.6286},{"inst":"BTC","salida":"sin objetivo (cierre)","tramo":"1a_mitad","ops_dia":0.962,"acierto":0.3002,"R_bruto":0.1671,"R_neto":-0.0519,"t":-0.674},{"inst":"BTC","salida":"sin objetivo (cierre)","tramo":"2a_mitad","ops_dia":1.0161,"acierto":0.3386,"R_bruto":0.1214,"R_neto":-0.1125,"t":-1.6705},{"inst":"NAS100","salida":"2:1","tramo":"todo","ops_dia":1.2016,"acierto":0.3875,"R_bruto":0.0583,"R_neto":0.0069,"t":0.3438},{"inst":"NAS100","salida":"2:1","tramo":"1a_mitad","ops_dia":1.2176,"acierto":0.3723,"R_bruto":0.0375,"R_neto":-0.0058,"t":-0.2081},{"inst":"NAS100","salida":"2:1","tramo":"2a_mitad","ops_dia":1.1856,"acierto":0.4031,"R_bruto":0.0796,"R_neto":0.02,"t":0.6951},{"inst":"NAS100","salida":"3:1","tramo":"todo","ops_dia":1.2016,"acierto":0.354,"R_bruto":0.1001,"R_neto":0.0467,"t":1.9958},{"inst":"NAS100","salida":"3:1","tramo":"1a_mitad","ops_dia":1.2176,"acierto":0.3465,"R_bruto":0.0988,"R_neto":0.0539,"t":1.6363},{"inst":"NAS100","salida":"3:1","tramo":"2a_mitad","ops_dia":1.1856,"acierto":0.3617,"R_bruto":0.1015,"R_neto":0.0393,"t":1.182},{"inst":"NAS100","salida":"candado 1,8→1 y dinámico 0,8","tramo":"todo","ops_dia":1.2016,"acierto":0.401,"R_bruto":0.0686,"R_neto":0.0118,"t":0.575},{"inst":"NAS100","salida":"candado 1,8→1 y dinámico 0,8","tramo":"1a_mitad","ops_dia":1.2176,"acierto":0.3872,"R_bruto":0.0577,"R_neto":0.0099,"t":0.3427},{"inst":"NAS100","salida":"candado 1,8→1 y dinámico 0,8","tramo":"2a_mitad","ops_dia":1.1856,"acierto":0.4152,"R_bruto":0.0798,"R_neto":0.0137,"t":0.4715},{"inst":"NAS100","salida":"a 1R stop a 0, dinámico 1","tramo":"todo","ops_dia":1.2016,"acierto":0.5142,"R_bruto":0.0815,"R_neto":0.0247,"t":1.3234},{"inst":"NAS100","salida":"a 1R stop a 0, dinámico 1","tramo":"1a_mitad","ops_dia":1.2176,"acierto":0.5011,"R_bruto":0.0452,"R_neto":-0.0026,"t":-0.1025},{"inst":"NAS100","salida":"a 1R stop a 0, dinámico 1","tramo":"2a_mitad","ops_dia":1.1856,"acierto":0.5277,"R_bruto":0.1187,"R_neto":0.0526,"t":1.9275},{"inst":"NAS100","salida":"sin objetivo (cierre)","tramo":"todo","ops_dia":1.2016,"acierto":0.3342,"R_bruto":0.1015,"R_neto":0.0447,"t":1.6399},{"inst":"NAS100","salida":"sin objetivo (cierre)","tramo":"1a_mitad","ops_dia":1.2176,"acierto":0.3285,"R_bruto":0.0666,"R_neto":0.0188,"t":0.5217},{"inst":"NAS100","salida":"sin objetivo (cierre)","tramo":"2a_mitad","ops_dia":1.1856,"acierto":0.3401,"R_bruto":0.1374,"R_neto":0.0713,"t":1.7362},{"inst":"XAU","salida":"2:1","tramo":"todo","ops_dia":1.0568,"acierto":0.3737,"R_bruto":-0.0065,"R_neto":-0.1739,"t":-7.9443},{"inst":"XAU","salida":"2:1","tramo":"1a_mitad","ops_dia":1.0661,"acierto":0.3613,"R_bruto":-0.0249,"R_neto":-0.1628,"t":-5.2703},{"inst":"XAU","salida":"2:1","tramo":"2a_mitad","ops_dia":1.0481,"acierto":0.3863,"R_bruto":0.0122,"R_neto":-0.1851,"t":-5.9681},{"inst":"XAU","salida":"3:1","tramo":"todo","ops_dia":1.0568,"acierto":0.3487,"R_bruto":0.0037,"R_neto":-0.1687,"t":-6.8965},{"inst":"XAU","salida":"3:1","tramo":"1a_mitad","ops_dia":1.0661,"acierto":0.3313,"R_bruto":-0.0147,"R_neto":-0.1567,"t":-4.5037},{"inst":"XAU","salida":"3:1","tramo":"2a_mitad","ops_dia":1.0481,"acierto":0.3664,"R_bruto":0.0223,"R_neto":-0.1809,"t":-5.2599},{"inst":"XAU","salida":"candado 1,8→1 y dinámico 0,8","tramo":"todo","ops_dia":1.0568,"acierto":0.3852,"R_bruto":0.0046,"R_neto":-0.174,"t":-7.8153},{"inst":"XAU","salida":"candado 1,8→1 y dinámico 0,8","tramo":"1a_mitad","ops_dia":1.0661,"acierto":0.3683,"R_bruto":-0.0117,"R_neto":-0.1592,"t":-4.9742},{"inst":"XAU","salida":"candado 1,8→1 y dinámico 0,8","tramo":"2a_mitad","ops_dia":1.0481,"acierto":0.4023,"R_bruto":0.0212,"R_neto":-0.1891,"t":-6.109},{"inst":"XAU","salida":"a 1R stop a 0, dinámico 1","tramo":"todo","ops_dia":1.0568,"acierto":0.4952,"R_bruto":0.007,"R_neto":-0.1717,"t":-8.6104},{"inst":"XAU","salida":"a 1R stop a 0, dinámico 1","tramo":"1a_mitad","ops_dia":1.0661,"acierto":0.4837,"R_bruto":-0.0051,"R_neto":-0.1526,"t":-5.3159},{"inst":"XAU","salida":"a 1R stop a 0, dinámico 1","tramo":"2a_mitad","ops_dia":1.0481,"acierto":0.5069,"R_bruto":0.0193,"R_neto":-0.1911,"t":-6.9079},{"inst":"XAU","salida":"sin objetivo (cierre)","tramo":"todo","ops_dia":1.0568,"acierto":0.3399,"R_bruto":0.0384,"R_neto":-0.1403,"t":-4.7064},{"inst":"XAU","salida":"sin objetivo (cierre)","tramo":"1a_mitad","ops_dia":1.0661,"acierto":0.3237,"R_bruto":0.0442,"R_neto":-0.1033,"t":-2.3593},{"inst":"XAU","salida":"sin objetivo (cierre)","tramo":"2a_mitad","ops_dia":1.0481,"acierto":0.3564,"R_bruto":0.0325,"R_neto":-0.1779,"t":-4.4048},{"inst":"acciones40","salida":"2:1","tramo":"todo","ops_dia":1.1583,"acierto":0.4061,"R_bruto":0.0878,"R_neto":0.0531,"t":0.755},{"inst":"acciones40","salida":"2:1","tramo":"1a_mitad","ops_dia":1.2037,"acierto":0.3631,"R_bruto":-0.0117,"R_neto":-0.0516,"t":-0.6449},{"inst":"acciones40","salida":"2:1","tramo":"2a_mitad","ops_dia":1.113,"acierto":0.4526,"R_bruto":0.1954,"R_neto":0.1663,"t":1.4627},{"inst":"acciones40","salida":"3:1","tramo":"todo","ops_dia":1.1583,"acierto":0.3741,"R_bruto":0.1132,"R_neto":0.0769,"t":0.8033},{"inst":"acciones40","salida":"3:1","tramo":"1a_mitad","ops_dia":1.2037,"acierto":0.32,"R_bruto":-0.032,"R_neto":-0.0738,"t":-0.7643},{"inst":"acciones40","salida":"3:1","tramo":"2a_mitad","ops_dia":1.113,"acierto":0.4326,"R_bruto":0.2702,"R_neto":0.2399,"t":1.4716},{"inst":"acciones40","salida":"candado 1,8→1 y dinámico 0,8","tramo":"todo","ops_dia":1.1583,"acierto":0.4197,"R_bruto":0.082,"R_neto":0.0436,"t":0.6175},{"inst":"acciones40","salida":"candado 1,8→1 y dinámico 0,8","tramo":"1a_mitad","ops_dia":1.2037,"acierto":0.38,"R_bruto":-0.0246,"R_neto":-0.0685,"t":-0.8743},{"inst":"acciones40","salida":"candado 1,8→1 y dinámico 0,8","tramo":"2a_mitad","ops_dia":1.113,"acierto":0.4626,"R_bruto":0.1973,"R_neto":0.1649,"t":1.435},{"inst":"acciones40","salida":"a 1R stop a 0, dinámico 1","tramo":"todo","ops_dia":1.1583,"acierto":0.5364,"R_bruto":0.0917,"R_neto":0.0533,"t":0.8077},{"inst":"acciones40","salida":"a 1R stop a 0, dinámico 1","tramo":"1a_mitad","ops_dia":1.2037,"acierto":0.5046,"R_bruto":0.0036,"R_neto":-0.0403,"t":-0.5964},{"inst":"acciones40","salida":"a 1R stop a 0, dinámico 1","tramo":"2a_mitad","ops_dia":1.113,"acierto":0.5707,"R_bruto":0.187,"R_neto":0.1546,"t":1.3652},{"inst":"acciones40","salida":"sin objetivo (cierre)","tramo":"todo","ops_dia":1.1583,"acierto":0.3653,"R_bruto":0.1712,"R_neto":0.1328,"t":0.9831},{"inst":"acciones40","salida":"sin objetivo (cierre)","tramo":"1a_mitad","ops_dia":1.2037,"acierto":0.3092,"R_bruto":-0.0481,"R_neto":-0.092,"t":-0.8202},{"inst":"acciones40","salida":"sin objetivo (cierre)","tramo":"2a_mitad","ops_dia":1.113,"acierto":0.426,"R_bruto":0.4082,"R_neto":0.3758,"t":1.5463}]};
+const C = { NVDA: "var(--s1)", acciones40: "var(--s2)", NAS100: "var(--s3)", BTC: "var(--s4)", XAU: "var(--s5)" };
+const NOM = { NVDA: "Nvidia", acciones40: "40 acciones", NAS100: "Nasdaq-100", BTC: "Bitcóin", XAU: "Oro" };
+const ORDEN = ["NVDA", "acciones40", "NAS100", "BTC", "XAU"];
+const nf = (v, d = 2, sign = false) => (v == null || isNaN(v)) ? "–" :
+  (sign && v > 0 ? "+" : "") + v.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (v, d = 1) => nf(100 * v, d) + " %";
+const SVGNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function niceTicks(lo, hi, n = 5) {
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const err = step0 / mag, step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag;
+  const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step, out = [];
+  for (let v = a; v <= b + step / 2; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function legend(id, items) {
+  const L = document.getElementById(id);
+  items.forEach(it => {
+    const s = document.createElement("span");
+    const i = document.createElement("i");
+    i.className = it.kind || "";
+    if (it.kind === "dash") i.style.borderColor = it.color; else i.style.background = it.color;
+    s.appendChild(i); s.appendChild(document.createTextNode(it.name)); L.appendChild(s);
+  });
+}
+function tooltip(wrap) {
+  const t = document.createElement("div"); t.className = "tip"; t.hidden = true; wrap.appendChild(t); return t;
+}
+function fillTip(t, head, rows) {
+  t.textContent = "";
+  const h = document.createElement("div"); h.className = "h"; h.textContent = head; t.appendChild(h);
+  rows.forEach(r => {
+    const d = document.createElement("div"); d.className = "r";
+    const i = document.createElement("i"); i.style.background = r.color;
+    const b = document.createElement("b"); b.textContent = r.value;
+    const s = document.createElement("span"); s.textContent = r.name;
+    d.append(i, b, s); t.appendChild(d);
+  });
+}
+function placeTip(t, wrap, px, py) {
+  const w = wrap.clientWidth, tw = t.offsetWidth;
+  let x = px + 14; if (x + tw > w) x = px - tw - 14; if (x < 0) x = 0;
+  t.style.left = x + "px"; t.style.top = Math.max(0, py - 10) + "px";
+}
+
+/* Gráfico de líneas genérico con cruz y etiqueta al final de cada serie. */
+function lineChart(id, cfg) {
+  const wrap = typeof id === "string" ? document.getElementById(id) : id;
+  const W = cfg.W || 720, H = cfg.H || 300, m = { l: 52, r: cfg.rpad ?? 104, t: 14, b: 34 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": cfg.aria || "" }, wrap);
+  const n = cfg.x.length;
+  const xs = cfg.xType === "cat" ? cfg.x.map((_, i) => i) : cfg.x.map(v => +v);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const X = v => m.l + (x1 === x0 ? 0 : (v - x0) / (x1 - x0)) * (W - m.l - m.r);
+  let all = cfg.series.flatMap(s => s.values.filter(v => v != null));
+  if (cfg.band) all.push(cfg.band[0], cfg.band[1]);
+  if (cfg.zero !== false) all.push(0);
+  const ticks = niceTicks(Math.min(...all), Math.max(...all), cfg.yt || 5);
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  const Y = v => m.t + (1 - (v - y0) / (y1 - y0)) * (H - m.t - m.b);
+  const ax = el("g", { class: "axis" }, svg);
+  ticks.forEach(v => {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), class: "gridl", stroke: "var(--grid)" }, ax);
+    const t = el("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end" }, ax); t.textContent = (cfg.fmtY || nf)(v);
+  });
+  if (cfg.zero !== false && y0 < 0 && y1 > 0)
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: "var(--ink-3)", "stroke-width": 1 }, ax);
+  if (cfg.band) {
+    el("rect", { x: m.l, width: W - m.l - m.r, y: Y(cfg.band[1]), height: Y(cfg.band[0]) - Y(cfg.band[1]), fill: "var(--band)" }, svg);
+    const bt = el("text", { x: W - m.r - 6, y: Y(cfg.band[1]) - 5, "text-anchor": "end", class: "lbl", fill: "var(--accent)" }, svg);
+    bt.textContent = cfg.bandLabel || "";
+  }
+  const xt = cfg.xTicks || (cfg.xType === "cat" ? xs : niceTicks(x0, x1, 5).filter(v => v >= x0 && v <= x1));
+  xt.forEach(v => {
+    const t = el("text", { x: X(v), y: H - m.b + 18, "text-anchor": "middle" }, ax);
+    t.textContent = cfg.fmtX ? cfg.fmtX(v) : (cfg.xType === "cat" ? cfg.x[v] : nf(v, 2));
+  });
+  if (cfg.xLabel) { const t = el("text", { x: (m.l + W - m.r) / 2, y: H - 2, "text-anchor": "middle" }, ax); t.textContent = cfg.xLabel; }
+  const ends = [];
+  cfg.series.forEach(s => {
+    let d = "", pen = false;
+    s.values.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? "L" : "M") + X(xs[i]).toFixed(1) + " " + Y(v).toFixed(1); pen = true; });
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": s.w || 2, "stroke-dasharray": s.dash || "", "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    if (cfg.markers) s.values.forEach((v, i) => { if (v != null) el("circle", { cx: X(xs[i]), cy: Y(v), r: 3.5, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }, svg); });
+    let li = s.values.length - 1; while (li >= 0 && s.values[li] == null) li--;
+    if (li >= 0 && cfg.endLabels !== false) ends.push({ y: Y(s.values[li]), x: X(xs[li]), name: s.short || s.name, color: s.color });
+  });
+  ends.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+  const fondo = H - m.b - 6;
+  if (ends.length && ends[ends.length - 1].y > fondo) {
+    ends[ends.length - 1].y = fondo;
+    for (let i = ends.length - 2; i >= 0; i--) if (ends[i + 1].y - ends[i].y < 14) ends[i].y = ends[i + 1].y - 14;
+  }
+  ends.forEach(e => {
+    el("circle", { cx: e.x, cy: e.y, r: 0 }, svg);
+    const t = el("text", { x: e.x + 8, y: e.y + 4, class: "lbl", fill: "var(--ink-2)" }, svg); t.textContent = e.name;
+  });
+  // cruz
+  const tip = tooltip(wrap);
+  const cross = el("line", { y1: m.t, y2: H - m.b, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent", tabindex: 0 }, svg);
+  let cur = n - 1;
+  function show(i) {
+    cur = Math.max(0, Math.min(n - 1, i));
+    const cx = X(xs[cur]);
+    cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+    const rows = cfg.series.map(s => ({ color: s.color, name: s.name, value: (cfg.fmtTip || cfg.fmtY || nf)(s.values[cur]) }))
+      .sort((a, b) => 0);
+    fillTip(tip, cfg.fmtHead ? cfg.fmtHead(cur) : String(cfg.x[cur]), rows); tip.hidden = false;
+    const r = svg.getBoundingClientRect(), k = r.width / W;
+    placeTip(tip, wrap, cx * k, m.t * k + 10);
+  }
+  function nearest(evt) {
+    const r = svg.getBoundingClientRect(), px = (evt.clientX - r.left) * W / r.width;
+    let best = 0, bd = Infinity; xs.forEach((v, i) => { const dd = Math.abs(X(v) - px); if (dd < bd) { bd = dd; best = i; } });
+    return best;
+  }
+  hit.addEventListener("pointermove", e => show(nearest(e)));
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  hit.addEventListener("focus", () => show(cur));
+  hit.addEventListener("blur", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  hit.addEventListener("keydown", e => { if (e.key === "ArrowRight") show(cur + 1); if (e.key === "ArrowLeft") show(cur - 1); });
+}
+
+/* Gráfico de puntos: filas = salidas, un punto por mercado. */
+function dotPlot(id, rows, series, fmt) {
+  const wrap = document.getElementById(id);
+  const W = 720, rowH = 30, m = { l: 236, r: 24, t: 10, b: 30 }, H = m.t + m.b + rows.length * rowH;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "R bruto por operación según la regla de salida" }, wrap);
+  const all = series.flatMap(s => s.values).concat([0]);
+  const ticks = niceTicks(Math.min(...all), Math.max(...all), 5), x0 = ticks[0], x1 = ticks[ticks.length - 1];
+  const X = v => m.l + (v - x0) / (x1 - x0) * (W - m.l - m.r);
+  const ax = el("g", { class: "axis" }, svg);
+  ticks.forEach(v => {
+    el("line", { x1: X(v), x2: X(v), y1: m.t, y2: H - m.b, stroke: v === 0 ? "var(--ink-3)" : "var(--grid)" }, ax);
+    const t = el("text", { x: X(v), y: H - m.b + 18, "text-anchor": "middle" }, ax); t.textContent = nf(v, 2, true);
+  });
+  const tip = tooltip(wrap);
+  rows.forEach((r, i) => {
+    const cy = m.t + i * rowH + rowH / 2;
+    el("line", { x1: m.l, x2: W - m.r, y1: cy, y2: cy, stroke: "var(--grid)" }, svg);
+    const t = el("text", { x: m.l - 12, y: cy + 4, "text-anchor": "end", class: "lbl", fill: r.hl ? "var(--ink)" : "var(--ink-2)", "font-weight": r.hl ? 600 : 500 }, svg);
+    t.textContent = r.label;
+    series.forEach(s => {
+      const v = s.values[i];
+      const g = el("g", { tabindex: 0 }, svg);
+      el("circle", { cx: X(v), cy, r: 12, fill: "transparent" }, g);
+      const c = el("circle", { cx: X(v), cy, r: 6, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }, g);
+      const on = () => {
+        c.setAttribute("r", 7.5);
+        fillTip(tip, r.label, [{ color: s.color, name: s.name, value: fmt(v) }, ...(s.extra ? [{ color: "transparent", name: "acierto", value: pct(s.extra[i], 0) }] : [])]);
+        tip.hidden = false; const k = svg.getBoundingClientRect().width / W; placeTip(tip, wrap, X(v) * k, cy * k);
+      };
+      const off = () => { c.setAttribute("r", 6); tip.hidden = true; };
+      g.addEventListener("pointerenter", on); g.addEventListener("pointerleave", off);
+      g.addEventListener("focus", on); g.addEventListener("blur", off);
+    });
+  });
+}
+
+function table(id, head, rows) {
+  const T = document.getElementById(id);
+  const th = document.createElement("thead"), tr = document.createElement("tr");
+  head.forEach(h => { const c = document.createElement("th"); c.textContent = h.t; if (h.n) c.className = "n"; tr.appendChild(c); });
+  th.appendChild(tr); T.appendChild(th);
+  const tb = document.createElement("tbody");
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    r.forEach(cell => {
+      const c = document.createElement("td");
+      if (typeof cell === "object" && cell !== null) {
+        if (cell.sw) { const s = document.createElement("span"); s.className = "sw"; s.style.background = cell.sw; c.appendChild(s); }
+        c.appendChild(document.createTextNode(cell.v)); c.className = cell.c || "";
+      } else c.textContent = cell;
+      tr.appendChild(c);
+    });
+    tb.appendChild(tr);
+  });
+  T.appendChild(tb);
+}
+const signo = v => v > 0.0005 ? "pos" : v < -0.0005 ? "neg" : "";
+
+/* ---- cifras de cabecera ---- */
+(function () {
+  const b = D.base.find(r => r.inst === "NVDA" && r.tp === 2);
+  const cBTC = D.base.find(r => r.inst === "BTC" && r.tp === 2);
+  const s = D.salidas.filter(r => r.inst === "BTC");
+  const corre = s.find(r => r.salida === "sin objetivo (cierre)").R, dos = s.find(r => r.salida === "2:1").R;
+  const items = [
+    [pct(b.acierto), "acierto real a 2:1 en Nvidia entrando a cualquier hora (teoría: 33,3 %)"],
+    [nf(b.coste_R, 2) + "R", "coste por operación en Nvidia con tu stop de 0,34 % (" + nf(cBTC.coste_R, 2) + "R en bitcóin)"],
+    [nf(corre, 2, true) + "R", "por operación dejando correr a favor del día en bitcóin (2:1 fijo: " + nf(dos, 2, true) + "R), antes de costes"],
+    [pct(D.usuario["p_5de7_acierto_0.33"]), "probabilidad de un día de 5 ganadas de 7 a 2:1 sin ninguna ventaja"],
+  ];
+  const S = document.getElementById("stats");
+  items.forEach(([v, t]) => {
+    const d = document.createElement("div"); d.className = "stat";
+    const bb = document.createElement("b"); bb.textContent = v;
+    const sp = document.createElement("span"); sp.textContent = t; d.append(bb, sp); S.appendChild(d);
+  });
+  document.getElementById("p57").textContent = pct(D.usuario["p_5de7_acierto_0.33"]);
+})();
+
+/* ---- tabla base ---- */
+table("t-base", [{ t: "Mercado" }, { t: "Objetivo" }, { t: "Acierto teórico", n: 1 }, { t: "Acierto real", n: 1 }, { t: "R bruto", n: 1 }, { t: "Coste (R)", n: 1 }, { t: "R neto", n: 1 }, { t: "Operaciones/día", n: 1 }],
+  ORDEN.flatMap(k => D.base.filter(r => r.inst === k && [1, 2, 3].includes(r.tp)).map((r, i) => [
+    i === 0 ? { v: NOM[k], sw: C[k] } : "", nf(r.tp, 0) + ":1", { v: pct(r.teorico), c: "n" }, { v: pct(r.acierto), c: "n" },
+    { v: nf(r.R_bruto, 3, true), c: "n " + signo(r.R_bruto) }, { v: nf(r.coste_R, 2), c: "n" }, { v: nf(r.R_neto, 3, true), c: "n " + signo(r.R_neto) }, { v: nf(r.ops_dia, 1), c: "n" }])));
+
+/* ---- mapa ---- */
+(function () {
+  const buckets = ["< -0,75", "-0,75 a -0,5", "-0,5 a -0,25", "-0,25 a 0", "0 a 0,25", "0,25 a 0,5", "0,5 a 0,75", "> 0,75"];
+  const xl = ["< −0,75", "−0,75", "−0,5", "−0,25", "0", "+0,25", "+0,5", "> +0,75"];
+  const ser = ["NAS100", "BTC", "XAU"].map(k => ({
+    name: NOM[k], color: C[k], values: buckets.map(b => { const r = D.mapa.find(m => m.inst === k && m.tramo === b); return r ? r.R : null; }),
+  }));
+  lineChart("c-mapa", {
+    x: xl, xType: "cat", series: ser, markers: true, fmtY: v => nf(v, 2, true), H: 280,
+    xLabel: "movimiento del día a favor de la operación al entrar (ATR)", fmtHead: i => "Movimiento previo: " + buckets[i] + " ATR",
+    aria: "Resultado de la horquilla según el movimiento previo del día",
+  });
+  legend("l-mapa", ser.map(s => ({ name: s.name, color: s.color, kind: "dot" })));
+})();
+
+/* ---- filtros ---- */
+(function () {
+  const sen = [["siempre", "Entrar siempre"], ["tendencia_diaria", "Tendencia de días (media 20 > 50)"], ["vwap+apertura", "Sobre VWAP y apertura"], ["dia_fuerte", "Día ≥ 0,25 ATR a favor"], ["orb30", "Rompe el rango de 30 min"], ["bajo_vwap_compra", "Comprar 0,15 ATR bajo la VWAP"]];
+  const head = [{ t: "Señal (largo / corto)" }, ...ORDEN.map(k => ({ t: NOM[k], n: 1 }))];
+  const rows = sen.map(([k, lab]) => [lab, ...ORDEN.map(i => {
+    const L = D.filtros.find(r => r.inst === i && r.senal === k && r.lado === "largo");
+    const S = D.filtros.find(r => r.inst === i && r.senal === k && r.lado === "corto");
+    const f = r => nf(r.R_bruto, 2, true);
+    const strong = Math.abs(L.t_bruto) >= 2 || Math.abs(S.t_bruto) >= 2;
+    return { v: f(L) + " / " + f(S), c: "n" + (strong ? " strong" : "") };
+  })]);
+  table("t-filtros", head, rows);
+})();
+
+/* ---- coste vs stop ---- */
+(function () {
+  const fs = [0.03, 0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.5];
+  const ser = ["NVDA", "NAS100", "BTC", "XAU"].map(k => ({
+    name: NOM[k], color: C[k], values: fs.map(f => { const r = D.coste.find(c => c.inst === k && Math.abs(c.f_atr - f) < 1e-9); return r ? r.coste_R : null; }),
+  }));
+  lineChart("c-coste", {
+    x: fs, xType: "num", series: ser, markers: true, band: [0.03, 0.10],
+    xTicks: [0.05, 0.1, 0.2, 0.3, 0.5], fmtX: v => nf(v, 2), fmtY: v => nf(v, 1), fmtTip: v => nf(v, 2) + "R", H: 300,
+    xLabel: "stop (fracción del ATR diario)", fmtHead: i => "Stop de " + nf(fs[i], 3) + " ATR",
+    aria: "Coste por operación en R según el tamaño del stop",
+  });
+  legend("l-coste", ser.map(s => ({ name: s.name, color: s.color, kind: "dot" })));
+})();
+
+/* ---- liquidez ---- */
+table("t-liq", [{ t: "Valor" }, { t: "Precio", n: 1 }, { t: "Volumen diario (M$)", n: 1 }, { t: "Rango medio del día", n: 1 }, { t: "ATR 14 días", n: 1 }, { t: "Stop 0,2 ATR ($)", n: 1 }],
+  D.liquidez.map(r => [r.ticker, { v: nf(r.precio, 2), c: "n" }, { v: nf(r.dolar_vol_m, 0), c: "n" }, { v: nf(r.rango_medio_pct, 1) + " %", c: "n" },
+    { v: nf(r.atr14_pct, 1) + " %", c: "n" }, { v: nf(0.2 * r.atr14_pct / 100 * r.precio, 2), c: "n" }]));
+
+/* ---- salidas ---- */
+(function () {
+  const sal = [["1:1", "1:1"], ["1,5:1", "1,5:1"], ["2:1", "2:1 (tu regla)"], ["3:1", "3:1"], ["a 1R stop a 0, objetivo 3", "A +1R stop a 0, objetivo 3R"],
+    ["dinámico 1R desde la entrada", "Dinámico a 1R desde la entrada"], ["a 1R stop a 0, dinámico 1", "A +1R stop a 0, luego dinámico 1R"],
+    ["candado 1,8→1 y dinámico 0,8", "Tu candado (+1,8R → stop a +1R)"], ["sin objetivo (cierre)", "Sin objetivo, hasta el cierre"]];
+  const ks = ["NVDA", "acciones40", "NAS100", "BTC", "XAU"];
+  const series = ks.map(k => ({
+    name: NOM[k], color: C[k],
+    values: sal.map(([s]) => D.salidas.find(r => r.inst === k && r.salida === s).R),
+    extra: sal.map(([s]) => D.salidas.find(r => r.inst === k && r.salida === s).acierto),
+  }));
+  dotPlot("c-salidas", sal.map(([s, l]) => ({ label: l, hl: s.startsWith("candado") || s === "2:1" })), series, v => nf(v, 3, true) + "R");
+  legend("l-salidas", series.map(s => ({ name: s.name, color: s.color, kind: "dot" })));
+})();
+
+/* ---- curvas ---- */
+(function () {
+  const F = [["original", "Original", "var(--st-orig)", ""], ["filtro", "Con filtro", "var(--st-filt)", "5 4"], ["plan", "Plan", "var(--st-plan)", ""], ["plan_corre", "Plan y dejar correr", "var(--st-corre)", ""]];
+  const box = document.getElementById("c-curvas");
+  const pans = [["NVDA", "feb–nov 2026 · diario"], ["acciones40", "oct–nov 2026 · R medio por acción"], ["NAS100", "2005–2020 · mensual"], ["BTC", "2022–2026 · semanal"]];
+  const mes = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  pans.forEach(([k, sub]) => {
+    const p = document.createElement("div"); p.className = "pan";
+    const h = document.createElement("h4"); h.textContent = NOM[k];
+    const s = document.createElement("div"); s.className = "ps"; s.textContent = sub;
+    const c = document.createElement("div"); c.className = "chart";
+    p.append(h, s, c); box.appendChild(p);
+    const cu = D.curvas[k];
+    const t = cu.fechas.map(f => new Date(f + "T12:00:00Z").getTime());
+    const t0 = t[0], t1 = t[t.length - 1], yrs = (t1 - t0) / 3.15e10;
+    let xt;
+    if (yrs > 3) { const ys = []; const a = new Date(t0).getUTCFullYear(), b = new Date(t1).getUTCFullYear(); const st = yrs > 8 ? 5 : 2; for (let y = Math.ceil(a / st) * st; y <= b; y += st) ys.push(Date.UTC(y, 0, 1)); xt = ys.filter(v => v >= t0 && v <= t1); }
+    else { xt = [t0, (t0 + t1) / 2, t1]; }
+    lineChart(c, {
+      x: t, xType: "date", W: 360, H: 220, rpad: 14, yt: 4, endLabels: false,
+      series: F.map(([key, name, color, dash]) => ({ name, color, dash, values: cu[key] })),
+      xTicks: xt, fmtX: v => { const d = new Date(v); return yrs > 3 ? String(d.getUTCFullYear()) : d.getUTCDate() + " " + mes[d.getUTCMonth()]; },
+      fmtY: v => nf(v, 0), fmtTip: v => nf(v, 1) + "R", fmtHead: i => cu.fechas[i].split("-").reverse().join("/"),
+      aria: "R acumulado en " + NOM[k],
+    });
+  });
+  legend("l-curvas", F.map(([, name, color, dash]) => ({ name, color, kind: dash ? "dash" : "" })));
+})();
+
+/* ---- tabla del plan ---- */
+(function () {
+  const sal = [["2:1", "2:1"], ["3:1", "3:1"], ["candado 1,8→1 y dinámico 0,8", "Candado"], ["sin objetivo (cierre)", "Hasta el cierre"]];
+  const head = [{ t: "Mercado" }, ...sal.map(([, l]) => ({ t: l + " · R neto (t)", n: 1 })), { t: "Op./día", n: 1 }];
+  const rows = ORDEN.map(k => {
+    const get = s => D.plan_tabla.find(r => r.inst === k && r.salida === s && r.tramo === "todo");
+    return [{ v: NOM[k], sw: C[k] }, ...sal.map(([s]) => { const r = get(s); return { v: nf(r.R_neto, 3, true) + " (" + nf(r.t, 1) + ")", c: "n " + signo(r.R_neto) + (Math.abs(r.t) >= 2 && r.R_neto > 0 ? " strong" : "") }; }),
+      { v: nf(get("2:1").ops_dia, 1), c: "n" }];
+  });
+  table("t-plan", head, rows);
+})();
+
+/* ---- operaciones necesarias ---- */
+table("t-ops", [{ t: "Ventaja real por operación" }, { t: "Operaciones necesarias", n: 1 }, { t: "A 5 operaciones al día", n: 1 }],
+  [0.02, 0.05, 0.1, 0.2].map(x => { const n = D.usuario["ops_para_ver_" + x + "R"]; return [nf(x, 2, true) + "R", { v: nf(n, 0), c: "n" }, { v: nf(n / 5 / 21, 1) + " meses", c: "n" }]; }));
+</script>
