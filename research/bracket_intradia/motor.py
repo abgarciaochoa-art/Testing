@@ -116,10 +116,12 @@ def _simular(O, H, L, C, senal, R, tp, cand_x, cand_y, trail, max_ops, max_perd,
 def simular(P: dict, senal: np.ndarray, R: np.ndarray, *, tp: float = 2.0,
             candado: tuple[float, float] | None = None, trail: float = 0.0,
             max_ops: int = 99, max_perd: int = 99, espera: int = 0,
-            ultima_entrada: int | None = None, corto: bool = False):
+            ultima_entrada: int | None = None, corto: bool = False,
+            cierre: int | None = None):
     """Simula la horquilla. ``R`` (días × velas o días) es la distancia al stop en precio.
 
-    ``ultima_entrada`` y ``espera`` van en velas. Devuelve un dict de arrays por operación.
+    ``ultima_entrada``, ``espera`` y ``cierre`` (vela en cuyo cierre se sale) van en velas.
+    Devuelve un dict de arrays por operación.
     """
     O, H, L, C = (P[k] for k in "OHLC")
     if corto:
@@ -127,7 +129,8 @@ def simular(P: dict, senal: np.ndarray, R: np.ndarray, *, tp: float = 2.0,
     D, N = O.shape
     if R.ndim == 1:
         R = np.repeat(R[:, None], N, axis=1)
-    cierre = N - 1 - max(1, 5 // int(P["paso"]))  # cerrar ~5 minutos antes del final
+    if cierre is None:
+        cierre = N - 1 - max(1, 5 // int(P["paso"]))  # cerrar ~5 minutos antes del final
     ue = cierre - 1 if ultima_entrada is None else min(ultima_entrada, cierre - 1)
     cx, cy = candado if candado else (0.0, 0.0)
     a = _simular(np.ascontiguousarray(O), np.ascontiguousarray(H), np.ascontiguousarray(L),

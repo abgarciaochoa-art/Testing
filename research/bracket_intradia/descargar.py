@@ -62,7 +62,7 @@ def _dia_dukas(inst: str, d: date) -> str:
     return "ok" if b else "vacío"
 
 
-def dukascopy(instrumentos: list[str], hilos: int = 5) -> None:
+def dukascopy(instrumentos: list[str], hilos: int = 3) -> None:
     """Dukascopy limita mucho la velocidad (503 y cortes): pocos hilos, del día más reciente
     hacia atrás y un instrumento detrás de otro, para que una descarga parcial ya sirva."""
     dias = [FIN - timedelta(n) for n in range((FIN - INICIO).days + 1)]

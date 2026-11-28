@@ -1,0 +1,140 @@
+// Semáforo de tendencia intradía (Pine Script v5, TradingView)
+// Réplica de research/tendencia_intradia/replicar.py. Úsalo en un gráfico intradía (1-15 min)
+// con el horario regular (sin pre ni post mercado) y la zona de Nueva York.
+//
+//   sigma  = (precio / apertura - 1) / movimiento absoluto medio a esa misma vela en los
+//            14 días anteriores
+//   rvol   = volumen acumulado del día / media de los 20 días anteriores a esa misma vela
+//   rojo          |sigma| < 1                       → sin tendencia (fondo sin color)
+//   ámbar         |sigma| >= 1 sin rvol >= 2 o al otro lado de la VWAP
+//   verde         |sigma| >= 1, rvol >= 2 y del lado bueno de la VWAP
+//   verde fuerte  lo mismo con rvol >= 3
+// Flecha: primera vez en el día que se pone verde entre las 10:00 y las 14:30.
+// Gestión probada: stop a 0,25 ATR(14) diario; a +1,8R el stop sube a +1R y sigue a 0,8R del
+// máximo; todo cerrado al final de la sesión.
+//@version=5
+indicator("Semáforo de tendencia intradía", shorttitle="Semáforo", overlay=true, max_labels_count=500)
+
+diasRuido  = input.int(14, "Días para el ruido", minval=5)
+diasVol    = input.int(20, "Días para el volumen relativo", minval=5)
+sigmaMin   = input.float(1.0, "Sigma mínima", step=0.1)
+rvolMin    = input.float(2.0, "Volumen relativo para verde", step=0.1)
+rvolFuerte = input.float(3.0, "Volumen relativo para verde fuerte", step=0.1)
+stopATR    = input.float(0.25, "Stop en fracción del ATR diario", step=0.05)
+sesion     = input.session("0930-1600", "Sesión regular")
+zona       = input.string("America/New_York", "Zona horaria")
+verBanda   = input.bool(true, "Dibujar la banda de ruido")
+
+MAXV = 400  // velas por día como máximo (400 cubre velas de 1 minuto)
+
+enSesion = not na(time(timeframe.period, sesion, zona))
+nuevoDia = enSesion and (not enSesion[1] or dayofmonth(time, zona) != dayofmonth(time[1], zona))
+
+var float apertura = na
+var int   k        = 0
+var int   dias     = 0
+var float volDia   = 0.0
+var int   t0       = na
+var bool  avisado  = false
+var matrix<float> movAbs = matrix.new<float>(diasRuido + 1, MAXV, na)
+var matrix<float> volAc  = matrix.new<float>(diasVol + 1, MAXV, na)
+
+if nuevoDia
+    apertura := open
+    k := 0
+    volDia := 0.0
+    t0 := time
+    avisado := false
+    dias += 1
+    matrix.fill(movAbs, float(na), dias % (diasRuido + 1), dias % (diasRuido + 1) + 1)
+    matrix.fill(volAc, float(na), dias % (diasVol + 1), dias % (diasVol + 1) + 1)
+else if enSesion
+    k += 1
+
+filaR = dias % (diasRuido + 1)
+filaV = dias % (diasVol + 1)
+kk = math.min(k, MAXV - 1)
+
+if enSesion
+    volDia += volume
+
+mov = enSesion ? close / apertura - 1 : na
+
+// medias de los días anteriores (todas las filas menos la de hoy)
+sumaM = 0.0
+nM = 0
+for i = 0 to diasRuido
+    if i != filaR
+        v = matrix.get(movAbs, i, kk)
+        if not na(v)
+            sumaM += v
+            nM += 1
+base = nM >= math.ceil(diasRuido / 2) ? sumaM / nM : na
+
+sumaV = 0.0
+nV = 0
+for i = 0 to diasVol
+    if i != filaV
+        v = matrix.get(volAc, i, kk)
+        if not na(v)
+            sumaV += v
+            nV += 1
+volBase = nV >= math.ceil(diasVol / 2) ? sumaV / nV : na
+
+// guardar el dato de hoy solo con la vela cerrada (no influye en los cálculos de hoy)
+if enSesion and barstate.isconfirmed
+    matrix.set(movAbs, filaR, kk, math.abs(mov))
+    matrix.set(volAc, filaV, kk, volDia)
+
+sigma = not na(base) and base > 0 ? mov / base : na
+rvol  = not na(volBase) and volBase > 0 ? volDia / volBase : na
+vw    = ta.vwap(hlc3)
+dir   = enSesion ? math.sign(close - apertura) : 0
+
+fuera  = not na(sigma) and math.abs(sigma) >= sigmaMin
+ladoOk = math.sign(close - vw) == dir
+estado = 0
+if fuera
+    estado := 1
+    if not na(rvol) and rvol >= rvolMin and ladoOk
+        estado := 2
+        if rvol >= rvolFuerte
+            estado := 3
+
+// ventana de entrada: la vela cierra entre las 10:00 y las 14:30
+minCierre = enSesion ? (time_close - t0) / 60000 : na
+enVentana = not na(minCierre) and minCierre >= 30 and minCierre <= 300
+entrada = enSesion and enVentana and estado >= 2 and not avisado and barstate.isconfirmed
+if entrada
+    avisado := true
+
+// ATR diario de ayer (sin mirar al futuro) y stop sugerido
+atrD = request.security(syminfo.tickerid, "D", ta.atr(14)[1], lookahead=barmerge.lookahead_on)
+stopDist = stopATR * atrD
+
+// dibujo
+colFondo = estado == 3 ? color.new(color.green, 70) : estado == 2 ? color.new(color.green, 85) : estado == 1 ? color.new(color.orange, 90) : na
+bgcolor(enSesion ? colFondo : na, title="Estado")
+plot(enSesion ? vw : na, "VWAP", color=color.new(color.blue, 0), linewidth=2, style=plot.style_linebr)
+plot(enSesion and verBanda and not na(base) ? apertura * (1 + sigmaMin * base) : na, "Banda de ruido superior", color=color.new(color.gray, 30), style=plot.style_linebr)
+plot(enSesion and verBanda and not na(base) ? apertura * (1 - sigmaMin * base) : na, "Banda de ruido inferior", color=color.new(color.gray, 30), style=plot.style_linebr)
+plot(enSesion ? apertura : na, "Apertura", color=color.new(color.gray, 60), style=plot.style_linebr)
+plotshape(entrada and dir > 0, "Entrada larga", shape.triangleup, location.belowbar, color.green, size=size.small)
+plotshape(entrada and dir < 0, "Entrada corta", shape.triangledown, location.abovebar, color.red, size=size.small)
+
+alertcondition(entrada and dir > 0, "Semáforo: verde alcista", "Tendencia alcista confirmada (semáforo verde)")
+alertcondition(entrada and dir < 0, "Semáforo: verde bajista", "Tendencia bajista confirmada (semáforo verde)")
+
+var tabla = table.new(position.top_right, 2, 5, border_width=1)
+if barstate.islast
+    nombre = estado == 3 ? "verde fuerte" : estado == 2 ? "verde" : estado == 1 ? "ámbar" : "rojo"
+    table.cell(tabla, 0, 0, "Estado", bgcolor=color.new(color.gray, 80))
+    table.cell(tabla, 1, 0, nombre + (dir > 0 ? " ↑" : dir < 0 ? " ↓" : ""), bgcolor=color.new(color.gray, 80))
+    table.cell(tabla, 0, 1, "Sigma")
+    table.cell(tabla, 1, 1, na(sigma) ? "–" : str.tostring(sigma, "#.##"))
+    table.cell(tabla, 0, 2, "Vol. relativo")
+    table.cell(tabla, 1, 2, na(rvol) ? "–" : str.tostring(rvol, "#.##"))
+    table.cell(tabla, 0, 3, "ATR diario")
+    table.cell(tabla, 1, 3, na(atrD) ? "–" : str.tostring(atrD, "#.##"))
+    table.cell(tabla, 0, 4, "Stop " + str.tostring(stopATR, "#.##") + " ATR")
+    table.cell(tabla, 1, 4, na(stopDist) ? "–" : str.tostring(stopDist, "#.##"))
